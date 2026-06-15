@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NewUU Entrance Prep — Mathematics</title>
+
+<!-- MathJax (renders \( \) inline and \[ \] display) -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    svg: { fontCache: 'global' },
+    startup: { typeset: false }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ---------- Light, flat, Bluebook-style theme ---------- */
+  :root {
+    --bg:        #ffffff;
+    --ink:       #1a1a1a;
+    --muted:     #6b7280;
+    --line:      #e8e8e8;
+    --blue:      #2b7fff;
+    --blue-soft: #eaf2ff;
+    --green:     #16a34a;
+    --green-soft:#f0faf3;
+    --amber:     #d97706;
+    --red:       #dc2626;
+    --red-soft:  #fdf2f2;
+    --radius:    14px;
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  button { font-family: inherit; }
+
+  /* ---------- App bar ---------- */
+  .appbar {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px; background: #fff; border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; background: none; border: none;
+    cursor: pointer; color: var(--ink); font-size: 16px; font-weight: 650; }
+  .logo { width: 30px; height: 30px; border-radius: 8px; background: var(--blue); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+  .timer { display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums;
+    font-size: 14px; color: var(--muted); background: #fff; border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; }
+  .timer .ic { font-size: 13px; }
+
+  #app { max-width: 1000px; margin: 0 auto; padding: 28px 24px 90px; }
+
+  /* ---------- Dashboard ---------- */
+  .greeting h1 { font-size: 27px; font-weight: 700; letter-spacing: -.4px; }
+  .greeting .subtitle { color: var(--muted); margin-top: 5px; font-size: 15px; }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 26px 0; }
+  .stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: #fff; }
+  .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .stat-val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -.5px; }
+  .stat-sub { font-size: 15px; color: var(--muted); font-weight: 600; }
+  .stat.correct .stat-val { color: var(--green); }
+  .stat.wrong .stat-val { color: var(--red); }
+  .mini-bar { height: 6px; background: var(--line); border-radius: 999px; margin-top: 12px; overflow: hidden; }
+  .mini-fill { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .4s ease; }
+
+  /* ---------- Due for review ---------- */
+  .due { border: 1px solid #d8e7ff; background: #f5f9ff; border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 26px; }
+  .due h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .due h3 .badge { background: var(--blue); color: #fff; border-radius: 999px; font-size: 12px;
+    padding: 1px 9px; font-weight: 700; }
+  .due-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .due-chip { display: inline-flex; align-items: center; gap: 9px; border: 1px solid #cfe0ff;
+    background: #fff; border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 14px; color: var(--ink); }
+  .due-chip:hover { border-color: var(--blue); }
+  .due-chip .go { color: var(--blue); font-weight: 600; }
+
+  /* ---------- Topic tracker ---------- */
+  .tracker-title { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .6px; margin-bottom: 12px; }
+  .tracker { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .unit-header { display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; background: #fafafa; border-top: 1px solid var(--line);
+    font-weight: 650; font-size: 14px; }
+  .unit-header:first-child { border-top: none; }
+  .unit-header .u-idx { display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--blue-soft); color: var(--blue);
+    font-size: 12px; font-weight: 700; margin-right: 9px; }
+  .unit-header .u-meta { color: var(--muted); font-weight: 600; font-size: 13px; }
+
+  .trow { display: grid; grid-template-columns: 1fr 150px 52px 96px; align-items: center; gap: 14px;
+    width: 100%; text-align: left; background: #fff; border: none; border-top: 1px solid var(--line);
+    padding: 13px 18px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .trow:hover { background: #fafcff; }
+  .trow-name { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .trow-name .txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tag-due { flex: 0 0 auto; font-size: 10.5px; font-weight: 700; color: var(--blue);
+    background: var(--blue-soft); border-radius: 999px; padding: 1px 8px; }
+  .pbar { display: block; height: 7px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .pfill { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .4s ease; }
+  .trow-count { font-size: 13px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .trow-acc { display: flex; align-items: center; gap: 7px; justify-content: flex-end;
+    font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #cbd0d6; flex: 0 0 auto; }
+  .dot.g { background: var(--green); }
+  .dot.a { background: var(--amber); }
+  .dot.r { background: var(--red); }
+
+  /* Unit challenge row (end of each unit) */
+  .trow.challenge-row { background: #f6f9ff; }
+  .trow.challenge-row:hover { background: #ecf3ff; }
+  .trow.challenge-row .trow-name { color: var(--blue); font-weight: 650; }
+  .bolt { flex: 0 0 auto; }
+  .ch-meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  .dash-foot { margin-top: 22px; text-align: center; }
+  .reset-link { background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; }
+  .reset-link:hover { color: var(--red); text-decoration: underline; }
+
+  /* ---------- Topic / skill screen ---------- */
+  .back { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 14px;
+    font-weight: 600; padding: 0; margin-bottom: 14px; }
+  .back:hover { text-decoration: underline; }
+  .unit-tag { display: inline-block; font-size: 12.5px; font-weight: 600; color: var(--blue);
+    background: var(--blue-soft); padding: 4px 11px; border-radius: 20px; margin-bottom: 10px; }
+  .topic-head h2 { font-size: 26px; font-weight: 650; letter-spacing: -.3px; }
+
+  .reading { max-width: 860px; margin-top: 22px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px 26px; margin-bottom: 18px; }
+  .card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted);
+    margin-bottom: 14px; font-weight: 700; }
+  .prose { font-size: 18px; line-height: 1.65; }
+  .prose p { margin-bottom: 12px; }
+  .prose ul { padding-left: 22px; }
+  .prose li { margin-bottom: 8px; }
+  .prose.placeholder { color: var(--muted); font-style: italic; }
+  .start-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+  .btn-primary { background: var(--blue); color: #fff; border: none; border-radius: 10px;
+    padding: 12px 22px; font-weight: 600; cursor: pointer; font-size: 15px; }
+  .btn-primary:hover { background: #1f6ff0; }
+  .btn-ghost { background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 18px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--muted); }
+  .btn-ghost:disabled { opacity: .4; cursor: default; }
+  .btn-ghost.active { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+
+  /* ---------- Bluebook question runner ---------- */
+  .runner { max-width: 720px; margin: 0 auto; }
+  .runner-top { display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+  .runner-title { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .stage { min-height: 280px; }
+  .q-big { font-size: 22px; line-height: 1.45; margin-bottom: 28px; }
+  .choices { display: flex; flex-direction: column; gap: 14px; }
+  .choice { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; background: #fff;
+    border: 1.5px solid var(--line); border-radius: 14px; padding: 17px 20px; font-size: 18px;
+    color: var(--ink); cursor: pointer; transition: border-color .12s, background .12s; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); background: #f7faff; }
+  .choice:disabled { cursor: default; }
+  .ch-letter { flex: 0 0 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+    font-size: 15px; color: var(--muted); }
+  .choice.chosen:not(.correct):not(.wrong) { border-color: var(--blue); background: var(--blue-soft); }
+  .choice.correct { border-color: var(--green); background: var(--green-soft); }
+  .choice.correct .ch-letter { background: var(--green); color: #fff; border-color: var(--green); }
+  .choice.wrong { border-color: var(--red); background: var(--red-soft); }
+  .choice.wrong .ch-letter { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .explain { margin-top: 24px; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: #fafafa; }
+  .explain-verdict { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
+  .explain-verdict.ok { color: var(--green); }
+  .explain-verdict.bad { color: var(--red); }
+  .explain-label { font-size: 11px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted);
+    font-weight: 700; margin-bottom: 5px; }
+  .explain-body { font-size: 16px; line-height: 1.55; }
+
+  .runner-bar { position: sticky; bottom: 0; background: #fff; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; padding: 14px 0; margin-top: 32px; }
+  .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar-actions { display: flex; gap: 10px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    #app { padding: 22px 16px 80px; }
+    .appbar { padding: 12px 16px; }
+    .brand .brand-name { display: none; }
+    .trow { grid-template-columns: 1fr 64px 82px; gap: 10px; padding: 12px 14px; font-size: 14px; }
+    .trow .trow-count { display: none; }
+    .unit-header { padding: 11px 14px; }
+    .q-big { font-size: 20px; }
+    .choice { font-size: 17px; padding: 15px 16px; }
+    .greeting h1 { font-size: 23px; }
+  }
+</style>
+</head>
+<body>
+  <header class="appbar">
+    <button class="brand" id="homeBtn"><span class="logo">N</span><span class="brand-name">NewUU Prep</span></button>
+  </header>
+
+  <main id="app"></main>
+
+  <!-- Course data (untouched) -->
+  <script src="course-data.js"></script>
+
+  <script>
+  (function () {
+    "use strict";
+
+    if (typeof COURSE_DATA === "undefined") {
+      document.getElementById("app").innerHTML =
+        '<p style="color:#dc2626">Could not load <code>course-data.js</code>.</p>';
+      return;
+    }
+
+    /* ---------------- helpers ---------------- */
+    const app = document.getElementById("app");
+    const el = (t, c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
+    const LABELS = ["A", "B", "C", "D", "E", "F"];
+    const PLACEHOLDER = /^\s*(\[.*\]|<p>\s*\[.*\]\s*<\/p>)\s*$/;
+    const STUDENT = "Muhammadali";
+    const INTERVALS = [1, 2, 4, 7, 15, 30]; // spaced-repetition days by stage
+    const scroll0 = () => window.scrollTo(0, 0);
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    function typeset(node) {
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.startup.promise.then(() => MathJax.typesetPromise(node ? [node] : undefined)).catch(() => {});
+      }
+    }
+
+    /* ---------------- persistence ---------------- */
+    const STORE = "newuu_stats_v2";
+    let DB = { answers: {}, review: {} };
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORE));
+      if (raw && typeof raw === "object") DB = { answers: raw.answers || {}, review: raw.review || {} };
+    } catch (e) {}
+    const save = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
+
+    /* ---------------- data access ---------------- */
+    function questionsFor(bank, skillId) {
+      const units = COURSE_DATA[bank] || [];
+      for (const u of units) {
+        const s = (u.skills || []).find((sk) => sk.id === skillId);
+        if (s) return s.questions || [];
+      }
+      return [];
+    }
+    function findSkill(id) {
+      for (const u of COURSE_DATA.units) {
+        const s = u.skills.find((x) => x.id === id);
+        if (s) return { unit: u, skill: s };
+      }
+      return null;
+    }
+    function allSkills() {
+      const out = [];
+      COURSE_DATA.units.forEach((u) => u.skills.forEach((s) => out.push({ unit: u, skill: s })));
+      return out;
+    }
+    const TOTAL_SKILLS = allSkills().length;
+
+    /* ---------------- stats ---------------- */
+    // Per-skill PRACTICE stats (drives the skill rows & topic completion)
+    function practiceStats(skillId) {
+      const list = questionsFor("practiceQuestions", skillId);
+      let done = 0, correct = 0;
+      list.forEach((q, i) => {
+        const a = DB.answers["practiceQuestions|" + skillId + "|" + i];
+        if (a) { done++; if (a.correct) correct++; }
+      });
+      return { total: list.length, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: list.length > 0 && done === list.length };
+    }
+    // Unit CHALLENGE stats (all hard questions across a unit's skills)
+    function unitChallengeStats(unit) {
+      let total = 0, done = 0, correct = 0;
+      unit.skills.forEach((s) => {
+        const list = questionsFor("hardQuestions", s.id);
+        total += list.length;
+        list.forEach((q, i) => {
+          const a = DB.answers["hardQuestions|" + s.id + "|" + i];
+          if (a) { done++; if (a.correct) correct++; }
+        });
+      });
+      return { total, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: total > 0 && done === total };
+    }
+    // Global stats (every answered question, practice + challenge)
+    function globalStats() {
+      let topics = 0;
+      allSkills().forEach(({ skill }) => { if (practiceStats(skill.id).complete) topics++; });
+      let attempted = 0, correct = 0;
+      Object.values(DB.answers).forEach((a) => { attempted++; if (a.correct) correct++; });
+      return { topics, totalSkills: TOTAL_SKILLS, attempted, correct, wrong: attempted - correct,
+               acc: attempted ? Math.round((correct / attempted) * 100) : 0 };
+    }
+    function dotClass(s) {
+      if (!s.done) return "";
+      if (s.acc >= 0.85) return "g";
+      if (s.acc >= 0.6) return "a";
+      return "r";
+    }
+
+    /* ---------------- spaced repetition ---------------- */
+    function scheduleReview(skillId) {
+      const ps = practiceStats(skillId);
+      if (!ps.total || !ps.complete) return;       // schedule only when practice set is complete
+      const r = DB.review[skillId] || { stage: 0 };
+      r.stage = ps.acc < 0.6 ? 0 : Math.min((r.stage || 0) + 1, INTERVALS.length - 1);
+      r.due = Date.now() + INTERVALS[r.stage] * 86400000;
+      r.last = Date.now();
+      r.acc = ps.acc;
+      DB.review[skillId] = r;
+      save();
+    }
+    function dueSkills() {
+      const now = Date.now();
+      return allSkills().filter(({ skill }) => {
+        const r = DB.review[skill.id];
+        return r && r.due && r.due <= now;
+      });
+    }
+    const isDue = (id) => { const r = DB.review[id]; return !!(r && r.due && r.due <= Date.now()); };
+
+    /* ---------------- view + session state ---------------- */
+    let state = { view: "dashboard", skillId: null };
+    let session = null;   // { kind:'practice'|'challenge', title, back, skillId?, unitNo?, items:[{q,key,skillId}] }
+    let qIndex = 0;
+    let showSol = false;
+    let quizStart = null;
+
+    function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; render(); scroll0(); }
+    function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; render(); scroll0(); }
+
+    function startPractice(id) {
+      const { skill } = findSkill(id);
+      const list = questionsFor("practiceQuestions", id);
+      session = { kind: "practice", skillId: id, title: "Practice · " + skill.title,
+        back: { type: "topic", id: id },
+        items: list.map((q, i) => ({ q: q, key: "practiceQuestions|" + id + "|" + i, skillId: id })) };
+      qIndex = firstUnanswered(session); showSol = false; quizStart = Date.now();
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function startUnitChallenge(unitNo) {
+      const unit = COURSE_DATA.units.find((u) => u.unit === unitNo);
+      const items = [];
+      unit.skills.forEach((s) => {
+        questionsFor("hardQuestions", s.id).forEach((q, i) => {
+          items.push({ q: q, key: "hardQuestions|" + s.id + "|" + i, skillId: s.id });
+        });
+      });
+      session = { kind: "challenge", unitNo: unitNo, title: "Unit " + unit.unit + " Challenge · " + unit.name,
+        back: { type: "dashboard" }, items: items };
+      qIndex = firstUnanswered(session); showSol = false; quizStart = Date.now();
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function firstUnanswered(s) { const i = s.items.findIndex((it) => !DB.answers[it.key]); return i < 0 ? 0 : i; }
+    function leaveSession() { session.back.type === "topic" ? openSkill(session.back.id) : goHome(); }
+
+    /* ---------------- timers ---------------- */
+    const pad = (n) => String(n).padStart(2, "0");
+    function fmt(ms) {
+      const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
+      return (h ? h + ":" + pad(m) : pad(m)) + ":" + pad(ss);
+    }
+    function updateTimers() {
+      const qt = document.getElementById("quizTimer");
+      if (qt && quizStart) qt.textContent = fmt(Date.now() - quizStart);
+    }
+    setInterval(updateTimers, 1000);
+
+    /* ---------------- dashboard ---------------- */
+    function renderDashboard() {
+      const g = globalStats();
+      const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const topicsPct = Math.round((g.topics / g.totalSkills) * 100);
+
+      let html = "";
+      html += '<section class="greeting"><h1>Hello, ' + STUDENT + ' 👋</h1>' +
+              '<p class="subtitle">' + today + ' — here\'s where your prep stands.</p></section>';
+
+      html += '<section class="stats">' +
+        statCard("Topics completed", g.topics, "/" + g.totalSkills, topicsPct) +
+        statCard("Questions attempted", g.attempted) +
+        statCard("Correct", g.correct, "", null, "correct") +
+        statCard("Wrong", g.wrong, "", null, "wrong") +
+        statCard("Accuracy", g.acc + "%", "", g.acc) +
+      '</section>';
+
+      const due = dueSkills();
+      if (due.length) {
+        html += '<section class="due"><h3>Due for review <span class="badge">' + due.length + '</span></h3>' +
+          '<div class="due-list">' +
+          due.map(({ skill }) => '<button class="due-chip" data-due="' + skill.id + '">' +
+            esc(skill.title) + ' <span class="go">Review →</span></button>').join("") +
+          '</div></section>';
+      }
+
+      html += '<div class="tracker-title">Topic tracker</div><section class="tracker">';
+      COURSE_DATA.units.forEach((u) => {
+        let complete = 0;
+        u.skills.forEach((s) => { if (practiceStats(s.id).complete) complete++; });
+        html += '<div class="unit-header"><span><span class="u-idx">' + u.unit + '</span>' + esc(u.name) +
+          '</span><span class="u-meta">' + complete + '/' + u.skills.length + ' topics</span></div>';
+        // skill rows (practice progress)
+        u.skills.forEach((s) => {
+          const st = practiceStats(s.id);
+          const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
+          html += '<button class="trow" data-skill="' + s.id + '">' +
+            '<span class="trow-name"><span class="txt">' + esc(s.title) + '</span>' +
+              (isDue(s.id) ? '<span class="tag-due">Due</span>' : '') + '</span>' +
+            '<span class="pbar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
+            '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
+            '<span class="trow-acc"><span class="dot ' + dotClass(st) + '"></span>' +
+              (st.done ? Math.round(st.acc * 100) + '%' : '—') + '</span>' +
+          '</button>';
+        });
+        // unit challenge row (end of unit)
+        const cs = unitChallengeStats(u);
+        const cpct = cs.total ? Math.round((cs.done / cs.total) * 100) : 0;
+        html += '<button class="trow challenge-row" data-unit="' + u.unit + '">' +
+          '<span class="trow-name"><span class="bolt">⚡</span><span class="txt">Unit Challenge</span>' +
+            '<span class="ch-meta">' + cs.total + ' hard Qs</span></span>' +
+          '<span class="pbar"><span class="pfill" style="width:' + cpct + '%"></span></span>' +
+          '<span class="trow-count">' + cs.done + '/' + cs.total + '</span>' +
+          '<span class="trow-acc"><span class="dot ' + dotClass(cs) + '"></span>' +
+            (cs.done ? Math.round(cs.acc * 100) + '%' : '—') + '</span>' +
+        '</button>';
+      });
+      html += '</section>';
+
+      html += '<div class="dash-foot"><button class="reset-link" id="resetBtn">Reset all progress</button></div>';
+
+      app.innerHTML = html;
+
+      app.querySelectorAll(".trow[data-skill]").forEach((b) => b.addEventListener("click", () => openSkill(b.dataset.skill)));
+      app.querySelectorAll(".trow[data-unit]").forEach((b) => b.addEventListener("click", () => startUnitChallenge(+b.dataset.unit)));
+      app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => startPractice(b.dataset.due)));
+      const reset = document.getElementById("resetBtn");
+      if (reset) reset.addEventListener("click", () => {
+        if (confirm("Clear all saved answers, stats and review dates?")) { DB = { answers: {}, review: {} }; save(); render(); }
+      });
+    }
+
+    function statCard(label, val, sub, pct, cls) {
+      return '<div class="stat ' + (cls || "") + '">' +
+        '<div class="stat-label">' + label + '</div>' +
+        '<div class="stat-val">' + val + (sub ? '<span class="stat-sub">' + sub + '</span>' : '') + '</div>' +
+        (pct != null ? '<div class="mini-bar"><div class="mini-fill" style="width:' + pct + '%"></div></div>' : '') +
+      '</div>';
+    }
+
+    /* ---------------- topic / skill screen (no tabs) ---------------- */
+    function renderTopic() {
+      const { unit, skill } = findSkill(state.skillId);
+      app.innerHTML =
+        '<button class="back" id="backBtn">← Dashboard</button>' +
+        '<div class="topic-head"><span class="unit-tag">Unit ' + unit.unit + ' · ' + esc(unit.name) + '</span>' +
+        '<h2>' + esc(skill.title) + '</h2></div>' +
+        '<div id="learn"></div>';
+      document.getElementById("backBtn").addEventListener("click", goHome);
+
+      const tc = document.getElementById("learn");
+      const wrap = el("div", "reading");
+
+      const exp = el("div", "card");
+      const eh = el("h3"); eh.textContent = "Explanation";
+      const ep = el("div", "prose");
+      if (PLACEHOLDER.test((skill.explanation || "").trim())) ep.classList.add("placeholder");
+      ep.innerHTML = skill.explanation || "<p>—</p>";
+      exp.append(eh, ep);
+
+      const rev = el("div", "card");
+      const rh = el("h3"); rh.textContent = "Quick review";
+      const rp = el("div", "prose");
+      if (/\[Key point 1\]/.test(skill.review || "")) rp.classList.add("placeholder");
+      rp.innerHTML = skill.review || "<ul><li>—</li></ul>";
+      rev.append(rh, rp);
+
+      const row = el("div", "start-row");
+      const bp = el("button", "btn-primary");
+      bp.textContent = "Start practice (" + questionsFor("practiceQuestions", skill.id).length + ")";
+      bp.addEventListener("click", () => startPractice(skill.id));
+      row.append(bp);
+
+      wrap.append(exp, rev, row);
+      tc.appendChild(wrap);
+      typeset(wrap);
+    }
+
+    /* ---------------- Bluebook quiz runner ---------------- */
+    function renderQuiz() {
+      app.innerHTML =
+        '<button class="back" id="backBtn">← ' + (session.back.type === "topic" ? "Topic" : "Dashboard") + '</button>' +
+        '<div class="runner">' +
+          '<div class="runner-top"><div class="runner-title">' + esc(session.title) + '</div>' +
+            '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div></div>' +
+          '<div id="stage" class="stage"></div>' +
+          '<div class="runner-bar"><div class="count" id="qCount"></div>' +
+            '<div class="bar-actions">' +
+              '<button class="btn-ghost" id="prevBtn">Previous</button>' +
+              '<button class="btn-ghost" id="explainBtn">Explanation</button>' +
+              '<button class="btn-primary" id="nextBtn">Next</button>' +
+            '</div></div>' +
+        '</div>';
+
+      document.getElementById("backBtn").addEventListener("click", leaveSession);
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (qIndex > 0) { qIndex--; showSol = false; renderStage(); }
+      });
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        if (qIndex >= session.items.length - 1) { leaveSession(); }
+        else { qIndex++; showSol = false; renderStage(); }
+      });
+      document.getElementById("explainBtn").addEventListener("click", () => {
+        if (!DB.answers[session.items[qIndex].key]) return;
+        showSol = !showSol; renderStage();
+      });
+
+      renderStage();
+    }
+
+    function answer(idx) {
+      const it = session.items[qIndex];
+      if (DB.answers[it.key]) return;
+      DB.answers[it.key] = { sel: idx, correct: idx === it.q.answer, ts: Date.now() };
+      save();
+      if (session.kind === "practice") scheduleReview(session.skillId);
+      renderStage();
+    }
+
+    function renderStage() {
+      const it = session.items[qIndex];
+      const q = it.q;
+      const a = DB.answers[it.key];
+      const stage = document.getElementById("stage");
+      stage.innerHTML = "";
+
+      const qt = el("div", "q-big"); qt.textContent = q.q; stage.appendChild(qt);
+
+      const choices = el("div", "choices");
+      q.options.forEach((opt, idx) => {
+        const b = el("button", "choice");
+        const L = el("span", "ch-letter"); L.textContent = LABELS[idx];
+        const T = el("span", "ch-text"); T.textContent = opt;
+        b.append(L, T);
+        if (a) {
+          b.disabled = true;
+          if (idx === q.answer) b.classList.add("correct");
+          else if (idx === a.sel) b.classList.add("wrong");
+          if (idx === a.sel) b.classList.add("chosen");
+        } else {
+          b.addEventListener("click", () => answer(idx));
+        }
+        choices.appendChild(b);
+      });
+      stage.appendChild(choices);
+
+      if (a && showSol) {
+        const ex = el("div", "explain");
+        const v = el("div", "explain-verdict " + (a.correct ? "ok" : "bad"));
+        v.textContent = a.correct ? "Correct" : "Incorrect";
+        const sl = el("div", "explain-label"); sl.textContent = "Worked solution";
+        const sb = el("div", "explain-body"); sb.textContent = q.solution || "—";
+        ex.append(v, sl, sb);
+        stage.appendChild(ex);
+      }
+
+      document.getElementById("qCount").textContent = (qIndex + 1) + " of " + session.items.length;
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const exBtn = document.getElementById("explainBtn");
+      prevBtn.disabled = qIndex === 0;
+      nextBtn.textContent = qIndex === session.items.length - 1 ? "Finish" : "Next";
+      exBtn.disabled = !a;
+      exBtn.classList.toggle("active", !!(a && showSol));
+
+      typeset(stage);
+    }
+
+    /* ---------------- router ---------------- */
+    function render() {
+      if (state.view === "dashboard") renderDashboard();
+      else if (state.view === "topic") renderTopic();
+      else renderQuiz();
+      updateTimers();
+    }
+
+    document.getElementById("homeBtn").addEventListener("click", goHome);
+
+    render();
+  })();
+  </script>
+</body>
+</html>
