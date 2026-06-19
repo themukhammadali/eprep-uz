@@ -349,9 +349,10 @@
     let qIndex = 0;
     let showSol = false;
     let quizStart = null;
+    let pendingIdx = null; // selected but not yet checked
 
-    function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; render(); scroll0(); }
-    function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; render(); scroll0(); }
+    function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
+    function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
 
     function startPractice(id) {
       const { skill } = findSkill(id);
@@ -359,7 +360,7 @@
       session = { kind: "practice", skillId: id, title: "Practice · " + skill.title,
         back: { type: "topic", id: id },
         items: list.map((q, i) => ({ q: q, key: "practiceQuestions|" + id + "|" + i, skillId: id })) };
-      qIndex = firstUnanswered(session); showSol = false; quizStart = Date.now();
+      qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
       state = { view: "quiz" }; render(); scroll0();
     }
     function startUnitChallenge(unitNo) {
@@ -372,7 +373,7 @@
       });
       session = { kind: "challenge", unitNo: unitNo, title: "Unit " + unit.unit + " Challenge · " + unit.name,
         back: { type: "dashboard" }, items: items };
-      qIndex = firstUnanswered(session); showSol = false; quizStart = Date.now();
+      qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
       state = { view: "quiz" }; render(); scroll0();
     }
     function firstUnanswered(s) { const i = s.items.findIndex((it) => !DB.answers[it.key]); return i < 0 ? 0 : i; }
@@ -521,21 +522,28 @@
             '<div class="bar-actions">' +
               '<button class="btn-ghost" id="prevBtn">Previous</button>' +
               '<button class="btn-ghost" id="explainBtn">Explanation</button>' +
-              '<button class="btn-primary" id="nextBtn">Next</button>' +
+              '<button class="btn-primary" id="checkBtn" disabled>Check</button>' +
+              '<button class="btn-ghost" id="nextBtn">Next</button>' +
             '</div></div>' +
         '</div>';
 
       document.getElementById("backBtn").addEventListener("click", leaveSession);
       document.getElementById("prevBtn").addEventListener("click", () => {
-        if (qIndex > 0) { qIndex--; showSol = false; renderStage(); }
+        if (qIndex > 0) { qIndex--; showSol = false; pendingIdx = null; renderStage(); }
       });
       document.getElementById("nextBtn").addEventListener("click", () => {
         if (qIndex >= session.items.length - 1) { leaveSession(); }
-        else { qIndex++; showSol = false; renderStage(); }
+        else { qIndex++; showSol = false; pendingIdx = null; renderStage(); }
       });
       document.getElementById("explainBtn").addEventListener("click", () => {
         if (!DB.answers[session.items[qIndex].key]) return;
         showSol = !showSol; renderStage();
+      });
+      document.getElementById("checkBtn").addEventListener("click", () => {
+        if (pendingIdx === null || DB.answers[session.items[qIndex].key]) return;
+        const idx = pendingIdx;
+        pendingIdx = null;
+        answer(idx);
       });
 
       renderStage();
@@ -571,7 +579,14 @@
           else if (idx === a.sel) b.classList.add("wrong");
           if (idx === a.sel) b.classList.add("chosen");
         } else {
-          b.addEventListener("click", () => answer(idx));
+          if (idx === pendingIdx) b.classList.add("chosen");
+          b.addEventListener("click", () => {
+            document.querySelectorAll("#stage .choice").forEach(c => c.classList.remove("chosen"));
+            b.classList.add("chosen");
+            pendingIdx = idx;
+            const cb = document.getElementById("checkBtn");
+            if (cb) cb.disabled = false;
+          });
         }
         choices.appendChild(b);
       });
@@ -591,10 +606,13 @@
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const exBtn = document.getElementById("explainBtn");
+      const checkBtn = document.getElementById("checkBtn");
       prevBtn.disabled = qIndex === 0;
       nextBtn.textContent = qIndex === session.items.length - 1 ? "Finish" : "Next";
       exBtn.disabled = !a;
       exBtn.classList.toggle("active", !!(a && showSol));
+      checkBtn.disabled = !!a || pendingIdx === null;
+      checkBtn.style.display = a ? "none" : "";
 
       typeset(stage);
     }
