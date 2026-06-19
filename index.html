@@ -250,6 +250,8 @@
 
   <!-- Course data (untouched) -->
   <script src="course-data.js"></script>
+  <!-- Russian translations of titles / explanations / reviews / questions (optional; falls back to English per-field) -->
+  <script src="course-data-ru.js"></script>
 
   <script>
   (function () {
@@ -328,6 +330,31 @@
       updateLangUI();
       render();
     }
+
+    /* ---------------- Russian content overlay (course-data-ru.js → COURSE_DATA_RU) ----------------
+       Resolves each field to Russian when LANG === "ru" and a translation exists, else English.
+       This is per-field, so a partially-translated file degrades gracefully. */
+    const RU_DATA = (typeof COURSE_DATA_RU !== "undefined") ? COURSE_DATA_RU : null;
+    const ruOn = () => LANG === "ru" && !!RU_DATA;
+    const pick = (en, ru) => (ruOn() && ru != null && ru !== "") ? ru : en;
+    function ruSkill(id) {
+      if (!RU_DATA) return null;
+      for (const u of (RU_DATA.units || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return s; }
+      return null;
+    }
+    function ruUnitName(no) {
+      if (!RU_DATA) return null;
+      const u = (RU_DATA.units || []).find((x) => x.unit === no); return u ? u.name : null;
+    }
+    function ruQuestion(bank, id, i) {
+      if (!RU_DATA) return null;
+      for (const u of (RU_DATA[bank] || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return (s.questions || [])[i] || null; }
+      return null;
+    }
+    const locUnitName = (u) => pick(u.name, ruUnitName(u.unit));
+    const locTitle = (s) => { const r = ruSkill(s.id); return pick(s.title, r && r.title); };
+    const locExplanation = (s) => { const r = ruSkill(s.id); return pick(s.explanation, r && r.explanation); };
+    const locReview = (s) => { const r = ruSkill(s.id); return pick(s.review, r && r.review); };
 
     function typeset(node) {
       if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
@@ -501,7 +528,7 @@
         html += '<section class="due"><h3>' + t("dueForReview") + ' <span class="badge">' + due.length + '</span></h3>' +
           '<div class="due-list">' +
           due.map(({ skill }) => '<button class="due-chip" data-due="' + skill.id + '">' +
-            esc(skill.title) + ' <span class="go">' + t("review") + '</span></button>').join("") +
+            esc(locTitle(skill)) + ' <span class="go">' + t("review") + '</span></button>').join("") +
           '</div></section>';
       }
 
@@ -509,14 +536,14 @@
       COURSE_DATA.units.forEach((u) => {
         let complete = 0;
         u.skills.forEach((s) => { if (practiceStats(s.id).complete) complete++; });
-        html += '<div class="unit-header"><span><span class="u-idx">' + u.unit + '</span>' + esc(u.name) +
+        html += '<div class="unit-header"><span><span class="u-idx">' + u.unit + '</span>' + esc(locUnitName(u)) +
           '</span><span class="u-meta">' + complete + '/' + u.skills.length + ' ' + t("topics") + '</span></div>';
         // skill rows (practice progress)
         u.skills.forEach((s) => {
           const st = practiceStats(s.id);
           const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
           html += '<button class="trow" data-skill="' + s.id + '">' +
-            '<span class="trow-name"><span class="txt">' + esc(s.title) + '</span>' +
+            '<span class="trow-name"><span class="txt">' + esc(locTitle(s)) + '</span>' +
               (isDue(s.id) ? '<span class="tag-due">Due</span>' : '') + '</span>' +
             '<span class="pbar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
             '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
@@ -564,8 +591,8 @@
       const { unit, skill } = findSkill(state.skillId);
       app.innerHTML =
         '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
-        '<div class="topic-head"><span class="unit-tag">' + t("unit") + ' ' + unit.unit + ' · ' + esc(unit.name) + '</span>' +
-        '<h2>' + esc(skill.title) + '</h2></div>' +
+        '<div class="topic-head"><span class="unit-tag">' + t("unit") + ' ' + unit.unit + ' · ' + esc(locUnitName(unit)) + '</span>' +
+        '<h2>' + esc(locTitle(skill)) + '</h2></div>' +
         '<div id="learn"></div>';
       document.getElementById("backBtn").addEventListener("click", goHome);
 
@@ -575,15 +602,17 @@
       const exp = el("div", "card");
       const eh = el("h3"); eh.textContent = t("explanation");
       const ep = el("div", "prose");
-      if (PLACEHOLDER.test((skill.explanation || "").trim())) ep.classList.add("placeholder");
-      ep.innerHTML = skill.explanation || "<p>—</p>";
+      const explanation = locExplanation(skill);
+      if (PLACEHOLDER.test((explanation || "").trim())) ep.classList.add("placeholder");
+      ep.innerHTML = explanation || "<p>—</p>";
       exp.append(eh, ep);
 
       const rev = el("div", "card");
       const rh = el("h3"); rh.textContent = t("quickReview");
       const rp = el("div", "prose");
-      if (/\[Key point 1\]/.test(skill.review || "")) rp.classList.add("placeholder");
-      rp.innerHTML = skill.review || "<ul><li>—</li></ul>";
+      const review = locReview(skill);
+      if (/\[Key point 1\]/.test(review || "")) rp.classList.add("placeholder");
+      rp.innerHTML = review || "<ul><li>—</li></ul>";
       rev.append(rh, rp);
 
       const row = el("div", "start-row");
@@ -601,10 +630,10 @@
     function renderQuiz() {
       let title;
       if (session.kind === "practice") {
-        title = t("practice") + " · " + findSkill(session.skillId).skill.title;
+        title = t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
       } else {
         const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
-        title = challengeTitle(u.unit, u.name);
+        title = challengeTitle(u.unit, locUnitName(u));
       }
       app.innerHTML =
         '<button class="back" id="backBtn">← ' + (session.back.type === "topic" ? t("topic") : t("dashboard")) + '</button>' +
@@ -656,16 +685,21 @@
       const it = session.items[qIndex];
       const q = it.q;
       const a = DB.answers[it.key];
+      const parts = it.key.split("|");          // [bank, skillId, index]
+      const rq = ruQuestion(parts[0], parts[1], +parts[2]);
+      const qText = pick(q.q, rq && rq.q);
+      const qOpts = q.options.map((opt, i) => pick(opt, rq && rq.options && rq.options[i]));
+      const qSol = pick(q.solution, rq && rq.solution);
       const stage = document.getElementById("stage");
       stage.innerHTML = "";
 
-      const qt = el("div", "q-big"); qt.textContent = q.q; stage.appendChild(qt);
+      const qt = el("div", "q-big"); qt.textContent = qText; stage.appendChild(qt);
 
       const choices = el("div", "choices");
       q.options.forEach((opt, idx) => {
         const b = el("button", "choice");
         const L = el("span", "ch-letter"); L.textContent = LABELS[idx];
-        const T = el("span", "ch-text"); T.textContent = opt;
+        const T = el("span", "ch-text"); T.textContent = qOpts[idx];
         b.append(L, T);
         if (a) {
           b.disabled = true;
@@ -691,7 +725,7 @@
         const v = el("div", "explain-verdict " + (a.correct ? "ok" : "bad"));
         v.textContent = a.correct ? t("verdictOk") : t("verdictBad");
         const sl = el("div", "explain-label"); sl.textContent = t("workedSolution");
-        const sb = el("div", "explain-body"); sb.textContent = q.solution || "—";
+        const sb = el("div", "explain-body"); sb.textContent = qSol || "—";
         ex.append(v, sl, sb);
         stage.appendChild(ex);
       }
