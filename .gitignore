@@ -1,1 +1,8 @@
 .DS_Store
+
+# Ruflo / claude-flow runtime + tooling artifacts (local only)
+.claude-flow/
+.swarm/
+.claude/
+ruvector.db
+CLAUDE.md

@@ -84,6 +84,25 @@
     font-size: 14px; color: var(--muted); background: var(--surface); border: 1px solid var(--line);
     border-radius: 999px; padding: 6px 13px; }
   .timer .ic { font-size: 13px; }
+  .timer.low { color: var(--red); border-color: var(--red); font-weight: 700; }
+
+  /* ---------- Test results ---------- */
+  .results { max-width: 720px; margin: 0 auto; }
+  .results h2 { font-size: 26px; font-weight: 650; letter-spacing: -.3px; margin-bottom: 6px; }
+  .results .res-sub { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+  .res-score { display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px; }
+  .res-score .big { font-size: 48px; font-weight: 800; letter-spacing: -1px; }
+  .res-score .pct { font-size: 18px; color: var(--muted); font-weight: 600; }
+  .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .res-cell { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: var(--surface); }
+  .res-cell .l { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .res-cell .v { font-size: 26px; font-weight: 700; margin-top: 6px; }
+  .res-cell.correct .v { color: var(--green); }
+  .res-cell.wrong .v { color: var(--red); }
+  .res-banner { background: var(--red-soft); border: 1px solid var(--red); color: var(--red);
+    border-radius: 12px; padding: 12px 16px; font-weight: 600; font-size: 14px; margin-bottom: 20px; }
+  .res-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  @media (max-width: 620px) { .res-grid { grid-template-columns: repeat(2, 1fr); } }
 
   /* ---------- Language switcher ---------- */
   .lang-wrap { position: relative; }
@@ -325,6 +344,11 @@
         verdictOk: "Correct", verdictBad: "Incorrect", workedSolution: "Worked solution",
         practiceAgain: "Practice again", reviewAnswers: "Review answers",
         resetSkillConfirm: "Reset this skill and practise the questions again?",
+        testResults: "Test results", score: "Score", skipped: "Skipped", timeUsed: "Time used",
+        timeUpMsg: "Time's up — your test was submitted automatically.",
+        backToDash: "Back to dashboard",
+        leaveTestConfirm: "Leave the test? Your answers so far won't be saved.",
+        timeLeft: "Time left",
         locale: "en-GB"
       },
       ru: {
@@ -343,6 +367,11 @@
         verdictOk: "Верно", verdictBad: "Неверно", workedSolution: "Разбор решения",
         practiceAgain: "Пройти заново", reviewAnswers: "Посмотреть ответы",
         resetSkillConfirm: "Сбросить эту тему и пройти вопросы заново?",
+        testResults: "Результаты теста", score: "Результат", skipped: "Пропущено", timeUsed: "Затрачено времени",
+        timeUpMsg: "Время вышло — тест отправлен автоматически.",
+        backToDash: "На главную",
+        leaveTestConfirm: "Выйти из теста? Текущие ответы не сохранятся.",
+        timeLeft: "Осталось времени",
         locale: "ru-RU"
       }
     };
@@ -526,8 +555,10 @@
     }
 
     /* ---------------- view + session state ---------------- */
+    const MIN_PER_Q = 3;  // unit-test (challenge) time budget: 3 minutes per question
     let state = { view: "dashboard", skillId: null };
-    let session = null;   // { kind:'practice'|'challenge', title, back, skillId?, unitNo?, items:[{q,key,skillId}] }
+    let session = null;   // { kind:'practice'|'challenge', back, skillId?, unitNo?, items:[...],
+                          //   selections?, deadline?, totalMs?, finished?, timeUp?, finishedAt?, review?, results? }
     let qIndex = 0;
     let showSol = false;
     let quizStart = null;
@@ -550,12 +581,18 @@
       const items = [];
       unit.skills.forEach((s) => {
         questionsFor("hardQuestions", s.id).forEach((q, i) => {
-          items.push({ q: q, key: "hardQuestions|" + s.id + "|" + i, skillId: s.id });
+          const key = "hardQuestions|" + s.id + "|" + i;
+          delete DB.answers[key];   // a timed test is always a fresh attempt
+          items.push({ q: q, key: key, skillId: s.id });
         });
       });
-      session = { kind: "challenge", unitNo: unitNo,
-        back: { type: "dashboard" }, items: items };
-      qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
+      save();
+      const totalMs = items.length * MIN_PER_Q * 60000;
+      quizStart = Date.now();
+      session = { kind: "challenge", unitNo: unitNo, back: { type: "dashboard" },
+        items: items, selections: {}, totalMs: totalMs, deadline: quizStart + totalMs,
+        finished: false, timeUp: false, review: false };
+      qIndex = 0; showSol = false; pendingIdx = null;
       state = { view: "quiz" }; render(); scroll0();
     }
     function firstUnanswered(s) { const i = s.items.findIndex((it) => !DB.answers[it.key]); return i < 0 ? 0 : i; }
@@ -569,9 +606,48 @@
     }
     function updateTimers() {
       const qt = document.getElementById("quizTimer");
-      if (qt && quizStart) qt.textContent = fmt(Date.now() - quizStart);
+      if (!qt) return;
+      // Unit test (challenge): countdown that auto-submits when it hits zero.
+      if (session && session.kind === "challenge" && !session.review && session.deadline) {
+        if (session.finished) return;
+        const remain = session.deadline - Date.now();
+        if (remain <= 0) { qt.textContent = "00:00"; finishChallenge(true); return; }
+        qt.textContent = fmt(remain);
+        const wrap = qt.closest(".timer");
+        if (wrap) wrap.classList.toggle("low", remain <= 60000);
+        return;
+      }
+      // Practice: count up.
+      if (quizStart) qt.textContent = fmt(Date.now() - quizStart);
     }
     setInterval(updateTimers, 1000);
+
+    /* ---------------- finish a timed unit test ---------------- */
+    function finishChallenge(timeUp) {
+      if (!session || session.kind !== "challenge" || session.finished) return;
+      session.finished = true;
+      session.timeUp = !!timeUp;
+      session.finishedAt = Date.now();
+      // Commit the answers the student selected; skipped questions stay unanswered.
+      let correct = 0, answered = 0;
+      session.items.forEach((it, i) => {
+        const sel = session.selections[i];
+        if (sel == null) return;
+        answered++;
+        const ok = sel === it.q.answer;
+        if (ok) correct++;
+        DB.answers[it.key] = { sel: sel, correct: ok, ts: Date.now() };
+      });
+      save();
+      const total = session.items.length;
+      session.results = {
+        total: total, answered: answered, correct: correct,
+        wrong: answered - correct, skipped: total - answered,
+        acc: total ? Math.round((correct / total) * 100) : 0,
+        timeUsedMs: timeUp ? session.totalMs : (session.finishedAt - quizStart)
+      };
+      state = { view: "results" }; render(); scroll0();
+    }
 
     /* ---------------- dashboard ---------------- */
     function renderDashboard() {
@@ -717,34 +793,50 @@
         const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
         title = challengeTitle(u.unit, locUnitName(u));
       }
+      const inTest = session.kind === "challenge" && !session.review;  // taking a timed unit test
+      const showCheck = session.kind === "practice";                   // no Check in unit tests
+      const showExplain = session.kind === "practice" || session.review;
+      const showTimer = session.kind === "practice" || inTest;         // hidden while reviewing a test
+
+      let actions = '<button class="btn-ghost" id="prevBtn">' + t("previous") + '</button>';
+      if (showExplain) actions += '<button class="btn-ghost" id="explainBtn">' + t("explanation") + '</button>';
+      if (showCheck) actions += '<button class="btn-primary" id="checkBtn" disabled>' + t("check") + '</button>';
+      actions += '<button class="btn-ghost" id="nextBtn">' + t("next") + '</button>';
+
       app.innerHTML =
         '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
         '<div class="runner">' +
           '<div class="runner-top"><div class="runner-title">' + esc(title) + '</div>' +
-            '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div></div>' +
+            (showTimer ? '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div>' : '') +
+          '</div>' +
           '<div id="stage" class="stage"></div>' +
           '<div class="runner-bar"><div class="count" id="qCount"></div>' +
-            '<div class="bar-actions">' +
-              '<button class="btn-ghost" id="prevBtn">' + t("previous") + '</button>' +
-              '<button class="btn-ghost" id="explainBtn">' + t("explanation") + '</button>' +
-              '<button class="btn-primary" id="checkBtn" disabled>' + t("check") + '</button>' +
-              '<button class="btn-ghost" id="nextBtn">' + t("next") + '</button>' +
-            '</div></div>' +
+            '<div class="bar-actions">' + actions + '</div></div>' +
         '</div>';
 
-      document.getElementById("backBtn").addEventListener("click", leaveSession);
+      document.getElementById("backBtn").addEventListener("click", () => {
+        if (session.kind === "challenge" && !session.review && !session.finished) {
+          if (!confirm(t("leaveTestConfirm"))) return;
+        }
+        leaveSession();
+      });
       document.getElementById("prevBtn").addEventListener("click", () => {
         if (qIndex > 0) { qIndex--; showSol = false; pendingIdx = null; renderStage(); }
       });
       document.getElementById("nextBtn").addEventListener("click", () => {
-        if (qIndex >= session.items.length - 1) { leaveSession(); }
-        else { qIndex++; showSol = false; pendingIdx = null; renderStage(); }
+        if (qIndex >= session.items.length - 1) {
+          if (inTest) finishChallenge(false);
+          else if (session.kind === "challenge" && session.review) { state = { view: "results" }; render(); scroll0(); }
+          else leaveSession();
+        } else { qIndex++; showSol = false; pendingIdx = null; renderStage(); }
       });
-      document.getElementById("explainBtn").addEventListener("click", () => {
+      const explainBtn = document.getElementById("explainBtn");
+      if (explainBtn) explainBtn.addEventListener("click", () => {
         if (!DB.answers[session.items[qIndex].key]) return;
         showSol = !showSol; renderStage();
       });
-      document.getElementById("checkBtn").addEventListener("click", () => {
+      const checkBtn0 = document.getElementById("checkBtn");
+      if (checkBtn0) checkBtn0.addEventListener("click", () => {
         if (pendingIdx === null || DB.answers[session.items[qIndex].key]) return;
         const idx = pendingIdx;
         pendingIdx = null;
@@ -777,13 +869,22 @@
 
       const qt = el("div", "q-big"); qt.textContent = qText; stage.appendChild(qt);
 
+      const inTest = session.kind === "challenge" && !session.review;  // timed test: no feedback yet
       const choices = el("div", "choices");
       q.options.forEach((opt, idx) => {
         const b = el("button", "choice");
         const L = el("span", "ch-letter"); L.textContent = LABELS[idx];
         const T = el("span", "ch-text"); T.textContent = qOpts[idx];
         b.append(L, T);
-        if (a) {
+        if (inTest) {
+          // Timed unit test — record selection only, reveal nothing until the test ends.
+          if (idx === session.selections[qIndex]) b.classList.add("chosen");
+          b.addEventListener("click", () => {
+            document.querySelectorAll("#stage .choice").forEach(c => c.classList.remove("chosen"));
+            b.classList.add("chosen");
+            session.selections[qIndex] = idx;
+          });
+        } else if (a) {
           b.disabled = true;
           if (idx === q.answer) b.classList.add("correct");
           else if (idx === a.sel) b.classList.add("wrong");
@@ -819,18 +920,53 @@
       const checkBtn = document.getElementById("checkBtn");
       prevBtn.disabled = qIndex === 0;
       nextBtn.textContent = qIndex === session.items.length - 1 ? t("finish") : t("next");
-      exBtn.disabled = !a;
-      exBtn.classList.toggle("active", !!(a && showSol));
-      checkBtn.disabled = !!a || pendingIdx === null;
-      checkBtn.style.display = a ? "none" : "";
+      if (exBtn) { exBtn.disabled = !a; exBtn.classList.toggle("active", !!(a && showSol)); }
+      if (checkBtn) { checkBtn.disabled = !!a || pendingIdx === null; checkBtn.style.display = a ? "none" : ""; }
 
       typeset(stage);
+    }
+
+    /* ---------------- test results screen ---------------- */
+    function renderResults() {
+      if (!session || !session.results) { goHome(); return; }
+      const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
+      const r = session.results;
+      app.innerHTML =
+        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<div class="results">' +
+          '<h2>' + t("testResults") + '</h2>' +
+          '<div class="res-sub">' + esc(challengeTitle(u.unit, locUnitName(u))) + '</div>' +
+          (session.timeUp ? '<div class="res-banner">⏱ ' + t("timeUpMsg") + '</div>' : '') +
+          '<div class="res-score"><span class="big">' + r.correct + ' / ' + r.total + '</span>' +
+            '<span class="pct">' + r.acc + '% ' + t("accuracy") + '</span></div>' +
+          '<div class="res-grid">' +
+            resCell(t("correct"), r.correct, "correct") +
+            resCell(t("wrong"), r.wrong, "wrong") +
+            resCell(t("skipped"), r.skipped) +
+            resCell(t("timeUsed"), fmt(r.timeUsedMs)) +
+          '</div>' +
+          '<div class="res-actions">' +
+            '<button class="btn-primary" id="reviewBtn">' + t("reviewAnswers") + '</button>' +
+            '<button class="btn-ghost" id="dashBtn">' + t("backToDash") + '</button>' +
+          '</div>' +
+        '</div>';
+      document.getElementById("backBtn").addEventListener("click", goHome);
+      document.getElementById("dashBtn").addEventListener("click", goHome);
+      document.getElementById("reviewBtn").addEventListener("click", () => {
+        session.review = true; qIndex = 0; showSol = false; pendingIdx = null;
+        state = { view: "quiz" }; render(); scroll0();
+      });
+    }
+    function resCell(label, val, cls) {
+      return '<div class="res-cell ' + (cls || "") + '"><div class="l">' + label +
+        '</div><div class="v">' + val + '</div></div>';
     }
 
     /* ---------------- router ---------------- */
     function render() {
       if (state.view === "dashboard") renderDashboard();
       else if (state.view === "topic") renderTopic();
+      else if (state.view === "results") renderResults();
       else renderQuiz();
       updateTimers();
     }
