@@ -3720,3 +3720,257 @@ const COURSE_DATA = {
     }
   ]
 };
+
+/* ---------------- FINAL CHALLENGE — NewUU 2026 Paper C (full mock exam) ----------------
+   The last test before exam day: a complete mixed paper (Mathematics 1-34, Logical
+   Thinking 35-40), deliberately harder than the real exam. 40 questions, 120 minutes,
+   no calculator. Rendered in the same timed unit-test style as the unit challenges.
+   Answer indices are 0-based (A=0, B=1, C=2, D=3). */
+COURSE_DATA.finalChallenge = {
+  "title": "Final Challenge · Paper C Mock Exam",
+  "titleRu": "Финальное испытание · Пробный экзамен (Paper C)",
+  "subtitle": "40 questions · 120 min",
+  "subtitleRu": "40 вопросов · 120 мин",
+  "questions": [
+    {
+      "q": "A fair coin is flipped 8 times. Find the probability of getting at least 2 heads.",
+      "options": ["\\(\\frac{255}{256}\\)", "\\(\\frac{1}{2}\\)", "\\(\\frac{219}{256}\\)", "\\(\\frac{247}{256}\\)"],
+      "answer": 3,
+      "solution": "1 - P(0) - P(1) = 1 - 1/256 - 8/256 = 247/256. Trap: you must subtract BOTH the 0-head and 1-head cases."
+    },
+    {
+      "q": "The mean of 6 numbers is 15. Two numbers, 8 and 22, are removed. Find the mean of the remaining four.",
+      "options": ["13.5", "15", "14", "16"],
+      "answer": 1,
+      "solution": "Sum = 90; remove 30 -> 60 over 4 = 15. Trap: the removed pair averages 15 too, so the mean is unchanged."
+    },
+    {
+      "q": "How many distinct arrangements of the letters of the word STATISTICS are there?",
+      "options": ["50400", "30240", "151200", "100800"],
+      "answer": 0,
+      "solution": "10 letters with S x3, T x3, I x2: 10!/(3!3!2!) = 3628800/72 = 50400."
+    },
+    {
+      "q": "Three cards are drawn without replacement from a standard deck. Find the probability all three are hearts.",
+      "options": ["\\(\\frac{11}{4096}\\)", "\\(\\frac{1}{64}\\)", "\\(\\frac{13}{204}\\)", "\\(\\frac{11}{850}\\)"],
+      "answer": 3,
+      "solution": "(13/52)(12/51)(11/50) = 1716/132600 = 11/850. Trap: (1/4)^3 ignores 'without replacement'."
+    },
+    {
+      "q": "A data set of 5 numbers has mean 10 and the numbers 7, 9, 11, 13 are four of them. Find the population standard deviation of the whole set.",
+      "options": ["\\(2\\sqrt{2}\\)", "\\(\\sqrt{10}\\)", "\\(2\\)", "\\(4\\)"],
+      "answer": 2,
+      "solution": "5th number = 10; deviations -3,-1,0,1,3; squares sum 20; variance 20/5 = 4; SD = sqrt(4) = 2. Trap: variance (4) is not the SD."
+    },
+    {
+      "q": "Two fair dice are rolled. Given that the product of the two numbers is even, find the probability that the sum is even.",
+      "options": ["\\(\\frac{5}{9}\\)", "\\(\\frac{1}{3}\\)", "\\(\\frac{4}{9}\\)", "\\(\\frac{1}{2}\\)"],
+      "answer": 1,
+      "solution": "27 outcomes have an even product; of these, an even sum needs both even: 9 outcomes. 9/27 = 1/3."
+    },
+    {
+      "q": "From 6 men and 4 women, a committee of 4 is chosen. Find the probability it contains at least one woman.",
+      "options": ["\\(\\frac{2}{3}\\)", "\\(\\frac{13}{14}\\)", "\\(\\frac{1}{14}\\)", "\\(\\frac{11}{14}\\)"],
+      "answer": 1,
+      "solution": "1 - C(6,4)/C(10,4) = 1 - 15/210 = 195/210 = 13/14."
+    },
+    {
+      "q": "Five positive integers have mean 6, median 6, and a single mode of 8. Find the smallest of the five numbers.",
+      "options": ["5", "4", "2", "3"],
+      "answer": 3,
+      "solution": "Median 6 is the middle value; mode 8 (twice) fills the top two: {a,b,6,8,8}, sum 30 -> a+b=8 with a unique mode gives {3,5,6,8,8}. Smallest 3."
+    },
+    {
+      "q": "Find all values of \\(k\\) for which \\(x^2 - kx + 9 > 0\\) for every real \\(x\\).",
+      "options": ["\\(k > 6\\)", "\\(-3 < k < 3\\)", "\\(-6 < k < 6\\)", "\\(k < -6\\ \\text{or}\\ k > 6\\)"],
+      "answer": 2,
+      "solution": "Positive for all x means no real roots: discriminant < 0 -> k^2 < 36 -> -6 < k < 6. Trap: the 'outside' region is when it HAS roots."
+    },
+    {
+      "q": "Find all values of \\(m\\) for which \\(mx^2 + 4x + 1 = 0\\) has no real solutions.",
+      "options": ["\\(0 < m < 4\\)", "\\(m < 4\\ \\text{and}\\ m \\neq 0\\)", "\\(m > 4\\ \\text{or}\\ m < 0\\)", "\\(m > 4\\)"],
+      "answer": 3,
+      "solution": "Need discriminant < 0: 16 - 4m < 0 -> m > 4 (and m = 0 makes it linear, which has a solution). So m > 4."
+    },
+    {
+      "q": "If \\(a\\) and \\(b\\) are the roots of \\(x^2 - 5x + 2 = 0\\), find \\(a^3 + b^3\\).",
+      "options": ["110", "85", "95", "125"],
+      "answer": 2,
+      "solution": "a+b = 5, ab = 2. a^3 + b^3 = (a+b)^3 - 3ab(a+b) = 125 - 30 = 95."
+    },
+    {
+      "q": "Solve the inequality \\((x-1)(x+2)(x-3) > 0\\).",
+      "options": ["\\(x > 3\\) only", "\\(x < -2\\ \\text{or}\\ 1 < x < 3\\)", "\\(-2 < x < 1\\ \\text{or}\\ x > 3\\)", "\\(-2 < x < 3\\)"],
+      "answer": 2,
+      "solution": "Sign chart of a cubic with roots -2, 1, 3: positive on (-2, 1) and (3, infinity)."
+    },
+    {
+      "q": "The remainder when \\(x^3 + ax^2 - 3x + 6\\) is divided by \\(x - 2\\) is 12. Find \\(a\\).",
+      "options": ["\\(-1\\)", "\\(1\\)", "\\(2\\)", "\\(3\\)"],
+      "answer": 1,
+      "solution": "f(2) = 8 + 4a - 6 + 6 = 12 -> 4a + 8 = 12 -> a = 1."
+    },
+    {
+      "q": "For what value of \\(c\\) is the line \\(y = 2x + c\\) tangent to the curve \\(y = x^2 - 4x + 7\\)?",
+      "options": ["\\(-1\\)", "\\(1\\)", "\\(-2\\)", "\\(2\\)"],
+      "answer": 2,
+      "solution": "x^2 - 4x + 7 = 2x + c -> x^2 - 6x + (7-c) = 0; tangent means discriminant 0: 36 - 4(7-c) = 0 -> c = -2."
+    },
+    {
+      "q": "A polynomial leaves remainder 7 when divided by \\((x-2)\\) and remainder 1 when divided by \\((x+1)\\). Find the remainder when divided by \\((x-2)(x+1)\\).",
+      "options": ["\\(-2x + 11\\)", "\\(x + 5\\)", "\\(2x + 3\\)", "\\(2x - 3\\)"],
+      "answer": 2,
+      "solution": "Remainder ax+b: 2a+b = 7, -a+b = 1 -> a = 2, b = 3 -> 2x + 3."
+    },
+    {
+      "q": "A right triangle has legs 5 and 12. A square is inscribed with one corner at the right angle and sides along the legs. Find the side of the square.",
+      "options": ["\\(\\frac{60}{17}\\)", "\\(\\frac{17}{5}\\)", "\\(\\frac{30}{7}\\)", "\\(\\frac{5}{2}\\)"],
+      "answer": 0,
+      "solution": "By similar triangles s/12 + s/5 = 1 -> s(5+12)/60 = 1 -> s = 60/17."
+    },
+    {
+      "q": "Two circles of radius 5 have centres 6 apart. Find the distance between their two intersection points.",
+      "options": ["\\(10\\)", "\\(8\\)", "\\(4\\sqrt{2}\\)", "\\(6\\)"],
+      "answer": 1,
+      "solution": "Half-distance 3 from each centre along the line of centres; half-chord = sqrt(25-9) = 4; full chord = 8."
+    },
+    {
+      "q": "An equilateral triangle has area \\(9\\sqrt{3}\\). Find its perimeter.",
+      "options": ["\\(12\\sqrt{3}\\)", "\\(27\\)", "\\(18\\)", "\\(9\\)"],
+      "answer": 2,
+      "solution": "(sqrt3/4)s^2 = 9 sqrt3 -> s^2 = 36 -> s = 6 -> perimeter 18."
+    },
+    {
+      "q": "A regular hexagon and an equilateral triangle have the same perimeter. Find the ratio (hexagon area) : (triangle area).",
+      "options": ["\\(1 : 1\\)", "\\(6 : 1\\)", "\\(2 : 3\\)", "\\(3 : 2\\)"],
+      "answer": 3,
+      "solution": "Equal perimeter P: hexagon side P/6, triangle side P/3. Comparing areas gives the ratio 3 : 2."
+    },
+    {
+      "q": "A cone has base radius 3 and slant height 5. Find its total surface area (base + curved).",
+      "options": ["\\(9\\pi\\)", "\\(24\\pi\\)", "\\(15\\pi\\)", "\\(30\\pi\\)"],
+      "answer": 1,
+      "solution": "Curved = pi r l = 15 pi; base = 9 pi; total 24 pi."
+    },
+    {
+      "q": "In a circle of radius 10, a chord subtends a central angle of 60 degrees. Find the area of the minor segment (between chord and arc).",
+      "options": ["\\(\\frac{100\\pi}{3} - 25\\sqrt{3}\\)", "\\(\\frac{50\\pi}{3} - 25\\sqrt{3}\\)", "\\(25\\pi - 25\\sqrt{3}\\)", "\\(\\frac{50\\pi}{3} - 50\\sqrt{3}\\)"],
+      "answer": 1,
+      "solution": "Sector = (60/360)(100 pi) = 50 pi/3; triangle = (1/2)(10)(10) sin60 = 25 sqrt3; segment = 50 pi/3 - 25 sqrt3."
+    },
+    {
+      "q": "A 13-14-15 triangle has an inscribed circle. Find its radius.",
+      "options": ["\\(4\\)", "\\(6\\)", "\\(4.5\\)", "\\(3.5\\)"],
+      "answer": 0,
+      "solution": "Heron: s = 21, area = sqrt(21*8*7*6) = 84; r = area/s = 84/21 = 4."
+    },
+    {
+      "q": "\\(f(x) = \\dfrac{2x + 3}{x - 1}\\). Find \\(f^{-1}(3)\\).",
+      "options": ["\\(-6\\)", "\\(9\\)", "\\(3\\)", "\\(6\\)"],
+      "answer": 3,
+      "solution": "Solve (2x+3)/(x-1) = 3 -> 2x+3 = 3x-3 -> x = 6. (Equivalently f(6) = 15/5 = 3.)"
+    },
+    {
+      "q": "\\(f(x) = \\dfrac{x+1}{x-2}\\). Find a simplified expression for \\(f(f(x))\\).",
+      "options": ["\\(\\frac{1-2x}{x-5}\\)", "\\(\\frac{x+1}{x-5}\\)", "\\(\\frac{2x-1}{x-5}\\)", "\\(x\\)"],
+      "answer": 0,
+      "solution": "f(f(x)) = ((x+1)/(x-2) + 1)/((x+1)/(x-2) - 2) = (2x-1)/(-x+5) = (1-2x)/(x-5)."
+    },
+    {
+      "q": "If \\(f(2x+1) = 4x^2 + 4x + 3\\), find \\(f(x)\\).",
+      "options": ["\\(x^2 + x + 1\\)", "\\(x^2 + 3\\)", "\\(x^2 + 2\\)", "\\((2x+1)^2\\)"],
+      "answer": 2,
+      "solution": "4x^2 + 4x + 3 = (2x+1)^2 + 2, so f(u) = u^2 + 2."
+    },
+    {
+      "q": "The domain of \\(f(x) = \\sqrt{x-1} + \\sqrt{5-x}\\) is:",
+      "options": ["\\([1, 5]\\)", "\\((1, 5)\\)", "\\([1, \\infty)\\)", "\\((-\\infty, 1] \\cup [5, \\infty)\\)"],
+      "answer": 0,
+      "solution": "Need x-1 >= 0 AND 5-x >= 0 -> 1 <= x <= 5."
+    },
+    {
+      "q": "\\(g\\) is odd with \\(g(2) = 5\\); \\(h\\) is even with \\(h(2) = -3\\). Find \\((gh)(2) + (gh)(-2)\\).",
+      "options": ["\\(0\\)", "\\(-15\\)", "\\(30\\)", "\\(-30\\)"],
+      "answer": 0,
+      "solution": "gh is odd (odd x even = odd), so (gh)(-2) = -(gh)(2); their sum is 0."
+    },
+    {
+      "q": "\\(f(x) = 2x - 6\\) and \\(g(x) = \\dfrac{x}{2} + 3\\). Find \\((f \\circ g)(x)\\).",
+      "options": ["\\(x\\)", "\\(x - 12\\)", "\\(x + 12\\)", "\\(4x\\)"],
+      "answer": 0,
+      "solution": "f(g(x)) = 2(x/2 + 3) - 6 = x. They are inverses."
+    },
+    {
+      "q": "The sum of the first \\(n\\) terms of a sequence is \\(S_n = 3n^2 - 2n\\). Find the 10th term.",
+      "options": ["53", "58", "280", "55"],
+      "answer": 3,
+      "solution": "a_10 = S_10 - S_9 = 280 - 225 = 55."
+    },
+    {
+      "q": "In a geometric progression, the 3rd term is 12 and the 6th term is 96. Find the sum of the first 5 terms.",
+      "options": ["45", "93", "96", "189"],
+      "answer": 1,
+      "solution": "r^3 = 8 -> r = 2; a r^2 = 12 -> a = 3; S_5 = 3(2^5 - 1)/(2 - 1) = 93."
+    },
+    {
+      "q": "A sequence satisfies \\(a_1 = 3\\) and \\(a_{n+1} = 2 - \\dfrac{1}{a_n}\\). Find \\(a_{2026}\\).",
+      "options": ["\\(\\frac{5}{3}\\)", "\\(1\\)", "\\(2\\)", "\\(\\frac{4053}{4051}\\)"],
+      "answer": 3,
+      "solution": "The pattern is a_n = (2n+1)/(2n-1) (a_1=3, a_2=5/3, a_3=7/5, ...). So a_2026 = 4053/4051."
+    },
+    {
+      "q": "Simplify \\(\\left( \\dfrac{x^{-2} y^3}{x^3 y^{-1}} \\right)^{-2}\\).",
+      "options": ["\\(\\frac{x^{10}}{y^8}\\)", "\\(\\frac{y^8}{x^{10}}\\)", "\\(x^{10} y^8\\)", "\\(\\frac{x^8}{y^{10}}\\)"],
+      "answer": 0,
+      "solution": "Inside: x^-5 y^4; raised to the -2: x^10 y^-8 = x^10 / y^8."
+    },
+    {
+      "q": "Evaluate \\(\\dfrac{\\sqrt{50} - \\sqrt{18}}{\\sqrt{2}}\\).",
+      "options": ["\\(2\\)", "\\(4\\)", "\\(8\\)", "\\(\\sqrt{16}\\)"],
+      "answer": 0,
+      "solution": "(5 sqrt2 - 3 sqrt2)/sqrt2 = 2 sqrt2 / sqrt2 = 2."
+    },
+    {
+      "q": "Simplify \\(\\dfrac{1}{2 - \\sqrt{3}} + \\dfrac{1}{2 + \\sqrt{3}}\\).",
+      "options": ["\\(4\\sqrt{3}\\)", "\\(4\\)", "\\(2\\sqrt{3}\\)", "\\(1\\)"],
+      "answer": 1,
+      "solution": "Common denominator 4 - 3 = 1: (2 + sqrt3) + (2 - sqrt3) = 4."
+    },
+    {
+      "q": "'If a number is divisible by 6, then it is divisible by 3.' A number is NOT divisible by 3. Which must be true?",
+      "options": ["It is not divisible by 6", "It is divisible by 2", "Cannot be determined", "It is divisible by 6"],
+      "answer": 0,
+      "solution": "Modus tollens: not divisible by 3 implies not divisible by 6."
+    },
+    {
+      "q": "Statements: (1) If it is raining, the match is cancelled. (2) The match was not cancelled. From these alone, what follows about the weather?",
+      "options": ["It was not raining", "Cannot be determined", "It was raining", "It was cloudy"],
+      "answer": 0,
+      "solution": "Modus tollens: the match was not cancelled implies it was not raining."
+    },
+    {
+      "q": "Four students sit in a row. Bek is not at either end. Anvar is immediately to the left of Bek. Diled is at the right end. Where is Karim?",
+      "options": ["Third from left", "Left end", "Second from left", "Right end"],
+      "answer": 1,
+      "solution": "Diled is 4th. Anvar-Bek adjacent with Bek not at an end -> Anvar 2nd, Bek 3rd. So Karim is 1st (left end)."
+    },
+    {
+      "q": "Exactly two of these three statements are true: (1) Sam owns a dog. (2) Sam owns a cat. (3) Sam owns a dog or a cat (inclusive). What can be concluded?",
+      "options": ["Sam owns neither", "Sam owns a dog for certain", "Sam owns both", "Sam owns exactly one of the two"],
+      "answer": 3,
+      "solution": "If both -> all three true (no). If neither -> all false (no). Exactly one -> (3) true plus one of (1),(2): exactly two true."
+    },
+    {
+      "q": "A says 'B is a liar.' B says 'C is a liar.' C says 'A and B are both liars.' Each is either a truth-teller (always true) or a liar (always false). Who is the truth-teller?",
+      "options": ["Only A", "Only B", "A and C", "Only C"],
+      "answer": 1,
+      "solution": "Testing cases: C true forces a contradiction; A true forces a contradiction; B true (A liar, C liar) is consistent. Only B."
+    },
+    {
+      "q": "'Everyone who studied passed. Some who passed did not study.' Are these statements consistent?",
+      "options": ["Only if no one studied", "Cannot be determined", "Yes, consistent", "No, inconsistent"],
+      "answer": 2,
+      "solution": "'Studied -> passed' does NOT mean only studiers passed; non-studiers can pass too. Consistent."
+    }
+  ]
+};

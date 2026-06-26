@@ -194,6 +194,11 @@
   .trow.challenge-row { background: var(--blue-soft); }
   .trow.challenge-row:hover { background: var(--surface-3); }
   .trow.challenge-row .trow-name { color: var(--blue); font-weight: 650; }
+  /* Final challenge row — the full mock exam, the last test before exam day */
+  .trow.final-row { background: var(--red-soft); border: 1px solid var(--red); margin-top: 8px; }
+  .trow.final-row:hover { background: var(--surface-3); }
+  .trow.final-row .trow-name { color: var(--red); font-weight: 750; }
+  .trow.final-row .ch-meta { color: var(--amber); }
   .bolt { flex: 0 0 auto; }
   .ch-meta { font-size: 12px; color: var(--muted); font-weight: 500; }
 
@@ -335,6 +340,7 @@
         dueForReview: "Due for review", review: "Review →",
         topicTracker: "Topic tracker", topics: "topics",
         unitChallenge: "Unit Challenge", hardQs: "hard Qs",
+        finalChallenge: "Final Challenge", finalConfirm: "Start the full 120-minute mock exam? It is timed and auto-submits when the clock runs out.",
         resetAll: "Reset all progress",
         resetConfirm: "Clear all saved answers, stats and review dates?",
         dashboard: "Dashboard", topic: "Topic", unit: "Unit",
@@ -358,6 +364,7 @@
         dueForReview: "Пора повторить", review: "Повторить →",
         topicTracker: "Прогресс по темам", topics: "тем",
         unitChallenge: "Испытание раздела", hardQs: "сложных задач",
+        finalChallenge: "Финальное испытание", finalConfirm: "Начать полный пробный экзамен на 120 минут? Тест с таймером и отправляется автоматически по истечении времени.",
         resetAll: "Сбросить весь прогресс",
         resetConfirm: "Удалить все сохранённые ответы, статистику и даты повторения?",
         dashboard: "Главная", topic: "Тема", unit: "Раздел",
@@ -383,6 +390,10 @@
       return LANG === "ru"
         ? "Испытание · Раздел " + n + " · " + name
         : "Unit " + n + " Challenge · " + name;
+    }
+    function finalChallengeTitle() {
+      const fc = COURSE_DATA.finalChallenge || {};
+      return (LANG === "ru" && fc.titleRu) ? fc.titleRu : (fc.title || t("finalChallenge"));
     }
     function updateLangUI() {
       const lbl = document.getElementById("langLabel");
@@ -502,6 +513,17 @@
       return { total, done, correct, wrong: done - correct,
                acc: done ? correct / done : 0, complete: total > 0 && done === total };
     }
+    // FINAL CHALLENGE stats (the standalone full mock exam — Paper C)
+    function finalChallengeStats() {
+      const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+      let done = 0, correct = 0;
+      list.forEach((q, i) => {
+        const a = DB.answers["finalChallenge|" + i];
+        if (a) { done++; if (a.correct) correct++; }
+      });
+      return { total: list.length, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: list.length > 0 && done === list.length };
+    }
     // Global stats (every answered question, practice + challenge)
     function globalStats() {
       let topics = 0;
@@ -590,6 +612,23 @@
       const totalMs = items.length * MIN_PER_Q * 60000;
       quizStart = Date.now();
       session = { kind: "challenge", unitNo: unitNo, back: { type: "dashboard" },
+        items: items, selections: {}, totalMs: totalMs, deadline: quizStart + totalMs,
+        finished: false, timeUp: false, review: false };
+      qIndex = 0; showSol = false; pendingIdx = null;
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function startFinalChallenge() {
+      const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+      if (!list.length) return;
+      const items = list.map((q, i) => {
+        const key = "finalChallenge|" + i;
+        delete DB.answers[key];   // a timed test is always a fresh attempt
+        return { q: q, key: key };
+      });
+      save();
+      const totalMs = items.length * MIN_PER_Q * 60000;   // 40 x 3 min = 120 minutes
+      quizStart = Date.now();
+      session = { kind: "challenge", isFinal: true, back: { type: "dashboard" },
         items: items, selections: {}, totalMs: totalMs, deadline: quizStart + totalMs,
         finished: false, timeUp: false, review: false };
       qIndex = 0; showSol = false; pendingIdx = null;
@@ -707,6 +746,21 @@
             (cs.done ? Math.round(cs.acc * 100) + '%' : '—') + '</span>' +
         '</button>';
       });
+      // Final challenge — the full mock exam, the last test before exam day (after the last unit)
+      const fc = COURSE_DATA.finalChallenge;
+      if (fc && fc.questions && fc.questions.length) {
+        const fs = finalChallengeStats();
+        const fpct = fs.total ? Math.round((fs.done / fs.total) * 100) : 0;
+        const fmeta = (LANG === "ru" && fc.subtitleRu) ? fc.subtitleRu : (fc.subtitle || "");
+        html += '<button class="trow final-row" data-final="1">' +
+          '<span class="trow-name"><span class="bolt">🏁</span><span class="txt">' + t("finalChallenge") + '</span>' +
+            '<span class="ch-meta">' + esc(fmeta) + '</span></span>' +
+          '<span class="pbar"><span class="pfill" style="width:' + fpct + '%"></span></span>' +
+          '<span class="trow-count">' + fs.done + '/' + fs.total + '</span>' +
+          '<span class="trow-acc"><span class="dot ' + dotClass(fs) + '"></span>' +
+            (fs.done ? Math.round(fs.acc * 100) + '%' : '—') + '</span>' +
+        '</button>';
+      }
       html += '</section>';
 
       html += '<div class="dash-foot"><button class="reset-link" id="resetBtn">' + t("resetAll") + '</button></div>';
@@ -715,6 +769,7 @@
 
       app.querySelectorAll(".trow[data-skill]").forEach((b) => b.addEventListener("click", () => openSkill(b.dataset.skill)));
       app.querySelectorAll(".trow[data-unit]").forEach((b) => b.addEventListener("click", () => startUnitChallenge(+b.dataset.unit)));
+      app.querySelectorAll(".trow[data-final]").forEach((b) => b.addEventListener("click", () => { if (confirm(t("finalConfirm"))) startFinalChallenge(); }));
       app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => reviewSkill(b.dataset.due)));
       const reset = document.getElementById("resetBtn");
       if (reset) reset.addEventListener("click", () => {
@@ -789,6 +844,8 @@
       let title;
       if (session.kind === "practice") {
         title = t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
+      } else if (session.isFinal) {
+        title = finalChallengeTitle();
       } else {
         const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
         title = challengeTitle(u.unit, locUnitName(u));
@@ -929,13 +986,14 @@
     /* ---------------- test results screen ---------------- */
     function renderResults() {
       if (!session || !session.results) { goHome(); return; }
-      const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
+      const u = session.isFinal ? null : COURSE_DATA.units.find((x) => x.unit === session.unitNo);
+      const subTitle = session.isFinal ? finalChallengeTitle() : challengeTitle(u.unit, locUnitName(u));
       const r = session.results;
       app.innerHTML =
         '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
         '<div class="results">' +
           '<h2>' + t("testResults") + '</h2>' +
-          '<div class="res-sub">' + esc(challengeTitle(u.unit, locUnitName(u))) + '</div>' +
+          '<div class="res-sub">' + esc(subTitle) + '</div>' +
           (session.timeUp ? '<div class="res-banner">⏱ ' + t("timeUpMsg") + '</div>' : '') +
           '<div class="res-score"><span class="big">' + r.correct + ' / ' + r.total + '</span>' +
             '<span class="pct">' + r.acc + '% ' + t("accuracy") + '</span></div>' +
