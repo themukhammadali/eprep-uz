@@ -307,17 +307,89 @@
   .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .bar-actions { display: flex; gap: 10px; }
 
+  /* ---------- Top nav tabs ---------- */
+  .topnav { display: flex; gap: 4px; margin-left: 8px; }
+  .topnav .tab { background: none; border: none; border-radius: 999px; padding: 8px 15px;
+    font-size: 14.5px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .topnav .tab:hover { color: var(--ink); background: var(--surface-3); }
+  .topnav .tab.active { color: var(--blue); background: var(--blue-soft); }
+
+  /* ---------- Page header (Learn / Practice) ---------- */
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+    margin-bottom: 6px; flex-wrap: wrap; }
+  .page-head h1 { font-size: 30px; font-weight: 750; letter-spacing: -.6px; }
+  .page-head .ph-sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .6px; margin: 30px 0 12px; }
+
+  /* ---------- Refined analytics cards ---------- */
+  .stats { gap: 16px; margin: 24px 0 8px; }
+  .stat { position: relative; padding: 20px 22px; border-radius: 16px; overflow: hidden; }
+  .stat-label { font-size: 13.5px; }
+  .stat-val { font-size: 34px; margin-top: 8px; font-weight: 750; }
+  .stat-ic { position: absolute; right: 14px; bottom: 10px; font-size: 30px; opacity: .07; }
+
+  /* ---------- Units overview cards ---------- */
+  .unit-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ucard { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px 18px 16px; cursor: pointer; transition: border-color .15s, transform .1s; }
+  .ucard:hover { border-color: var(--blue); transform: translateY(-1px); }
+  .ucard .uc-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .ucard .uc-idx { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+    border-radius: 8px; background: var(--blue-soft); color: var(--blue); font-weight: 800; font-size: 13px; flex: none; }
+  .ucard .uc-name { font-weight: 650; font-size: 15px; line-height: 1.3; }
+  .ucard .uc-meta { display: flex; align-items: center; justify-content: space-between; font-size: 13px;
+    color: var(--muted); margin-bottom: 8px; }
+
+  /* ---------- "Practice all topics" hero card ---------- */
+  .practice-all { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2);
+    padding: 22px 24px; margin: 20px 0 26px; }
+  .practice-all .pa-text h3 { font-size: 18px; font-weight: 700; }
+  .practice-all .pa-text p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  /* ---------- Filters (segmented control) ---------- */
+  .seg { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--line);
+    border-radius: 999px; background: var(--surface); flex-wrap: wrap; }
+  .seg button { background: none; border: none; border-radius: 999px; padding: 7px 14px;
+    font-size: 13.5px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .seg button:hover { color: var(--ink); }
+  .seg button.active { background: var(--blue); color: #fff; }
+
+  /* ---------- Grouped list (Learn / Practice) — airy variant of the tracker ---------- */
+  .group { margin-top: 26px; }
+  .group-head { font-size: 18px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 6px; }
+  .listcard { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .lrow { display: grid; grid-template-columns: 26px 1fr 150px 56px 100px; align-items: center; gap: 16px;
+    width: 100%; text-align: left; background: var(--surface); border: none; border-top: 1px solid var(--line);
+    padding: 16px 20px; cursor: pointer; font-size: 15.5px; color: var(--ink); }
+  .lrow:first-child { border-top: none; }
+  .lrow:hover { background: var(--surface-2); }
+  .lrow .lr-check { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center; font-size: 13px; color: transparent; }
+  .lrow .lr-check.done { background: var(--green); border-color: var(--green); color: #fff; }
+  .lrow .lr-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; }
+  .lrow .lr-go { font-size: 13.5px; font-weight: 650; color: var(--blue); text-align: right; white-space: nowrap; }
+  .empty { padding: 26px; text-align: center; color: var(--muted); font-size: 14px; }
+
   /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
     .stats { grid-template-columns: repeat(2, 1fr); }
+    .unit-cards { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 620px) {
     #app { padding: 22px 16px 80px; }
-    .appbar { padding: 12px 16px; }
+    .appbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
     .brand .brand-name { display: none; }
+    .topnav { order: 3; width: 100%; margin-left: 0; justify-content: center;
+      border-top: 1px solid var(--line); padding-top: 8px; }
     .trow { grid-template-columns: 1fr 64px 82px; gap: 10px; padding: 12px 14px; font-size: 14px; }
     .trow .trow-count { display: none; }
     .unit-header { padding: 11px 14px; }
+    .unit-cards { grid-template-columns: 1fr; }
+    .lrow { grid-template-columns: 22px 1fr 60px 70px; gap: 10px; padding: 13px 14px; font-size: 14.5px; }
+    .lrow .lr-bar { display: none; }
+    .practice-all { flex-direction: column; align-items: flex-start; }
     .q-big { font-size: 20px; }
     .choice { font-size: 17px; padding: 15px 16px; }
     .greeting h1 { font-size: 23px; }
@@ -327,6 +399,11 @@
 <body>
   <header class="appbar">
     <button class="brand" id="homeBtn"><span class="logo">N</span><span class="brand-name">NewUU Prep</span></button>
+    <nav class="topnav" id="topnav">
+      <button class="tab" data-view="dashboard" id="tabHome">Home</button>
+      <button class="tab" data-view="learn" id="tabLearn">Learn</button>
+      <button class="tab" data-view="practice" id="tabPractice">Practice</button>
+    </nav>
     <div class="appbar-actions">
       <div class="auth-wrap" id="authWrap" hidden>
         <button class="lang-btn auth-btn" id="authBtn" aria-haspopup="true" aria-expanded="false">
@@ -420,6 +497,14 @@
         backToDash: "Back to dashboard",
         leaveTestConfirm: "Leave the test? Your answers so far won't be saved.",
         timeLeft: "Time left",
+        navHome: "Home", navLearn: "Learn", navPractice: "Practice",
+        learnTitle: "Learn", learnSub: "Read the lesson for any skill, then practise it.",
+        practiceTitle: "Practice", practiceSub: "Pick a skill to drill, or practise everything at once.",
+        readLesson: "Read lesson", continueLesson: "Continue", lessonDone: "Reviewed",
+        practiceAllTitle: "Practice all topics", practiceAllSub: "Mix questions from every skill into one session.",
+        startSession: "Start practice",
+        filterAll: "All", filterInProgress: "In progress", filterNotStarted: "Not started", filterMastered: "Mastered",
+        unitsOverview: "Your units", tests: "Tests", noMatch: "No skills match this filter.",
         locale: "en-GB"
       },
       ru: {
@@ -444,6 +529,14 @@
         backToDash: "На главную",
         leaveTestConfirm: "Выйти из теста? Текущие ответы не сохранятся.",
         timeLeft: "Осталось времени",
+        navHome: "Главная", navLearn: "Уроки", navPractice: "Практика",
+        learnTitle: "Уроки", learnSub: "Прочитайте объяснение к любой теме, затем потренируйтесь.",
+        practiceTitle: "Практика", practiceSub: "Выберите тему для тренировки или решайте всё сразу.",
+        readLesson: "Открыть урок", continueLesson: "Продолжить", lessonDone: "Изучено",
+        practiceAllTitle: "Все темы сразу", practiceAllSub: "Смешать вопросы из всех тем в одну сессию.",
+        startSession: "Начать практику",
+        filterAll: "Все", filterInProgress: "В процессе", filterNotStarted: "Не начато", filterMastered: "Освоено",
+        unitsOverview: "Ваши разделы", tests: "Тесты", noMatch: "Нет тем по этому фильтру.",
         locale: "ru-RU"
       }
     };
@@ -464,6 +557,8 @@
       const lbl = document.getElementById("langLabel");
       if (lbl) lbl.textContent = LANG === "ru" ? "RU" : "EN";
       document.querySelectorAll(".lang-opt").forEach((o) => o.classList.toggle("active", o.dataset.lang === LANG));
+      const navMap = { tabHome: "navHome", tabLearn: "navLearn", tabPractice: "navPractice" };
+      Object.keys(navMap).forEach((id) => { const e = document.getElementById(id); if (e) e.textContent = t(navMap[id]); });
     }
     function setLang(l) {
       if ((l !== "en" && l !== "ru") || l === LANG) return;
@@ -803,6 +898,7 @@
     let showSol = false;
     let quizStart = null;
     let pendingIdx = null; // selected but not yet checked
+    let practiceFilter = "all"; // Practice page filter: all | inprogress | notstarted | mastered
 
     function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
     function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
@@ -813,6 +909,18 @@
       session = { kind: "practice", skillId: id,
         back: { type: "topic", id: id },
         items: list.map((q, i) => ({ q: q, key: "practiceQuestions|" + id + "|" + i, skillId: id })) };
+      qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function startPracticeAll() {
+      const items = [];
+      allSkills().forEach(({ skill }) => {
+        questionsFor("practiceQuestions", skill.id).forEach((q, i) => {
+          items.push({ q: q, key: "practiceQuestions|" + skill.id + "|" + i, skillId: skill.id });
+        });
+      });
+      if (!items.length) return;
+      session = { kind: "practice", allTopics: true, skillId: null, back: { type: "practice" }, items: items };
       qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
       state = { view: "quiz" }; render(); scroll0();
     }
@@ -933,38 +1041,34 @@
           '</div></section>';
       }
 
-      html += '<div class="tracker-title">' + t("topicTracker") + '</div><section class="tracker">';
+      // Units overview — compact progress cards that lead into Practice
+      html += '<div class="section-title">' + t("unitsOverview") + '</div><div class="unit-cards">';
       COURSE_DATA.units.forEach((u) => {
         let complete = 0;
         u.skills.forEach((s) => { if (practiceStats(s.id).complete) complete++; });
-        html += '<div class="unit-header"><span><span class="u-idx">' + u.unit + '</span>' + esc(locUnitName(u)) +
-          '</span><span class="u-meta">' + complete + '/' + u.skills.length + ' ' + t("topics") + '</span></div>';
-        // skill rows (practice progress)
-        u.skills.forEach((s) => {
-          const st = practiceStats(s.id);
-          const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
-          html += '<button class="trow" data-skill="' + s.id + '">' +
-            '<span class="trow-name"><span class="txt">' + esc(locTitle(s)) + '</span>' +
-              (isDue(s.id) ? '<span class="tag-due">Due</span>' : '') + '</span>' +
-            '<span class="pbar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
-            '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
-            '<span class="trow-acc"><span class="dot ' + dotClass(st) + '"></span>' +
-              (st.done ? Math.round(st.acc * 100) + '%' : '—') + '</span>' +
-          '</button>';
-        });
-        // unit challenge row (end of unit)
+        const pct = Math.round((complete / u.skills.length) * 100);
+        html += '<button class="ucard" data-unit-go="' + u.unit + '">' +
+          '<div class="uc-top"><span class="uc-idx">' + u.unit + '</span><span class="uc-name">' + esc(locUnitName(u)) + '</span></div>' +
+          '<div class="uc-meta"><span>' + complete + '/' + u.skills.length + ' ' + t("topics") + '</span><span>' + pct + '%</span></div>' +
+          '<span class="pbar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
+        '</button>';
+      });
+      html += '</div>';
+
+      // Tests — unit challenges + the final mock exam
+      html += '<div class="section-title">' + t("tests") + '</div><section class="tracker">';
+      COURSE_DATA.units.forEach((u) => {
         const cs = unitChallengeStats(u);
+        if (!cs.total) return;
         const cpct = cs.total ? Math.round((cs.done / cs.total) * 100) : 0;
         html += '<button class="trow challenge-row" data-unit="' + u.unit + '">' +
-          '<span class="trow-name"><span class="bolt">⚡</span><span class="txt">' + t("unitChallenge") + '</span>' +
-            '<span class="ch-meta">' + cs.total + ' ' + t("hardQs") + '</span></span>' +
+          '<span class="trow-name"><span class="bolt">⚡</span><span class="txt">' + esc(locUnitName(u)) + ' · ' + t("unitChallenge") + '</span></span>' +
           '<span class="pbar"><span class="pfill" style="width:' + cpct + '%"></span></span>' +
           '<span class="trow-count">' + cs.done + '/' + cs.total + '</span>' +
           '<span class="trow-acc"><span class="dot ' + dotClass(cs) + '"></span>' +
             (cs.done ? Math.round(cs.acc * 100) + '%' : '—') + '</span>' +
         '</button>';
       });
-      // Final challenge — the full mock exam, the last test before exam day (after the last unit)
       const fc = COURSE_DATA.finalChallenge;
       if (fc && fc.questions && fc.questions.length) {
         const fs = finalChallengeStats();
@@ -985,7 +1089,7 @@
 
       app.innerHTML = html;
 
-      app.querySelectorAll(".trow[data-skill]").forEach((b) => b.addEventListener("click", () => openSkill(b.dataset.skill)));
+      app.querySelectorAll(".ucard[data-unit-go]").forEach((b) => b.addEventListener("click", () => goView("practice")));
       app.querySelectorAll(".trow[data-unit]").forEach((b) => b.addEventListener("click", () => startUnitChallenge(+b.dataset.unit)));
       app.querySelectorAll(".trow[data-final]").forEach((b) => b.addEventListener("click", () => { if (confirm(t("finalConfirm"))) startFinalChallenge(); }));
       app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => reviewSkill(b.dataset.due)));
@@ -993,6 +1097,82 @@
       if (reset) reset.addEventListener("click", () => {
         if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {} }; save(); render(); }
       });
+    }
+
+    /* ---------------- shared skill row (Learn / Practice lists) ---------------- */
+    function skillRow(s, mode) {
+      const st = practiceStats(s.id);
+      const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
+      const last = mode === "learn"
+        ? '<span class="lr-go">' + t("readLesson") + ' →</span>'
+        : '<span class="trow-acc"><span class="dot ' + dotClass(st) + '"></span>' +
+            (st.done ? Math.round(st.acc * 100) + '%' : '—') + '</span>';
+      return '<button class="lrow" data-skill="' + s.id + '" data-mode="' + mode + '">' +
+        '<span class="lr-check' + (st.complete ? ' done' : '') + '">✓</span>' +
+        '<span class="lr-name">' + esc(locTitle(s)) + (isDue(s.id) ? ' <span class="tag-due">Due</span>' : '') + '</span>' +
+        '<span class="pbar lr-bar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
+        '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
+        last +
+      '</button>';
+    }
+
+    /* ---------------- Learn: lesson-first index ---------------- */
+    function renderLearn() {
+      let html = '<div class="page-head"><div><h1>' + t("learnTitle") + '</h1>' +
+        '<div class="ph-sub">' + t("learnSub") + '</div></div></div>';
+      COURSE_DATA.units.forEach((u) => {
+        html += '<div class="group"><div class="group-head"><span class="uc-idx">' + u.unit + '</span> ' +
+          esc(locUnitName(u)) + '</div><div class="listcard">';
+        u.skills.forEach((s) => { html += skillRow(s, "learn"); });
+        html += '</div></div>';
+      });
+      app.innerHTML = html;
+      app.querySelectorAll('.lrow[data-mode="learn"]').forEach((b) =>
+        b.addEventListener("click", () => openSkill(b.dataset.skill)));
+    }
+
+    /* ---------------- Practice: drill-first question bank ---------------- */
+    function renderPractice() {
+      const filters = [
+        ["all", t("filterAll")], ["inprogress", t("filterInProgress")],
+        ["notstarted", t("filterNotStarted")], ["mastered", t("filterMastered")]
+      ];
+      const matches = (s) => {
+        const st = practiceStats(s.id);
+        if (practiceFilter === "inprogress") return st.done > 0 && !st.complete;
+        if (practiceFilter === "notstarted") return st.done === 0;
+        if (practiceFilter === "mastered") return st.complete;
+        return true;
+      };
+
+      let html = '<div class="page-head"><div><h1>' + t("practiceTitle") + '</h1>' +
+        '<div class="ph-sub">' + t("practiceSub") + '</div></div></div>';
+      html += '<div class="practice-all"><div class="pa-text"><h3>' + t("practiceAllTitle") + '</h3>' +
+        '<p>' + t("practiceAllSub") + '</p></div>' +
+        '<button class="btn-primary" id="practiceAllBtn">' + t("startSession") + '</button></div>';
+      html += '<div class="seg" id="practiceFilters">' +
+        filters.map(([k, lbl]) => '<button data-filter="' + k + '"' +
+          (practiceFilter === k ? ' class="active"' : '') + '>' + lbl + '</button>').join("") + '</div>';
+
+      let any = false;
+      COURSE_DATA.units.forEach((u) => {
+        const skills = u.skills.filter(matches);
+        if (!skills.length) return;
+        any = true;
+        html += '<div class="group"><div class="group-head"><span class="uc-idx">' + u.unit + '</span> ' +
+          esc(locUnitName(u)) + '</div><div class="listcard">';
+        skills.forEach((s) => { html += skillRow(s, "practice"); });
+        html += '</div></div>';
+      });
+      if (!any) html += '<div class="empty">' + t("noMatch") + '</div>';
+
+      app.innerHTML = html;
+      const allBtn = document.getElementById("practiceAllBtn");
+      if (allBtn) allBtn.addEventListener("click", startPracticeAll);
+      app.querySelectorAll('#practiceFilters button').forEach((b) =>
+        b.addEventListener("click", () => { practiceFilter = b.dataset.filter; renderPractice(); }));
+      app.querySelectorAll('.lrow[data-mode="practice"]').forEach((b) =>
+        b.addEventListener("click", () => startPractice(b.dataset.skill)));
     }
 
     function statCard(label, val, sub, pct, cls) {
@@ -1007,11 +1187,11 @@
     function renderTopic() {
       const { unit, skill } = findSkill(state.skillId);
       app.innerHTML =
-        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<button class="back" id="backBtn">← ' + t("navLearn") + '</button>' +
         '<div class="topic-head"><span class="unit-tag">' + t("unit") + ' ' + unit.unit + ' · ' + esc(locUnitName(unit)) + '</span>' +
         '<h2>' + esc(locTitle(skill)) + '</h2></div>' +
         '<div id="learn"></div>';
-      document.getElementById("backBtn").addEventListener("click", goHome);
+      document.getElementById("backBtn").addEventListener("click", () => goView("learn"));
 
       const tc = document.getElementById("learn");
       const wrap = el("div", "reading");
@@ -1061,7 +1241,8 @@
       if (!session || !session.items.length) { leaveSession(); return; }  // nothing to show — bail safely
       let title;
       if (session.kind === "practice") {
-        title = t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
+        title = session.allTopics ? t("practiceAllTitle")
+              : t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
       } else if (session.isFinal) {
         title = finalChallengeTitle();
       } else {
@@ -1241,13 +1422,31 @@
     /* ---------------- router ---------------- */
     function render() {
       if (state.view === "dashboard") renderDashboard();
+      else if (state.view === "learn") renderLearn();
+      else if (state.view === "practice") renderPractice();
       else if (state.view === "topic") renderTopic();
       else if (state.view === "results") renderResults();
       else renderQuiz();
+      updateNav();
       updateTimers();
     }
 
+    // highlight the nav tab matching the current top-level section
+    function updateNav() {
+      const map = { dashboard: "dashboard", learn: "learn", lesson: "learn",
+                    practice: "practice", topic: "learn" };
+      const active = map[state.view] || "dashboard";
+      document.querySelectorAll(".topnav .tab").forEach((b) =>
+        b.classList.toggle("active", b.dataset.view === active));
+    }
+    function goView(view) {
+      state = { view: view }; session = null; quizStart = null; pendingIdx = null;
+      render(); scroll0();
+    }
+
     document.getElementById("homeBtn").addEventListener("click", goHome);
+    document.querySelectorAll(".topnav .tab").forEach((b) =>
+      b.addEventListener("click", () => goView(b.dataset.view)));
 
     /* ---------------- language switcher wiring ---------------- */
     const langBtn = document.getElementById("langBtn");
