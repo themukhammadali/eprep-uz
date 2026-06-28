@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NewUU Entrance Prep — Mathematics</title>
+
+<!-- MathJax (renders \( \) inline and \[ \] display) -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    svg: { fontCache: 'global' },
+    startup: { typeset: false }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ---------- Light, flat, Bluebook-style theme ---------- */
+  :root {
+    --bg:        #ffffff;
+    --ink:       #1a1a1a;
+    --muted:     #6b7280;
+    --line:      #e8e8e8;
+    --blue:      #2b7fff;
+    --blue-soft: #eaf2ff;
+    --green:     #16a34a;
+    --green-soft:#f0faf3;
+    --amber:     #d97706;
+    --red:       #dc2626;
+    --red-soft:  #fdf2f2;
+    --surface:   #ffffff;
+    --surface-2: #fafafa;
+    --surface-3: #f5f7fa;
+    --shadow:    rgba(0,0,0,.10);
+    --radius:    14px;
+  }
+
+  /* ---------- Dark theme (overrides the variables above) ---------- */
+  :root[data-theme="dark"] {
+    --bg:        #0f1115;
+    --ink:       #e6e8eb;
+    --muted:     #9aa1ab;
+    --line:      #2a2f3a;
+    --blue:      #4f8dff;
+    --blue-soft: #18253d;
+    --green:     #35c46b;
+    --green-soft:#14271b;
+    --amber:     #e0a13b;
+    --red:       #ff6b6b;
+    --red-soft:  #2c1a1a;
+    --surface:   #161922;
+    --surface-2: #1b1f29;
+    --surface-3: #232838;
+    --shadow:    rgba(0,0,0,.55);
+  }
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    transition: background .25s ease, color .25s ease;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  button { font-family: inherit; }
+
+  /* ---------- App bar ---------- */
+  .appbar {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; background: none; border: none;
+    cursor: pointer; color: var(--ink); font-size: 16px; font-weight: 650; }
+  .logo { width: 30px; height: 30px; border-radius: 8px; background: var(--blue); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+  .timer { display: inline-flex; align-items: center; gap: 7px; font-variant-numeric: tabular-nums;
+    font-size: 14px; color: var(--muted); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 13px; }
+  .timer .ic { font-size: 13px; }
+  .timer.low { color: var(--red); border-color: var(--red); font-weight: 700; }
+
+  /* ---------- Test results ---------- */
+  .results { max-width: 720px; margin: 0 auto; }
+  .results h2 { font-size: 26px; font-weight: 650; letter-spacing: -.3px; margin-bottom: 6px; }
+  .results .res-sub { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+  .res-score { display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px; }
+  .res-score .big { font-size: 48px; font-weight: 800; letter-spacing: -1px; }
+  .res-score .pct { font-size: 18px; color: var(--muted); font-weight: 600; }
+  .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+  .res-cell { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: var(--surface); }
+  .res-cell .l { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .res-cell .v { font-size: 26px; font-weight: 700; margin-top: 6px; }
+  .res-cell.correct .v { color: var(--green); }
+  .res-cell.wrong .v { color: var(--red); }
+  .res-banner { background: var(--red-soft); border: 1px solid var(--red); color: var(--red);
+    border-radius: 12px; padding: 12px 16px; font-weight: 600; font-size: 14px; margin-bottom: 20px; }
+  .res-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  @media (max-width: 620px) { .res-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ---------- Language switcher ---------- */
+  .lang-wrap { position: relative; }
+  .lang-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer;
+    font-size: 14px; font-weight: 600; color: var(--ink); }
+  .lang-btn:hover { border-color: var(--muted); }
+  .lang-btn .globe { font-size: 14px; }
+  .lang-btn .chev { color: var(--muted); font-size: 10px; }
+  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--surface);
+    border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px var(--shadow);
+    padding: 6px; min-width: 210px; z-index: 40; }
+  .lang-menu[hidden] { display: none; }
+  .lang-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; text-align: left; background: none; border: none; border-radius: 8px;
+    padding: 10px 12px; cursor: pointer; font-size: 14px; color: var(--ink); }
+  .lang-opt:hover { background: var(--surface-3); }
+  .lang-opt.active { color: var(--blue); font-weight: 650; }
+  .lang-opt .tick { color: var(--blue); font-weight: 700; visibility: hidden; }
+  .lang-opt.active .tick { visibility: visible; }
+
+  /* ---------- App-bar actions + theme toggle ---------- */
+  .appbar-actions { display: flex; align-items: center; gap: 10px; }
+  .theme-btn { display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+    width: 36px; height: 33px; cursor: pointer; font-size: 15px; line-height: 1; }
+  .theme-btn:hover { border-color: var(--muted); }
+
+  /* ---------- Auth (account button, menu, modal) ---------- */
+  .auth-wrap { position: relative; }
+  .auth-wrap[hidden] { display: none; }
+  .auth-btn .auth-avatar { display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 999px; background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .auth-btn .auth-avatar[hidden] { display: none; }
+  .auth-menu { min-width: 220px; }
+  .auth-menu[hidden] { display: none; }
+  .auth-email { padding: 8px 12px 2px; font-size: 13px; font-weight: 650; color: var(--ink);
+    word-break: break-all; }
+  .auth-status { padding: 0 12px 8px; font-size: 12px; color: var(--muted);
+    border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+
+  .auth-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center;
+    justify-content: center; padding: 20px; background: rgba(0,0,0,.45); }
+  .auth-modal[hidden] { display: none; }
+  .auth-card { position: relative; width: 100%; max-width: 380px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px 24px;
+    box-shadow: 0 20px 60px var(--shadow); }
+  .auth-close { position: absolute; top: 10px; right: 12px; background: none; border: none;
+    font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; }
+  .auth-card h2 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
+  .auth-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 16px; line-height: 1.5; }
+  .auth-card form { display: flex; flex-direction: column; gap: 10px; }
+  .auth-card input { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px;
+    font-size: 15px; color: var(--ink); background: var(--surface-2); }
+  .auth-card input:focus { outline: none; border-color: var(--blue); }
+  .auth-submit { background: var(--blue); color: #fff; border: none; border-radius: 10px;
+    padding: 11px 13px; font-size: 15px; font-weight: 650; cursor: pointer; }
+  .auth-submit:hover { filter: brightness(.96); }
+  .auth-submit:disabled { opacity: .6; cursor: default; }
+  .auth-msg { margin-top: 12px; font-size: 13.5px; line-height: 1.5; }
+  .auth-msg[hidden] { display: none; }
+  .auth-msg.ok { color: var(--green); }
+  .auth-msg.err { color: var(--red); }
+
+  #app { max-width: 1000px; margin: 0 auto; padding: 28px 24px 90px; }
+
+  /* ---------- Dashboard ---------- */
+  .greeting h1 { font-size: 27px; font-weight: 700; letter-spacing: -.4px; }
+  .greeting .subtitle { color: var(--muted); margin-top: 5px; font-size: 15px; }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 26px 0; }
+  .stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: var(--surface); }
+  .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .stat-val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -.5px; }
+  .stat-sub { font-size: 15px; color: var(--muted); font-weight: 600; }
+  .stat.correct .stat-val { color: var(--green); }
+  .stat.wrong .stat-val { color: var(--red); }
+  .mini-bar { height: 6px; background: var(--line); border-radius: 999px; margin-top: 12px; overflow: hidden; }
+  .mini-fill { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .4s ease; }
+
+  /* ---------- Due for review ---------- */
+  .due { border: 1px solid var(--line); background: var(--blue-soft); border-radius: var(--radius);
+    padding: 16px 18px; margin-bottom: 26px; }
+  .due h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .due h3 .badge { background: var(--blue); color: #fff; border-radius: 999px; font-size: 12px;
+    padding: 1px 9px; font-weight: 700; }
+  .due-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .due-chip { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line);
+    background: var(--surface); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 14px; color: var(--ink); }
+  .due-chip:hover { border-color: var(--blue); }
+  .due-chip .go { color: var(--blue); font-weight: 600; }
+
+  /* ---------- Topic tracker ---------- */
+  .tracker-title { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .6px; margin-bottom: 12px; }
+  .tracker { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .unit-header { display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 18px; background: var(--surface-2); border-top: 1px solid var(--line);
+    font-weight: 650; font-size: 14px; }
+  .unit-header:first-child { border-top: none; }
+  .unit-header .u-idx { display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; background: var(--blue-soft); color: var(--blue);
+    font-size: 12px; font-weight: 700; margin-right: 9px; }
+  .unit-header .u-meta { color: var(--muted); font-weight: 600; font-size: 13px; }
+
+  .trow { display: grid; grid-template-columns: 1fr 150px 52px 96px; align-items: center; gap: 14px;
+    width: 100%; text-align: left; background: var(--surface); border: none; border-top: 1px solid var(--line);
+    padding: 13px 18px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .trow:hover { background: var(--surface-2); }
+  .trow-name { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .trow-name .txt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tag-due { flex: 0 0 auto; font-size: 10.5px; font-weight: 700; color: var(--blue);
+    background: var(--blue-soft); border-radius: 999px; padding: 1px 8px; }
+  .pbar { display: block; height: 7px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .pfill { display: block; height: 100%; background: var(--blue); border-radius: 999px; transition: width .4s ease; }
+  .trow-count { font-size: 13px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .trow-acc { display: flex; align-items: center; gap: 7px; justify-content: flex-end;
+    font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #cbd0d6; flex: 0 0 auto; }
+  .dot.g { background: var(--green); }
+  .dot.a { background: var(--amber); }
+  .dot.r { background: var(--red); }
+
+  /* Unit challenge row (end of each unit) */
+  .trow.challenge-row { background: var(--blue-soft); }
+  .trow.challenge-row:hover { background: var(--surface-3); }
+  .trow.challenge-row .trow-name { color: var(--blue); font-weight: 650; }
+  /* Final challenge row — the full mock exam, the last test before exam day */
+  .trow.final-row { background: var(--red-soft); border: 1px solid var(--red); margin-top: 8px; }
+  .trow.final-row:hover { background: var(--surface-3); }
+  .trow.final-row .trow-name { color: var(--red); font-weight: 750; }
+  .trow.final-row .ch-meta { color: var(--amber); }
+  .bolt { flex: 0 0 auto; }
+  .ch-meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  .dash-foot { margin-top: 22px; text-align: center; }
+  .reset-link { background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; }
+  .reset-link:hover { color: var(--red); text-decoration: underline; }
+
+  /* ---------- Topic / skill screen ---------- */
+  .back { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 14px;
+    font-weight: 600; padding: 0; margin-bottom: 14px; }
+  .back:hover { text-decoration: underline; }
+  .unit-tag { display: inline-block; font-size: 12.5px; font-weight: 600; color: var(--blue);
+    background: var(--blue-soft); padding: 4px 11px; border-radius: 20px; margin-bottom: 10px; }
+  .topic-head h2 { font-size: 26px; font-weight: 650; letter-spacing: -.3px; }
+
+  .reading { max-width: 860px; margin-top: 22px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px 26px; margin-bottom: 18px; }
+  .card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted);
+    margin-bottom: 14px; font-weight: 700; }
+  .prose { font-size: 18px; line-height: 1.65; }
+  .prose p { margin-bottom: 12px; }
+  .prose ul { padding-left: 22px; }
+  .prose li { margin-bottom: 8px; }
+  .prose.placeholder { color: var(--muted); font-style: italic; }
+  .start-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+
+  .btn-primary { background: var(--blue); color: #fff; border: none; border-radius: 10px;
+    padding: 12px 22px; font-weight: 600; cursor: pointer; font-size: 15px; }
+  .btn-primary:hover { background: #1f6ff0; }
+  .btn-ghost { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 12px 18px; cursor: pointer; font-size: 15px; color: var(--ink); }
+  .btn-ghost:hover:not(:disabled) { border-color: var(--muted); }
+  .btn-ghost:disabled { opacity: .4; cursor: default; }
+  .btn-ghost.active { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+
+  /* ---------- Bluebook question runner ---------- */
+  .runner { max-width: 720px; margin: 0 auto; }
+  .runner-top { display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+  .runner-title { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .stage { min-height: 280px; }
+  .q-big { font-size: 22px; line-height: 1.45; margin-bottom: 28px; }
+  .choices { display: flex; flex-direction: column; gap: 14px; }
+  .choice { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; background: var(--surface);
+    border: 1.5px solid var(--line); border-radius: 14px; padding: 17px 20px; font-size: 18px;
+    color: var(--ink); cursor: pointer; transition: border-color .12s, background .12s; }
+  .choice:hover:not(:disabled) { border-color: var(--blue); background: var(--surface-2); }
+  .choice:disabled { cursor: default; }
+  .ch-letter { flex: 0 0 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--line);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700;
+    font-size: 15px; color: var(--muted); }
+  .choice.chosen:not(.correct):not(.wrong) { border-color: var(--blue); background: var(--blue-soft); }
+  .choice.correct { border-color: var(--green); background: var(--green-soft); }
+  .choice.correct .ch-letter { background: var(--green); color: #fff; border-color: var(--green); }
+  .choice.wrong { border-color: var(--red); background: var(--red-soft); }
+  .choice.wrong .ch-letter { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .explain { margin-top: 24px; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--surface-2); }
+  .explain-verdict { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
+  .explain-verdict.ok { color: var(--green); }
+  .explain-verdict.bad { color: var(--red); }
+  .explain-label { font-size: 11px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted);
+    font-weight: 700; margin-bottom: 5px; }
+  .explain-body { font-size: 16px; line-height: 1.55; }
+
+  .runner-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between; padding: 14px 0; margin-top: 32px; }
+  .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bar-actions { display: flex; gap: 10px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    #app { padding: 22px 16px 80px; }
+    .appbar { padding: 12px 16px; }
+    .brand .brand-name { display: none; }
+    .trow { grid-template-columns: 1fr 64px 82px; gap: 10px; padding: 12px 14px; font-size: 14px; }
+    .trow .trow-count { display: none; }
+    .unit-header { padding: 11px 14px; }
+    .q-big { font-size: 20px; }
+    .choice { font-size: 17px; padding: 15px 16px; }
+    .greeting h1 { font-size: 23px; }
+  }
+</style>
+</head>
+<body>
+  <header class="appbar">
+    <button class="brand" id="homeBtn"><span class="logo">N</span><span class="brand-name">NewUU Prep</span></button>
+    <div class="appbar-actions">
+      <div class="auth-wrap" id="authWrap" hidden>
+        <button class="lang-btn auth-btn" id="authBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="auth-avatar" id="authAvatar" hidden></span>
+          <span id="authLabel">Sign in</span>
+        </button>
+        <div class="lang-menu auth-menu" id="authMenu" role="menu" hidden>
+          <div class="auth-email" id="authEmail"></div>
+          <div class="auth-status" id="authStatus"></div>
+          <button class="lang-opt" role="menuitem" id="signOutBtn">Sign out</button>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">🌙</button>
+      <div class="lang-wrap">
+        <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="globe">🌐</span><span id="langLabel">EN</span><span class="chev">▾</span>
+        </button>
+        <div class="lang-menu" id="langMenu" role="menu" hidden>
+          <button class="lang-opt" role="menuitem" data-lang="en">English (original)<span class="tick">✓</span></button>
+          <button class="lang-opt" role="menuitem" data-lang="ru">Русский<span class="tick">✓</span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="auth-modal" id="authModal" hidden>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
+      <h2 id="authTitle">Sign in to sync your progress</h2>
+      <p class="auth-sub">Save your answers, accuracy and review schedule across every device. We email you a one-time link — no password to remember.</p>
+      <form id="authForm">
+        <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
+        <button type="submit" class="auth-submit" id="authSubmitBtn">Send magic link</button>
+      </form>
+      <p class="auth-msg" id="authMsg" hidden></p>
+    </div>
+  </div>
+
+  <main id="app"></main>
+
+  <!-- Course data (untouched) -->
+  <script src="course-data.js"></script>
+  <!-- Russian translations of titles / explanations / reviews / questions (optional; falls back to English per-field) -->
+  <script src="course-data-ru.js"></script>
+
+  <!-- Optional cloud accounts + cross-device sync (Supabase). Falls back to local-only if unconfigured. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+
+  <script>
+  (function () {
+    "use strict";
+
+    if (typeof COURSE_DATA === "undefined") {
+      document.getElementById("app").innerHTML =
+        '<p style="color:#dc2626">Could not load <code>course-data.js</code>.</p>';
+      return;
+    }
+
+    /* ---------------- helpers ---------------- */
+    const app = document.getElementById("app");
+    const el = (t, c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
+    const LABELS = ["A", "B", "C", "D", "E", "F"];
+    const PLACEHOLDER = /^\s*(\[.*\]|<p>\s*\[.*\]\s*<\/p>)\s*$/;
+    let STUDENT = "";   // set from the signed-in account; empty = no name in greeting
+    const INTERVALS = [1, 2, 4, 7, 15, 30]; // spaced-repetition days by stage
+    const scroll0 = () => window.scrollTo(0, 0);
+    const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    /* ---------------- i18n (UI strings only — questions stay in their original language) ---------------- */
+    const I18N = {
+      en: {
+        hello: "Hello", prepStands: "here's where your prep stands.",
+        topicsCompleted: "Topics completed", questionsAttempted: "Questions attempted",
+        correct: "Correct", wrong: "Wrong", accuracy: "Accuracy",
+        dueForReview: "Due for review", review: "Review →",
+        topicTracker: "Topic tracker", topics: "topics",
+        unitChallenge: "Unit Challenge", hardQs: "hard Qs",
+        finalChallenge: "Final Challenge", finalConfirm: "Start the full 120-minute mock exam? It is timed and auto-submits when the clock runs out.",
+        resetAll: "Reset all progress",
+        resetConfirm: "Clear all saved answers, stats and review dates?",
+        dashboard: "Dashboard", topic: "Topic", unit: "Unit",
+        explanation: "Explanation", quickReview: "Quick review",
+        startPractice: "Start practice", practice: "Practice",
+        previous: "Previous", next: "Next", finish: "Finish", check: "Check", of: "of",
+        verdictOk: "Correct", verdictBad: "Incorrect", workedSolution: "Worked solution",
+        practiceAgain: "Practice again", reviewAnswers: "Review answers",
+        resetSkillConfirm: "Reset this skill and practise the questions again?",
+        testResults: "Test results", score: "Score", skipped: "Skipped", timeUsed: "Time used",
+        timeUpMsg: "Time's up — your test was submitted automatically.",
+        backToDash: "Back to dashboard",
+        leaveTestConfirm: "Leave the test? Your answers so far won't be saved.",
+        timeLeft: "Time left",
+        locale: "en-GB"
+      },
+      ru: {
+        hello: "Привет", prepStands: "вот ваш текущий прогресс.",
+        topicsCompleted: "Тем пройдено", questionsAttempted: "Вопросов решено",
+        correct: "Верных", wrong: "Неверных", accuracy: "Точность",
+        dueForReview: "Пора повторить", review: "Повторить →",
+        topicTracker: "Прогресс по темам", topics: "тем",
+        unitChallenge: "Испытание раздела", hardQs: "сложных задач",
+        finalChallenge: "Финальное испытание", finalConfirm: "Начать полный пробный экзамен на 120 минут? Тест с таймером и отправляется автоматически по истечении времени.",
+        resetAll: "Сбросить весь прогресс",
+        resetConfirm: "Удалить все сохранённые ответы, статистику и даты повторения?",
+        dashboard: "Главная", topic: "Тема", unit: "Раздел",
+        explanation: "Объяснение", quickReview: "Краткое повторение",
+        startPractice: "Начать практику", practice: "Практика",
+        previous: "Назад", next: "Далее", finish: "Завершить", check: "Проверить", of: "из",
+        verdictOk: "Верно", verdictBad: "Неверно", workedSolution: "Разбор решения",
+        practiceAgain: "Пройти заново", reviewAnswers: "Посмотреть ответы",
+        resetSkillConfirm: "Сбросить эту тему и пройти вопросы заново?",
+        testResults: "Результаты теста", score: "Результат", skipped: "Пропущено", timeUsed: "Затрачено времени",
+        timeUpMsg: "Время вышло — тест отправлен автоматически.",
+        backToDash: "На главную",
+        leaveTestConfirm: "Выйти из теста? Текущие ответы не сохранятся.",
+        timeLeft: "Осталось времени",
+        locale: "ru-RU"
+      }
+    };
+    const LANG_STORE = "newuu_lang";
+    let LANG = "en";
+    try { const l = localStorage.getItem(LANG_STORE); if (l === "en" || l === "ru") LANG = l; } catch (e) {}
+    const t = (k) => (I18N[LANG] && I18N[LANG][k] != null) ? I18N[LANG][k] : I18N.en[k];
+    function challengeTitle(n, name) {
+      return LANG === "ru"
+        ? "Испытание · Раздел " + n + " · " + name
+        : "Unit " + n + " Challenge · " + name;
+    }
+    function finalChallengeTitle() {
+      const fc = COURSE_DATA.finalChallenge || {};
+      return (LANG === "ru" && fc.titleRu) ? fc.titleRu : (fc.title || t("finalChallenge"));
+    }
+    function updateLangUI() {
+      const lbl = document.getElementById("langLabel");
+      if (lbl) lbl.textContent = LANG === "ru" ? "RU" : "EN";
+      document.querySelectorAll(".lang-opt").forEach((o) => o.classList.toggle("active", o.dataset.lang === LANG));
+    }
+    function setLang(l) {
+      if ((l !== "en" && l !== "ru") || l === LANG) return;
+      LANG = l;
+      try { localStorage.setItem(LANG_STORE, l); } catch (e) {}
+      document.documentElement.lang = l;
+      updateLangUI();
+      render();
+    }
+
+    /* ---------------- theme (light / dark) ---------------- */
+    const THEME_STORE = "newuu_theme";
+    let THEME = "light";
+    try { const tm = localStorage.getItem(THEME_STORE); if (tm === "light" || tm === "dark") THEME = tm; } catch (e) {}
+    function applyTheme() {
+      document.documentElement.setAttribute("data-theme", THEME);
+      const b = document.getElementById("themeBtn");
+      if (b) { b.textContent = THEME === "dark" ? "☀️" : "🌙"; b.setAttribute("aria-pressed", String(THEME === "dark")); }
+    }
+    function toggleTheme() {
+      THEME = THEME === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_STORE, THEME); } catch (e) {}
+      applyTheme();
+    }
+
+    /* ---------------- Russian content overlay (course-data-ru.js → COURSE_DATA_RU) ----------------
+       Resolves each field to Russian when LANG === "ru" and a translation exists, else English.
+       This is per-field, so a partially-translated file degrades gracefully. */
+    const RU_DATA = (typeof COURSE_DATA_RU !== "undefined") ? COURSE_DATA_RU : null;
+    const ruOn = () => LANG === "ru" && !!RU_DATA;
+    const pick = (en, ru) => (ruOn() && ru != null && ru !== "") ? ru : en;
+    function ruSkill(id) {
+      if (!RU_DATA) return null;
+      for (const u of (RU_DATA.units || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return s; }
+      return null;
+    }
+    function ruUnitName(no) {
+      if (!RU_DATA) return null;
+      const u = (RU_DATA.units || []).find((x) => x.unit === no); return u ? u.name : null;
+    }
+    function ruQuestion(bank, id, i) {
+      if (!RU_DATA) return null;
+      for (const u of (RU_DATA[bank] || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return (s.questions || [])[i] || null; }
+      return null;
+    }
+    const locUnitName = (u) => pick(u.name, ruUnitName(u.unit));
+    const locTitle = (s) => { const r = ruSkill(s.id); return pick(s.title, r && r.title); };
+    const locExplanation = (s) => { const r = ruSkill(s.id); return pick(s.explanation, r && r.explanation); };
+    const locReview = (s) => { const r = ruSkill(s.id); return pick(s.review, r && r.review); };
+
+    function typeset(node) {
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.startup.promise.then(() => MathJax.typesetPromise(node ? [node] : undefined)).catch(() => {});
+      }
+    }
+
+    /* ---------------- persistence ---------------- */
+    const STORE = "newuu_stats_v2";
+    let DB = { answers: {}, review: {} };
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORE));
+      if (raw && typeof raw === "object") DB = { answers: raw.answers || {}, review: raw.review || {} };
+    } catch (e) {}
+    const saveLocal = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
+    // save() persists locally always, and (when signed in) pushes to the cloud on a debounce.
+    const save = () => { saveLocal(); cloud.schedulePush(); };
+
+    /* ---------------- cloud accounts + sync (Supabase) ---------------- */
+    // Self-contained: if Supabase isn't configured/loaded, every method no-ops and
+    // the app behaves exactly as the local-only version. Access is restricted per-user
+    // by Row-Level Security (see scripts/supabase-schema.sql); the anon key is public.
+    const cloud = (function () {
+      const cfg = window.SUPABASE_CONFIG || {};
+      const ready = !!(cfg.url && cfg.anonKey && window.supabase);
+      const client = ready ? window.supabase.createClient(cfg.url, cfg.anonKey) : null;
+      let user = null;
+      let pushTimer = null;
+
+      // ---- merge: combine two { answers, review } blobs without losing progress.
+      // Answers are keyed per question and carry `ts`; reviews per skill carry `last`.
+      // For each key we keep the most recently written entry (last-write-wins per key).
+      function mergeBy(a, b, stampKey) {
+        const out = {}, keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+        keys.forEach((k) => {
+          const x = a && a[k], y = b && b[k];
+          if (!x) { out[k] = y; return; }
+          if (!y) { out[k] = x; return; }
+          out[k] = (Number(y[stampKey]) || 0) >= (Number(x[stampKey]) || 0) ? y : x;
+        });
+        return out;
+      }
+      function merge(local, remote) {
+        return {
+          answers: mergeBy(local.answers, remote.answers, "ts"),
+          review: mergeBy(local.review, remote.review, "last"),
+        };
+      }
+
+      // ---- UI helpers
+      const $ = (id) => document.getElementById(id);
+      function setStatus(text) { const el = $("authStatus"); if (el) el.textContent = text; }
+      function renderAuthUI() {
+        const wrap = $("authWrap"); if (!wrap) return;
+        wrap.hidden = false;
+        const label = $("authLabel"), avatar = $("authAvatar");
+        if (user) {
+          const email = user.email || "";
+          label.textContent = email.split("@")[0] || "Account";
+          avatar.hidden = false;
+          avatar.textContent = (email[0] || "?");
+          $("authEmail").textContent = email;
+          $("signOutBtn").hidden = false;
+        } else {
+          label.textContent = "Sign in";
+          avatar.hidden = true;
+          $("authEmail").textContent = "";
+          setStatus("");
+          $("signOutBtn").hidden = true;
+        }
+      }
+
+      // ---- sync
+      async function pull() {
+        if (!client || !user) return;
+        setStatus("Syncing…");
+        const { data, error } = await client.from("progress").select("data").eq("user_id", user.id).maybeSingle();
+        if (error) { setStatus("Sync error"); return; }
+        const remote = (data && data.data) || { answers: {}, review: {} };
+        DB = merge(DB, remote);
+        saveLocal();
+        await push();           // write the merged result straight back up
+        if (typeof render === "function") render();
+        setStatus("Synced ✓");
+      }
+      async function push() {
+        if (!client || !user) return;
+        const { error } = await client.from("progress")
+          .upsert({ user_id: user.id, data: DB, updated_at: new Date().toISOString() });
+        setStatus(error ? "Sync error" : "Synced ✓");
+      }
+      function schedulePush() {
+        if (!client || !user) return;
+        setStatus("Saving…");
+        clearTimeout(pushTimer);
+        pushTimer = setTimeout(push, 1200);
+      }
+
+      // ---- auth actions
+      async function sendMagicLink(email) {
+        return client.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+      }
+      async function signOut() { if (client) await client.auth.signOut(); }
+
+      // ---- boot
+      function init() {
+        if (!ready) return;   // leave the account button hidden; local-only mode
+        renderAuthUI();
+        wireUI();
+        client.auth.getSession().then(({ data }) => onAuth(data.session));
+        client.auth.onAuthStateChange((_e, session) => onAuth(session));
+      }
+      function displayName(u) {
+        if (!u) return "";
+        const m = u.user_metadata || {};
+        if (m.name) return m.name;
+        if (m.full_name) return m.full_name;
+        const local = (u.email || "").split("@")[0];
+        return local ? local.charAt(0).toUpperCase() + local.slice(1) : "";
+      }
+      function onAuth(session) {
+        const next = session ? session.user : null;
+        const changed = (next && next.id) !== (user && user.id);
+        user = next;
+        STUDENT = displayName(user);
+        renderAuthUI();
+        if (typeof render === "function") render();   // refresh greeting
+        if (user && changed) pull();
+      }
+
+      function wireUI() {
+        const btn = $("authBtn"), menu = $("authMenu");
+        const modal = $("authModal"), form = $("authForm"), msg = $("authMsg");
+        function toggleMenu(open) {
+          const show = open != null ? open : menu.hidden;
+          menu.hidden = !show; btn.setAttribute("aria-expanded", String(show));
+        }
+        function openModal() { modal.hidden = false; setTimeout(() => $("authEmailInput").focus(), 30); }
+        function closeModal() { modal.hidden = true; msg.hidden = true; }
+
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (user) toggleMenu(); else openModal();
+        });
+        document.addEventListener("click", (e) => {
+          if (!menu.hidden && !e.target.closest(".auth-wrap")) toggleMenu(false);
+        });
+        $("authCloseBtn").addEventListener("click", closeModal);
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape") { toggleMenu(false); closeModal(); } });
+        $("signOutBtn").addEventListener("click", () => { toggleMenu(false); signOut(); });
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = $("authEmailInput").value.trim();
+          if (!email) return;
+          const submit = $("authSubmitBtn");
+          submit.disabled = true; submit.textContent = "Sending…";
+          const { error } = await sendMagicLink(email);
+          submit.disabled = false; submit.textContent = "Send magic link";
+          msg.hidden = false;
+          if (error) { msg.className = "auth-msg err"; msg.textContent = error.message || "Could not send the link. Try again."; }
+          else { msg.className = "auth-msg ok"; msg.textContent = "Check your inbox for the sign-in link."; }
+        });
+      }
+
+      return { init, schedulePush };
+    })();
+
+    /* ---------------- data access ---------------- */
+    function questionsFor(bank, skillId) {
+      const units = COURSE_DATA[bank] || [];
+      for (const u of units) {
+        const s = (u.skills || []).find((sk) => sk.id === skillId);
+        if (s) return s.questions || [];
+      }
+      return [];
+    }
+    function findSkill(id) {
+      for (const u of COURSE_DATA.units) {
+        const s = u.skills.find((x) => x.id === id);
+        if (s) return { unit: u, skill: s };
+      }
+      return null;
+    }
+    function allSkills() {
+      const out = [];
+      COURSE_DATA.units.forEach((u) => u.skills.forEach((s) => out.push({ unit: u, skill: s })));
+      return out;
+    }
+    const TOTAL_SKILLS = allSkills().length;
+
+    /* ---------------- stats ---------------- */
+    // Per-skill PRACTICE stats (drives the skill rows & topic completion)
+    function practiceStats(skillId) {
+      const list = questionsFor("practiceQuestions", skillId);
+      let done = 0, correct = 0;
+      list.forEach((q, i) => {
+        const a = DB.answers["practiceQuestions|" + skillId + "|" + i];
+        if (a) { done++; if (a.correct) correct++; }
+      });
+      return { total: list.length, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: list.length > 0 && done === list.length };
+    }
+    // Unit CHALLENGE stats (all hard questions across a unit's skills)
+    function unitChallengeStats(unit) {
+      let total = 0, done = 0, correct = 0;
+      unit.skills.forEach((s) => {
+        const list = questionsFor("hardQuestions", s.id);
+        total += list.length;
+        list.forEach((q, i) => {
+          const a = DB.answers["hardQuestions|" + s.id + "|" + i];
+          if (a) { done++; if (a.correct) correct++; }
+        });
+      });
+      return { total, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: total > 0 && done === total };
+    }
+    // FINAL CHALLENGE stats (the standalone full mock exam — Paper C)
+    function finalChallengeStats() {
+      const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+      let done = 0, correct = 0;
+      list.forEach((q, i) => {
+        const a = DB.answers["finalChallenge|" + i];
+        if (a) { done++; if (a.correct) correct++; }
+      });
+      return { total: list.length, done, correct, wrong: done - correct,
+               acc: done ? correct / done : 0, complete: list.length > 0 && done === list.length };
+    }
+    // Global stats (every answered question, practice + challenge)
+    function globalStats() {
+      let topics = 0;
+      allSkills().forEach(({ skill }) => { if (practiceStats(skill.id).complete) topics++; });
+      let attempted = 0, correct = 0;
+      Object.values(DB.answers).forEach((a) => { attempted++; if (a.correct) correct++; });
+      return { topics, totalSkills: TOTAL_SKILLS, attempted, correct, wrong: attempted - correct,
+               acc: attempted ? Math.round((correct / attempted) * 100) : 0 };
+    }
+    function dotClass(s) {
+      if (!s.done) return "";
+      if (s.acc >= 0.85) return "g";
+      if (s.acc >= 0.6) return "a";
+      return "r";
+    }
+
+    /* ---------------- spaced repetition ---------------- */
+    function scheduleReview(skillId) {
+      const ps = practiceStats(skillId);
+      if (!ps.total || !ps.complete) return;       // schedule only when practice set is complete
+      const r = DB.review[skillId] || { stage: 0 };
+      r.stage = ps.acc < 0.6 ? 0 : Math.min((r.stage || 0) + 1, INTERVALS.length - 1);
+      r.due = Date.now() + INTERVALS[r.stage] * 86400000;
+      r.last = Date.now();
+      r.acc = ps.acc;
+      DB.review[skillId] = r;
+      save();
+    }
+    function dueSkills() {
+      const now = Date.now();
+      return allSkills().filter(({ skill }) => {
+        const r = DB.review[skill.id];
+        return r && r.due && r.due <= now;
+      });
+    }
+    const isDue = (id) => { const r = DB.review[id]; return !!(r && r.due && r.due <= Date.now()); };
+
+    /* ---------------- re-practice / review reset ----------------
+       A review (or "Practice again") is a FRESH attempt: clear the skill's stored
+       practice answers first, then start practice. Completing it re-runs
+       scheduleReview() with the new accuracy, advancing the spaced-repetition stage. */
+    function resetSkillPractice(id) {
+      questionsFor("practiceQuestions", id).forEach((q, i) => {
+        delete DB.answers["practiceQuestions|" + id + "|" + i];
+      });
+      save();
+    }
+    function reviewSkill(id) {
+      resetSkillPractice(id);
+      startPractice(id);
+    }
+
+    /* ---------------- view + session state ---------------- */
+    const MIN_PER_Q = 3;  // unit-test (challenge) time budget: 3 minutes per question
+    let state = { view: "dashboard", skillId: null };
+    let session = null;   // { kind:'practice'|'challenge', back, skillId?, unitNo?, items:[...],
+                          //   selections?, deadline?, totalMs?, finished?, timeUp?, finishedAt?, review?, results? }
+    let qIndex = 0;
+    let showSol = false;
+    let quizStart = null;
+    let pendingIdx = null; // selected but not yet checked
+
+    function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
+    function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
+
+    function startPractice(id) {
+      const { skill } = findSkill(id);
+      const list = questionsFor("practiceQuestions", id);
+      session = { kind: "practice", skillId: id,
+        back: { type: "topic", id: id },
+        items: list.map((q, i) => ({ q: q, key: "practiceQuestions|" + id + "|" + i, skillId: id })) };
+      qIndex = firstUnanswered(session); showSol = false; pendingIdx = null; quizStart = Date.now();
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function startUnitChallenge(unitNo) {
+      const unit = COURSE_DATA.units.find((u) => u.unit === unitNo);
+      const items = [];
+      unit.skills.forEach((s) => {
+        questionsFor("hardQuestions", s.id).forEach((q, i) => {
+          const key = "hardQuestions|" + s.id + "|" + i;
+          delete DB.answers[key];   // a timed test is always a fresh attempt
+          items.push({ q: q, key: key, skillId: s.id });
+        });
+      });
+      save();
+      const totalMs = items.length * MIN_PER_Q * 60000;
+      quizStart = Date.now();
+      session = { kind: "challenge", unitNo: unitNo, back: { type: "dashboard" },
+        items: items, selections: {}, totalMs: totalMs, deadline: quizStart + totalMs,
+        finished: false, timeUp: false, review: false };
+      qIndex = 0; showSol = false; pendingIdx = null;
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function startFinalChallenge() {
+      const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+      if (!list.length) return;
+      const items = list.map((q, i) => {
+        const key = "finalChallenge|" + i;
+        delete DB.answers[key];   // a timed test is always a fresh attempt
+        return { q: q, key: key };
+      });
+      save();
+      const totalMs = items.length * MIN_PER_Q * 60000;   // 40 x 3 min = 120 minutes
+      quizStart = Date.now();
+      session = { kind: "challenge", isFinal: true, back: { type: "dashboard" },
+        items: items, selections: {}, totalMs: totalMs, deadline: quizStart + totalMs,
+        finished: false, timeUp: false, review: false };
+      qIndex = 0; showSol = false; pendingIdx = null;
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    function firstUnanswered(s) { const i = s.items.findIndex((it) => !DB.answers[it.key]); return i < 0 ? 0 : i; }
+    function leaveSession() { goHome(); }   // always return to the dashboard from a quiz
+
+    /* ---------------- timers ---------------- */
+    const pad = (n) => String(n).padStart(2, "0");
+    function fmt(ms) {
+      const s = Math.floor(ms / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = s % 60;
+      return (h ? h + ":" + pad(m) : pad(m)) + ":" + pad(ss);
+    }
+    function updateTimers() {
+      const qt = document.getElementById("quizTimer");
+      if (!qt) return;
+      // Unit test (challenge): countdown that auto-submits when it hits zero.
+      if (session && session.kind === "challenge" && !session.review && session.deadline) {
+        if (session.finished) return;
+        const remain = session.deadline - Date.now();
+        if (remain <= 0) { qt.textContent = "00:00"; finishChallenge(true); return; }
+        qt.textContent = fmt(remain);
+        const wrap = qt.closest(".timer");
+        if (wrap) wrap.classList.toggle("low", remain <= 60000);
+        return;
+      }
+      // Practice: count up.
+      if (quizStart) qt.textContent = fmt(Date.now() - quizStart);
+    }
+    setInterval(updateTimers, 1000);
+
+    /* ---------------- finish a timed unit test ---------------- */
+    function finishChallenge(timeUp) {
+      if (!session || session.kind !== "challenge" || session.finished) return;
+      session.finished = true;
+      session.timeUp = !!timeUp;
+      session.finishedAt = Date.now();
+      // Commit the answers the student selected; skipped questions stay unanswered.
+      let correct = 0, answered = 0;
+      session.items.forEach((it, i) => {
+        const sel = session.selections[i];
+        if (sel == null) return;
+        answered++;
+        const ok = sel === it.q.answer;
+        if (ok) correct++;
+        DB.answers[it.key] = { sel: sel, correct: ok, ts: Date.now() };
+      });
+      save();
+      const total = session.items.length;
+      session.results = {
+        total: total, answered: answered, correct: correct,
+        wrong: answered - correct, skipped: total - answered,
+        acc: total ? Math.round((correct / total) * 100) : 0,
+        timeUsedMs: timeUp ? session.totalMs : (session.finishedAt - quizStart)
+      };
+      state = { view: "results" }; render(); scroll0();
+    }
+
+    /* ---------------- dashboard ---------------- */
+    function renderDashboard() {
+      const g = globalStats();
+      const today = new Date().toLocaleDateString(t("locale"), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const topicsPct = Math.round((g.topics / g.totalSkills) * 100);
+
+      let html = "";
+      html += '<section class="greeting"><h1>' + t("hello") + (STUDENT ? ', ' + esc(STUDENT) : '') + ' 👋</h1>' +
+              '<p class="subtitle">' + today + ' — ' + t("prepStands") + '</p></section>';
+
+      html += '<section class="stats">' +
+        statCard(t("topicsCompleted"), g.topics, "/" + g.totalSkills, topicsPct) +
+        statCard(t("questionsAttempted"), g.attempted) +
+        statCard(t("correct"), g.correct, "", null, "correct") +
+        statCard(t("wrong"), g.wrong, "", null, "wrong") +
+        statCard(t("accuracy"), g.acc + "%", "", g.acc) +
+      '</section>';
+
+      const due = dueSkills();
+      if (due.length) {
+        html += '<section class="due"><h3>' + t("dueForReview") + ' <span class="badge">' + due.length + '</span></h3>' +
+          '<div class="due-list">' +
+          due.map(({ skill }) => '<button class="due-chip" data-due="' + skill.id + '">' +
+            esc(locTitle(skill)) + ' <span class="go">' + t("review") + '</span></button>').join("") +
+          '</div></section>';
+      }
+
+      html += '<div class="tracker-title">' + t("topicTracker") + '</div><section class="tracker">';
+      COURSE_DATA.units.forEach((u) => {
+        let complete = 0;
+        u.skills.forEach((s) => { if (practiceStats(s.id).complete) complete++; });
+        html += '<div class="unit-header"><span><span class="u-idx">' + u.unit + '</span>' + esc(locUnitName(u)) +
+          '</span><span class="u-meta">' + complete + '/' + u.skills.length + ' ' + t("topics") + '</span></div>';
+        // skill rows (practice progress)
+        u.skills.forEach((s) => {
+          const st = practiceStats(s.id);
+          const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
+          html += '<button class="trow" data-skill="' + s.id + '">' +
+            '<span class="trow-name"><span class="txt">' + esc(locTitle(s)) + '</span>' +
+              (isDue(s.id) ? '<span class="tag-due">Due</span>' : '') + '</span>' +
+            '<span class="pbar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
+            '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
+            '<span class="trow-acc"><span class="dot ' + dotClass(st) + '"></span>' +
+              (st.done ? Math.round(st.acc * 100) + '%' : '—') + '</span>' +
+          '</button>';
+        });
+        // unit challenge row (end of unit)
+        const cs = unitChallengeStats(u);
+        const cpct = cs.total ? Math.round((cs.done / cs.total) * 100) : 0;
+        html += '<button class="trow challenge-row" data-unit="' + u.unit + '">' +
+          '<span class="trow-name"><span class="bolt">⚡</span><span class="txt">' + t("unitChallenge") + '</span>' +
+            '<span class="ch-meta">' + cs.total + ' ' + t("hardQs") + '</span></span>' +
+          '<span class="pbar"><span class="pfill" style="width:' + cpct + '%"></span></span>' +
+          '<span class="trow-count">' + cs.done + '/' + cs.total + '</span>' +
+          '<span class="trow-acc"><span class="dot ' + dotClass(cs) + '"></span>' +
+            (cs.done ? Math.round(cs.acc * 100) + '%' : '—') + '</span>' +
+        '</button>';
+      });
+      // Final challenge — the full mock exam, the last test before exam day (after the last unit)
+      const fc = COURSE_DATA.finalChallenge;
+      if (fc && fc.questions && fc.questions.length) {
+        const fs = finalChallengeStats();
+        const fpct = fs.total ? Math.round((fs.done / fs.total) * 100) : 0;
+        const fmeta = (LANG === "ru" && fc.subtitleRu) ? fc.subtitleRu : (fc.subtitle || "");
+        html += '<button class="trow final-row" data-final="1">' +
+          '<span class="trow-name"><span class="bolt">🏁</span><span class="txt">' + t("finalChallenge") + '</span>' +
+            '<span class="ch-meta">' + esc(fmeta) + '</span></span>' +
+          '<span class="pbar"><span class="pfill" style="width:' + fpct + '%"></span></span>' +
+          '<span class="trow-count">' + fs.done + '/' + fs.total + '</span>' +
+          '<span class="trow-acc"><span class="dot ' + dotClass(fs) + '"></span>' +
+            (fs.done ? Math.round(fs.acc * 100) + '%' : '—') + '</span>' +
+        '</button>';
+      }
+      html += '</section>';
+
+      html += '<div class="dash-foot"><button class="reset-link" id="resetBtn">' + t("resetAll") + '</button></div>';
+
+      app.innerHTML = html;
+
+      app.querySelectorAll(".trow[data-skill]").forEach((b) => b.addEventListener("click", () => openSkill(b.dataset.skill)));
+      app.querySelectorAll(".trow[data-unit]").forEach((b) => b.addEventListener("click", () => startUnitChallenge(+b.dataset.unit)));
+      app.querySelectorAll(".trow[data-final]").forEach((b) => b.addEventListener("click", () => { if (confirm(t("finalConfirm"))) startFinalChallenge(); }));
+      app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => reviewSkill(b.dataset.due)));
+      const reset = document.getElementById("resetBtn");
+      if (reset) reset.addEventListener("click", () => {
+        if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {} }; save(); render(); }
+      });
+    }
+
+    function statCard(label, val, sub, pct, cls) {
+      return '<div class="stat ' + (cls || "") + '">' +
+        '<div class="stat-label">' + label + '</div>' +
+        '<div class="stat-val">' + val + (sub ? '<span class="stat-sub">' + sub + '</span>' : '') + '</div>' +
+        (pct != null ? '<div class="mini-bar"><div class="mini-fill" style="width:' + pct + '%"></div></div>' : '') +
+      '</div>';
+    }
+
+    /* ---------------- topic / skill screen (no tabs) ---------------- */
+    function renderTopic() {
+      const { unit, skill } = findSkill(state.skillId);
+      app.innerHTML =
+        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<div class="topic-head"><span class="unit-tag">' + t("unit") + ' ' + unit.unit + ' · ' + esc(locUnitName(unit)) + '</span>' +
+        '<h2>' + esc(locTitle(skill)) + '</h2></div>' +
+        '<div id="learn"></div>';
+      document.getElementById("backBtn").addEventListener("click", goHome);
+
+      const tc = document.getElementById("learn");
+      const wrap = el("div", "reading");
+
+      const exp = el("div", "card");
+      const eh = el("h3"); eh.textContent = t("explanation");
+      const ep = el("div", "prose");
+      const explanation = locExplanation(skill);
+      if (PLACEHOLDER.test((explanation || "").trim())) ep.classList.add("placeholder");
+      ep.innerHTML = explanation || "<p>—</p>";
+      exp.append(eh, ep);
+
+      const rev = el("div", "card");
+      const rh = el("h3"); rh.textContent = t("quickReview");
+      const rp = el("div", "prose");
+      const review = locReview(skill);
+      if (/\[Key point 1\]/.test(review || "")) rp.classList.add("placeholder");
+      rp.innerHTML = review || "<ul><li>—</li></ul>";
+      rev.append(rh, rp);
+
+      const row = el("div", "start-row");
+      const nQ = questionsFor("practiceQuestions", skill.id).length;
+      const ps = practiceStats(skill.id);
+      const bp = el("button", "btn-primary");
+      if (ps.complete) {
+        // Skill already finished: primary action re-practises fresh, ghost lets you review past answers.
+        bp.textContent = t("practiceAgain");
+        bp.addEventListener("click", () => { if (confirm(t("resetSkillConfirm"))) reviewSkill(skill.id); });
+        const rev = el("button", "btn-ghost");
+        rev.textContent = t("reviewAnswers");
+        rev.addEventListener("click", () => startPractice(skill.id));
+        row.append(bp, rev);
+      } else {
+        bp.textContent = t("startPractice") + " (" + nQ + ")";
+        if (nQ === 0) bp.disabled = true;
+        bp.addEventListener("click", () => { if (nQ) startPractice(skill.id); });
+        row.append(bp);
+      }
+
+      wrap.append(exp, rev, row);
+      tc.appendChild(wrap);
+      typeset(wrap);
+    }
+
+    /* ---------------- Bluebook quiz runner ---------------- */
+    function renderQuiz() {
+      if (!session || !session.items.length) { leaveSession(); return; }  // nothing to show — bail safely
+      let title;
+      if (session.kind === "practice") {
+        title = t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
+      } else if (session.isFinal) {
+        title = finalChallengeTitle();
+      } else {
+        const u = COURSE_DATA.units.find((x) => x.unit === session.unitNo);
+        title = challengeTitle(u.unit, locUnitName(u));
+      }
+      const inTest = session.kind === "challenge" && !session.review;  // taking a timed unit test
+      const showCheck = session.kind === "practice";                   // no Check in unit tests
+      const showExplain = session.kind === "practice" || session.review;
+      const showTimer = session.kind === "practice" || inTest;         // hidden while reviewing a test
+
+      let actions = '<button class="btn-ghost" id="prevBtn">' + t("previous") + '</button>';
+      if (showExplain) actions += '<button class="btn-ghost" id="explainBtn">' + t("explanation") + '</button>';
+      if (showCheck) actions += '<button class="btn-primary" id="checkBtn" disabled>' + t("check") + '</button>';
+      actions += '<button class="btn-ghost" id="nextBtn">' + t("next") + '</button>';
+
+      app.innerHTML =
+        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<div class="runner">' +
+          '<div class="runner-top"><div class="runner-title">' + esc(title) + '</div>' +
+            (showTimer ? '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div>' : '') +
+          '</div>' +
+          '<div id="stage" class="stage"></div>' +
+          '<div class="runner-bar"><div class="count" id="qCount"></div>' +
+            '<div class="bar-actions">' + actions + '</div></div>' +
+        '</div>';
+
+      document.getElementById("backBtn").addEventListener("click", () => {
+        if (session.kind === "challenge" && !session.review && !session.finished) {
+          if (!confirm(t("leaveTestConfirm"))) return;
+        }
+        leaveSession();
+      });
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (qIndex > 0) { qIndex--; showSol = false; pendingIdx = null; renderStage(); }
+      });
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        if (qIndex >= session.items.length - 1) {
+          if (inTest) finishChallenge(false);
+          else if (session.kind === "challenge" && session.review) { state = { view: "results" }; render(); scroll0(); }
+          else leaveSession();
+        } else { qIndex++; showSol = false; pendingIdx = null; renderStage(); }
+      });
+      const explainBtn = document.getElementById("explainBtn");
+      if (explainBtn) explainBtn.addEventListener("click", () => {
+        if (!DB.answers[session.items[qIndex].key]) return;
+        showSol = !showSol; renderStage();
+      });
+      const checkBtn0 = document.getElementById("checkBtn");
+      if (checkBtn0) checkBtn0.addEventListener("click", () => {
+        if (pendingIdx === null || DB.answers[session.items[qIndex].key]) return;
+        const idx = pendingIdx;
+        pendingIdx = null;
+        answer(idx);
+      });
+
+      renderStage();
+    }
+
+    function answer(idx) {
+      const it = session.items[qIndex];
+      if (DB.answers[it.key]) return;
+      DB.answers[it.key] = { sel: idx, correct: idx === it.q.answer, ts: Date.now() };
+      save();
+      if (session.kind === "practice") scheduleReview(session.skillId);
+      renderStage();
+    }
+
+    function renderStage() {
+      const it = session.items[qIndex];
+      const q = it.q;
+      const a = DB.answers[it.key];
+      const parts = it.key.split("|");          // [bank, skillId, index]
+      const rq = ruQuestion(parts[0], parts[1], +parts[2]);
+      const qText = pick(q.q, rq && rq.q);
+      const qOpts = q.options.map((opt, i) => pick(opt, rq && rq.options && rq.options[i]));
+      const qSol = pick(q.solution, rq && rq.solution);
+      const stage = document.getElementById("stage");
+      stage.innerHTML = "";
+
+      const qt = el("div", "q-big"); qt.textContent = qText; stage.appendChild(qt);
+
+      const inTest = session.kind === "challenge" && !session.review;  // timed test: no feedback yet
+      const choices = el("div", "choices");
+      q.options.forEach((opt, idx) => {
+        const b = el("button", "choice");
+        const L = el("span", "ch-letter"); L.textContent = LABELS[idx];
+        const T = el("span", "ch-text"); T.textContent = qOpts[idx];
+        b.append(L, T);
+        if (inTest) {
+          // Timed unit test — record selection only, reveal nothing until the test ends.
+          if (idx === session.selections[qIndex]) b.classList.add("chosen");
+          b.addEventListener("click", () => {
+            document.querySelectorAll("#stage .choice").forEach(c => c.classList.remove("chosen"));
+            b.classList.add("chosen");
+            session.selections[qIndex] = idx;
+          });
+        } else if (a) {
+          b.disabled = true;
+          if (idx === q.answer) b.classList.add("correct");
+          else if (idx === a.sel) b.classList.add("wrong");
+          if (idx === a.sel) b.classList.add("chosen");
+        } else {
+          if (idx === pendingIdx) b.classList.add("chosen");
+          b.addEventListener("click", () => {
+            document.querySelectorAll("#stage .choice").forEach(c => c.classList.remove("chosen"));
+            b.classList.add("chosen");
+            pendingIdx = idx;
+            const cb = document.getElementById("checkBtn");
+            if (cb) cb.disabled = false;
+          });
+        }
+        choices.appendChild(b);
+      });
+      stage.appendChild(choices);
+
+      if (a && showSol) {
+        const ex = el("div", "explain");
+        const v = el("div", "explain-verdict " + (a.correct ? "ok" : "bad"));
+        v.textContent = a.correct ? t("verdictOk") : t("verdictBad");
+        const sl = el("div", "explain-label"); sl.textContent = t("workedSolution");
+        const sb = el("div", "explain-body"); sb.textContent = qSol || "—";
+        ex.append(v, sl, sb);
+        stage.appendChild(ex);
+      }
+
+      document.getElementById("qCount").textContent = (qIndex + 1) + " " + t("of") + " " + session.items.length;
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const exBtn = document.getElementById("explainBtn");
+      const checkBtn = document.getElementById("checkBtn");
+      prevBtn.disabled = qIndex === 0;
+      nextBtn.textContent = qIndex === session.items.length - 1 ? t("finish") : t("next");
+      if (exBtn) { exBtn.disabled = !a; exBtn.classList.toggle("active", !!(a && showSol)); }
+      if (checkBtn) { checkBtn.disabled = !!a || pendingIdx === null; checkBtn.style.display = a ? "none" : ""; }
+
+      typeset(stage);
+    }
+
+    /* ---------------- test results screen ---------------- */
+    function renderResults() {
+      if (!session || !session.results) { goHome(); return; }
+      const u = session.isFinal ? null : COURSE_DATA.units.find((x) => x.unit === session.unitNo);
+      const subTitle = session.isFinal ? finalChallengeTitle() : challengeTitle(u.unit, locUnitName(u));
+      const r = session.results;
+      app.innerHTML =
+        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<div class="results">' +
+          '<h2>' + t("testResults") + '</h2>' +
+          '<div class="res-sub">' + esc(subTitle) + '</div>' +
+          (session.timeUp ? '<div class="res-banner">⏱ ' + t("timeUpMsg") + '</div>' : '') +
+          '<div class="res-score"><span class="big">' + r.correct + ' / ' + r.total + '</span>' +
+            '<span class="pct">' + r.acc + '% ' + t("accuracy") + '</span></div>' +
+          '<div class="res-grid">' +
+            resCell(t("correct"), r.correct, "correct") +
+            resCell(t("wrong"), r.wrong, "wrong") +
+            resCell(t("skipped"), r.skipped) +
+            resCell(t("timeUsed"), fmt(r.timeUsedMs)) +
+          '</div>' +
+          '<div class="res-actions">' +
+            '<button class="btn-primary" id="reviewBtn">' + t("reviewAnswers") + '</button>' +
+            '<button class="btn-ghost" id="dashBtn">' + t("backToDash") + '</button>' +
+          '</div>' +
+        '</div>';
+      document.getElementById("backBtn").addEventListener("click", goHome);
+      document.getElementById("dashBtn").addEventListener("click", goHome);
+      document.getElementById("reviewBtn").addEventListener("click", () => {
+        session.review = true; qIndex = 0; showSol = false; pendingIdx = null;
+        state = { view: "quiz" }; render(); scroll0();
+      });
+    }
+    function resCell(label, val, cls) {
+      return '<div class="res-cell ' + (cls || "") + '"><div class="l">' + label +
+        '</div><div class="v">' + val + '</div></div>';
+    }
+
+    /* ---------------- router ---------------- */
+    function render() {
+      if (state.view === "dashboard") renderDashboard();
+      else if (state.view === "topic") renderTopic();
+      else if (state.view === "results") renderResults();
+      else renderQuiz();
+      updateTimers();
+    }
+
+    document.getElementById("homeBtn").addEventListener("click", goHome);
+
+    /* ---------------- language switcher wiring ---------------- */
+    const langBtn = document.getElementById("langBtn");
+    const langMenu = document.getElementById("langMenu");
+    function toggleLangMenu(open) {
+      const show = open != null ? open : langMenu.hidden;
+      langMenu.hidden = !show;
+      langBtn.setAttribute("aria-expanded", String(show));
+    }
+    langBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleLangMenu(); });
+    const themeBtn = document.getElementById("themeBtn");
+    if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
+    document.querySelectorAll(".lang-opt").forEach((o) =>
+      o.addEventListener("click", () => { toggleLangMenu(false); setLang(o.dataset.lang); }));
+    document.addEventListener("click", (e) => {
+      if (!langMenu.hidden && !e.target.closest(".lang-wrap")) toggleLangMenu(false);
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleLangMenu(false); });
+
+    document.documentElement.lang = LANG;
+    updateLangUI();
+    applyTheme();
+    render();
+    cloud.init();
+  })();
+  </script>
+</body>
+</html>

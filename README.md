@@ -5,8 +5,14 @@ New Uzbekistan University (NewUU) entrance exam. Dashboard-first, with per-skill
 progress tracking, practice and challenge questions, worked solutions, and
 spaced-repetition review — all saved locally in the browser.
 
+The site has two parts: a lightweight public **landing page** (`index.html`) that's
+the shareable front door, and the **study app** (`app.html`) behind the "Open app"
+button.
+
 ## Features
 
+- **Landing page** — fast, dependency-free front door with an interactive sample
+  question, feature overview, and topic list. Links into the app.
 - **Dashboard** — greeting, live stat cards (topics completed, questions attempted,
   correct, wrong, accuracy), and a unit-grouped **topic tracker** with progress bars
   and accuracy dots.
@@ -31,12 +37,12 @@ spaced-repetition review — all saved locally in the browser.
 
 ## Running it
 
-It's a static site — no build step. Either open `index.html` directly, or serve the
-folder (so the relative `course-data.js` load works cleanly):
+It's a static site — no build step. Serve the folder (so the relative `course-data.js`
+load works cleanly) and open the landing page:
 
 ```bash
 python3 -m http.server 8000
-# then visit http://localhost:8000
+# then visit http://localhost:8000  (landing → "Open app" goes to /app.html)
 ```
 
 ## Cloud sync (optional)
@@ -52,14 +58,16 @@ to set up. To let students sign in and sync progress across devices, plug in a f
 
 Reload the app and a **Sign in** button appears in the header. Sign-in is passwordless
 (magic link by email). On login the app merges local and cloud progress (most recent
-answer per question wins) and keeps them in sync from then on. Leave the config empty
-to stay local-only. The anon key is safe to ship in a static site — RLS ensures each
-user can only read/write their own row.
+answer per question wins) and keeps them in sync from then on, and the dashboard greets
+you by your account name. Leave the config empty to stay local-only. The anon key is
+safe to ship in a static site — RLS ensures each user can only read/write their own row.
 
 ## Structure
 
-- `index.html` — the whole app (UI, styling, and logic), including the auth + sync layer.
+- `index.html` — the public landing page (self-contained: own styling + sample-question demo).
+- `app.html` — the study app (UI, styling, and logic), including the auth + sync layer.
 - `course-data.js` — all course content: explanations, reviews, and questions.
+- `course-data-ru.js` — Russian translations (optional, per-field fallback to English).
 - `supabase-config.js` — your Supabase URL + anon key (empty = local-only).
 - `scripts/supabase-schema.sql` — one-time database setup for cloud sync.
 
