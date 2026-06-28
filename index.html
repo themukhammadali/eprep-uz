@@ -131,6 +131,43 @@
     width: 36px; height: 33px; cursor: pointer; font-size: 15px; line-height: 1; }
   .theme-btn:hover { border-color: var(--muted); }
 
+  /* ---------- Auth (account button, menu, modal) ---------- */
+  .auth-wrap { position: relative; }
+  .auth-wrap[hidden] { display: none; }
+  .auth-btn .auth-avatar { display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 999px; background: var(--blue); color: #fff;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; }
+  .auth-btn .auth-avatar[hidden] { display: none; }
+  .auth-menu { min-width: 220px; }
+  .auth-menu[hidden] { display: none; }
+  .auth-email { padding: 8px 12px 2px; font-size: 13px; font-weight: 650; color: var(--ink);
+    word-break: break-all; }
+  .auth-status { padding: 0 12px 8px; font-size: 12px; color: var(--muted);
+    border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+
+  .auth-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center;
+    justify-content: center; padding: 20px; background: rgba(0,0,0,.45); }
+  .auth-modal[hidden] { display: none; }
+  .auth-card { position: relative; width: 100%; max-width: 380px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px 24px;
+    box-shadow: 0 20px 60px var(--shadow); }
+  .auth-close { position: absolute; top: 10px; right: 12px; background: none; border: none;
+    font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; }
+  .auth-card h2 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
+  .auth-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 16px; line-height: 1.5; }
+  .auth-card form { display: flex; flex-direction: column; gap: 10px; }
+  .auth-card input { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px;
+    font-size: 15px; color: var(--ink); background: var(--surface-2); }
+  .auth-card input:focus { outline: none; border-color: var(--blue); }
+  .auth-submit { background: var(--blue); color: #fff; border: none; border-radius: 10px;
+    padding: 11px 13px; font-size: 15px; font-weight: 650; cursor: pointer; }
+  .auth-submit:hover { filter: brightness(.96); }
+  .auth-submit:disabled { opacity: .6; cursor: default; }
+  .auth-msg { margin-top: 12px; font-size: 13.5px; line-height: 1.5; }
+  .auth-msg[hidden] { display: none; }
+  .auth-msg.ok { color: var(--green); }
+  .auth-msg.err { color: var(--red); }
+
   #app { max-width: 1000px; margin: 0 auto; padding: 28px 24px 90px; }
 
   /* ---------- Dashboard ---------- */
@@ -291,6 +328,17 @@
   <header class="appbar">
     <button class="brand" id="homeBtn"><span class="logo">N</span><span class="brand-name">NewUU Prep</span></button>
     <div class="appbar-actions">
+      <div class="auth-wrap" id="authWrap" hidden>
+        <button class="lang-btn auth-btn" id="authBtn" aria-haspopup="true" aria-expanded="false">
+          <span class="auth-avatar" id="authAvatar" hidden></span>
+          <span id="authLabel">Sign in</span>
+        </button>
+        <div class="lang-menu auth-menu" id="authMenu" role="menu" hidden>
+          <div class="auth-email" id="authEmail"></div>
+          <div class="auth-status" id="authStatus"></div>
+          <button class="lang-opt" role="menuitem" id="signOutBtn">Sign out</button>
+        </div>
+      </div>
       <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">🌙</button>
       <div class="lang-wrap">
         <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
@@ -304,12 +352,29 @@
     </div>
   </header>
 
+  <div class="auth-modal" id="authModal" hidden>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
+      <h2 id="authTitle">Sign in to sync your progress</h2>
+      <p class="auth-sub">Save your answers, accuracy and review schedule across every device. We email you a one-time link — no password to remember.</p>
+      <form id="authForm">
+        <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
+        <button type="submit" class="auth-submit" id="authSubmitBtn">Send magic link</button>
+      </form>
+      <p class="auth-msg" id="authMsg" hidden></p>
+    </div>
+  </div>
+
   <main id="app"></main>
 
   <!-- Course data (untouched) -->
   <script src="course-data.js"></script>
   <!-- Russian translations of titles / explanations / reviews / questions (optional; falls back to English per-field) -->
   <script src="course-data-ru.js"></script>
+
+  <!-- Optional cloud accounts + cross-device sync (Supabase). Falls back to local-only if unconfigured. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 
   <script>
   (function () {
@@ -462,7 +527,150 @@
       const raw = JSON.parse(localStorage.getItem(STORE));
       if (raw && typeof raw === "object") DB = { answers: raw.answers || {}, review: raw.review || {} };
     } catch (e) {}
-    const save = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
+    const saveLocal = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
+    // save() persists locally always, and (when signed in) pushes to the cloud on a debounce.
+    const save = () => { saveLocal(); cloud.schedulePush(); };
+
+    /* ---------------- cloud accounts + sync (Supabase) ---------------- */
+    // Self-contained: if Supabase isn't configured/loaded, every method no-ops and
+    // the app behaves exactly as the local-only version. Access is restricted per-user
+    // by Row-Level Security (see scripts/supabase-schema.sql); the anon key is public.
+    const cloud = (function () {
+      const cfg = window.SUPABASE_CONFIG || {};
+      const ready = !!(cfg.url && cfg.anonKey && window.supabase);
+      const client = ready ? window.supabase.createClient(cfg.url, cfg.anonKey) : null;
+      let user = null;
+      let pushTimer = null;
+
+      // ---- merge: combine two { answers, review } blobs without losing progress.
+      // Answers are keyed per question and carry `ts`; reviews per skill carry `last`.
+      // For each key we keep the most recently written entry (last-write-wins per key).
+      function mergeBy(a, b, stampKey) {
+        const out = {}, keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+        keys.forEach((k) => {
+          const x = a && a[k], y = b && b[k];
+          if (!x) { out[k] = y; return; }
+          if (!y) { out[k] = x; return; }
+          out[k] = (Number(y[stampKey]) || 0) >= (Number(x[stampKey]) || 0) ? y : x;
+        });
+        return out;
+      }
+      function merge(local, remote) {
+        return {
+          answers: mergeBy(local.answers, remote.answers, "ts"),
+          review: mergeBy(local.review, remote.review, "last"),
+        };
+      }
+
+      // ---- UI helpers
+      const $ = (id) => document.getElementById(id);
+      function setStatus(text) { const el = $("authStatus"); if (el) el.textContent = text; }
+      function renderAuthUI() {
+        const wrap = $("authWrap"); if (!wrap) return;
+        wrap.hidden = false;
+        const label = $("authLabel"), avatar = $("authAvatar");
+        if (user) {
+          const email = user.email || "";
+          label.textContent = email.split("@")[0] || "Account";
+          avatar.hidden = false;
+          avatar.textContent = (email[0] || "?");
+          $("authEmail").textContent = email;
+          $("signOutBtn").hidden = false;
+        } else {
+          label.textContent = "Sign in";
+          avatar.hidden = true;
+          $("authEmail").textContent = "";
+          setStatus("");
+          $("signOutBtn").hidden = true;
+        }
+      }
+
+      // ---- sync
+      async function pull() {
+        if (!client || !user) return;
+        setStatus("Syncing…");
+        const { data, error } = await client.from("progress").select("data").eq("user_id", user.id).maybeSingle();
+        if (error) { setStatus("Sync error"); return; }
+        const remote = (data && data.data) || { answers: {}, review: {} };
+        DB = merge(DB, remote);
+        saveLocal();
+        await push();           // write the merged result straight back up
+        if (typeof render === "function") render();
+        setStatus("Synced ✓");
+      }
+      async function push() {
+        if (!client || !user) return;
+        const { error } = await client.from("progress")
+          .upsert({ user_id: user.id, data: DB, updated_at: new Date().toISOString() });
+        setStatus(error ? "Sync error" : "Synced ✓");
+      }
+      function schedulePush() {
+        if (!client || !user) return;
+        setStatus("Saving…");
+        clearTimeout(pushTimer);
+        pushTimer = setTimeout(push, 1200);
+      }
+
+      // ---- auth actions
+      async function sendMagicLink(email) {
+        return client.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+      }
+      async function signOut() { if (client) await client.auth.signOut(); }
+
+      // ---- boot
+      function init() {
+        if (!ready) return;   // leave the account button hidden; local-only mode
+        renderAuthUI();
+        wireUI();
+        client.auth.getSession().then(({ data }) => onAuth(data.session));
+        client.auth.onAuthStateChange((_e, session) => onAuth(session));
+      }
+      function onAuth(session) {
+        const next = session ? session.user : null;
+        const changed = (next && next.id) !== (user && user.id);
+        user = next;
+        renderAuthUI();
+        if (user && changed) pull();
+      }
+
+      function wireUI() {
+        const btn = $("authBtn"), menu = $("authMenu");
+        const modal = $("authModal"), form = $("authForm"), msg = $("authMsg");
+        function toggleMenu(open) {
+          const show = open != null ? open : menu.hidden;
+          menu.hidden = !show; btn.setAttribute("aria-expanded", String(show));
+        }
+        function openModal() { modal.hidden = false; setTimeout(() => $("authEmailInput").focus(), 30); }
+        function closeModal() { modal.hidden = true; msg.hidden = true; }
+
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (user) toggleMenu(); else openModal();
+        });
+        document.addEventListener("click", (e) => {
+          if (!menu.hidden && !e.target.closest(".auth-wrap")) toggleMenu(false);
+        });
+        $("authCloseBtn").addEventListener("click", closeModal);
+        modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape") { toggleMenu(false); closeModal(); } });
+        $("signOutBtn").addEventListener("click", () => { toggleMenu(false); signOut(); });
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = $("authEmailInput").value.trim();
+          if (!email) return;
+          const submit = $("authSubmitBtn");
+          submit.disabled = true; submit.textContent = "Sending…";
+          const { error } = await sendMagicLink(email);
+          submit.disabled = false; submit.textContent = "Send magic link";
+          msg.hidden = false;
+          if (error) { msg.className = "auth-msg err"; msg.textContent = error.message || "Could not send the link. Try again."; }
+          else { msg.className = "auth-msg ok"; msg.textContent = "Check your inbox for the sign-in link."; }
+        });
+      }
+
+      return { init, schedulePush };
+    })();
 
     /* ---------------- data access ---------------- */
     function questionsFor(bank, skillId) {
@@ -1053,6 +1261,7 @@
     updateLangUI();
     applyTheme();
     render();
+    cloud.init();
   })();
   </script>
 </body>
