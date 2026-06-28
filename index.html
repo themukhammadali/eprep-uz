@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NewUU Prep — Free Maths Practice for the New Uzbekistan University Entrance Exam</title>
+<title>eprep.uz — Free Maths Practice for the New Uzbekistan University Entrance Exam</title>
 <meta name="description" content="Free, Bluebook-style practice for the New Uzbekistan University (NewUU) entrance maths exam. Every topic, worked solutions, timed tests, and progress that syncs across your devices." />
 
 <style>
@@ -128,6 +128,35 @@
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--ink); }
 
+  /* ---------- Auth modal ---------- */
+  .auth-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
+    padding:20px; background:rgba(0,0,0,.5); }
+  .auth-modal[hidden] { display:none; }
+  .auth-card { position:relative; width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:26px 24px 22px; box-shadow:0 20px 60px var(--shadow); }
+  .auth-close { position:absolute; top:10px; right:12px; background:none; border:none; font-size:22px; line-height:1;
+    color:var(--muted); }
+  .auth-close:hover { color:var(--ink); }
+  .auth-card h2 { font-size:21px; font-weight:750; letter-spacing:-.4px; }
+  .auth-tabs { display:flex; gap:4px; background:var(--surface-3); border:1px solid var(--line); border-radius:10px;
+    padding:4px; margin:16px 0 14px; }
+  .auth-tab { flex:1; border:none; background:none; padding:8px 10px; border-radius:8px; font-size:14px; font-weight:650;
+    color:var(--muted); }
+  .auth-tab.is-active { background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.07); }
+  .auth-sub { color:var(--muted); font-size:14px; margin:6px 0 16px; line-height:1.5; }
+  .auth-card form { display:flex; flex-direction:column; gap:10px; }
+  .auth-card input { border:1px solid var(--line); border-radius:10px; padding:11px 13px; font-size:15px;
+    background:var(--surface); color:var(--ink); }
+  .auth-card input:focus { outline:none; border-color:var(--blue); }
+  .auth-submit { background:var(--blue); color:#fff; border:none; border-radius:10px; padding:12px; font-size:15px;
+    font-weight:650; margin-top:2px; }
+  .auth-submit:hover { filter:brightness(.96); }
+  .auth-submit:disabled { opacity:.6; cursor:default; }
+  .auth-msg { margin-top:12px; font-size:13.5px; line-height:1.5; }
+  .auth-msg[hidden] { display:none; }
+  .auth-msg.ok { color:var(--green); }
+  .auth-msg.err { color:var(--red); }
+
   @media (max-width:760px) {
     .hero h1 { font-size:34px; }
     .hero p.lede { font-size:17px; }
@@ -140,7 +169,7 @@
 </head>
 <body>
   <header class="appbar">
-    <a class="brand" href="#top" style="text-decoration:none"><span class="logo">N</span><span class="bn">NewUU Prep</span></a>
+    <a class="brand" href="#top" style="text-decoration:none"><span class="logo">e</span><span class="bn">eprep.uz</span></a>
     <div class="appbar-actions">
       <nav class="nav-links">
         <a href="#demo">Try a question</a>
@@ -148,7 +177,7 @@
         <a href="#topics">Topics</a>
       </nav>
       <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-      <a class="btn btn-primary" href="app.html">Open app</a>
+      <a class="btn btn-primary js-cta" href="app.html">Open app</a>
     </div>
   </header>
 
@@ -158,7 +187,7 @@
       <h1>Ace the NewUU <span class="accent">entrance maths</span> — for free.</h1>
       <p class="lede">Every topic on the exam, in a clean Bluebook-style practice app: timed tests, worked solutions, and progress that remembers you across devices.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="app.html">Start practicing — free</a>
+        <a class="btn btn-primary js-cta" href="app.html">Start practicing — free</a>
         <a class="btn btn-ghost" href="#demo">Try a question ↓</a>
       </div>
       <p class="trust">Made by a student who used it to prep — and it worked. <b>No paywall.</b></p>
@@ -201,7 +230,7 @@
           <div class="feat"><div class="ic">⏱️</div><h3>Bluebook-style tests</h3><p>One question at a time, lettered choices, a per-question timer, and timed unit challenges that feel like the real thing.</p></div>
           <div class="feat"><div class="ic">💡</div><h3>Worked solutions</h3><p>Every question comes with a step-by-step explanation, so you learn the method — not just the answer.</p></div>
           <div class="feat"><div class="ic">📈</div><h3>Progress that remembers</h3><p>Accuracy, completion, and spaced-repetition review dates, all tracked automatically and surfaced when a skill is due.</p></div>
-          <div class="feat"><div class="ic">☁️</div><h3>Sign in &amp; sync</h3><p>Create a free account and your progress follows you to every device. No account? It still works, saved in your browser.</p></div>
+          <div class="feat"><div class="ic">☁️</div><h3>Sign in &amp; sync</h3><p id="featSync">Create a free account and your progress follows you to every device. No account? It still works, saved in your browser.</p></div>
           <div class="feat"><div class="ic">🌗</div><h3>Yours to use</h3><p>English and Russian, light and dark mode, free and open. No subscriptions, no ads, no catch.</p></div>
         </div>
       </div>
@@ -225,15 +254,38 @@
     <section class="block cta-band">
       <div class="wrap">
         <h2>Ready to start?</h2>
-        <p class="sub">Jump straight in — no sign-up required to begin practicing.</p>
-        <a class="btn btn-primary" href="app.html">Open NewUU Prep</a>
+        <p class="sub" id="ctaSub">Jump straight in — no sign-up required to begin practicing.</p>
+        <a class="btn btn-primary js-cta" href="app.html">Open eprep.uz</a>
       </div>
     </section>
   </main>
 
+  <!-- Auth modal — shown only when a backend is configured (see supabase-config.js). -->
+  <div class="auth-modal" id="authModal" hidden>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" id="authTabSignIn" data-mode="signin" role="tab">Sign in</button>
+        <button class="auth-tab" id="authTabSignUp" data-mode="signup" role="tab">Sign up</button>
+      </div>
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="auth-sub" id="authSub">Sign in to open the app and sync your progress across every device.</p>
+      <form id="authForm">
+        <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
+        <input type="password" id="authPasswordInput" placeholder="Password (min 6 characters)" autocomplete="current-password" required minlength="6" />
+        <button type="submit" class="auth-submit" id="authSubmitBtn">Sign in</button>
+      </form>
+      <p class="auth-msg" id="authMsg" hidden></p>
+    </div>
+  </div>
+
   <footer>
-    <p>NewUU Prep — free practice for the New Uzbekistan University entrance exam. <a href="app.html">Open the app</a></p>
+    <p>eprep.uz — free practice for the New Uzbekistan University entrance exam. <a href="app.html" class="js-cta">Open the app</a></p>
   </footer>
+
+  <!-- Optional cloud accounts (Supabase). When configured, the app requires a free account. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
 
   <script>
   (function () {
@@ -258,6 +310,112 @@
       try { localStorage.setItem(THEME_STORE, theme); } catch (e) {}
       applyTheme();
     });
+
+    /* ---- accounts (Supabase) ----
+       When supabase-config.js is filled in, a free account is required: the CTAs
+       open the sign-in/up modal and the app (app.html) is gated. While it's empty,
+       the CTAs link straight to app.html and the app stays open (local-only). */
+    (function authSetup() {
+      var cfg = window.SUPABASE_CONFIG || {};
+      var ready = !!(cfg.url && cfg.anonKey && window.supabase);
+      var ctas = Array.prototype.slice.call(document.querySelectorAll(".js-cta"));
+      if (!ready) return;   // no backend → leave CTAs linking to app.html as-is
+
+      var client = window.supabase.createClient(cfg.url, cfg.anonKey);
+      var modal = document.getElementById("authModal");
+      var form = document.getElementById("authForm");
+      var msg = document.getElementById("authMsg");
+      var emailInput = document.getElementById("authEmailInput");
+      var pwInput = document.getElementById("authPasswordInput");
+      var submit = document.getElementById("authSubmitBtn");
+      var tabIn = document.getElementById("authTabSignIn");
+      var tabUp = document.getElementById("authTabSignUp");
+      var signedIn = false;
+      var mode = "signin";   // "signin" | "signup"
+
+      // Reflect the account-required reality in the marketing copy.
+      var ctaSub = document.getElementById("ctaSub");
+      if (ctaSub) ctaSub.textContent = "Create a free account to start practicing and keep your progress on every device.";
+      var featSync = document.getElementById("featSync");
+      if (featSync) featSync.textContent = "Create a free account — it's how your answers, accuracy and review schedule follow you to every device.";
+
+      function applyMode(next) {
+        mode = next;
+        var up = mode === "signup";
+        tabIn.classList.toggle("is-active", !up);
+        tabUp.classList.toggle("is-active", up);
+        document.getElementById("authTitle").textContent = up ? "Create your free account" : "Welcome back";
+        document.getElementById("authSub").textContent = up
+          ? "Sign up to open the app and save your progress across every device."
+          : "Sign in to open the app and sync your progress across every device.";
+        submit.textContent = up ? "Create account" : "Sign in";
+        pwInput.setAttribute("autocomplete", up ? "new-password" : "current-password");
+        msg.hidden = true;
+      }
+      function openModal(next) {
+        applyMode(next || "signin");
+        modal.hidden = false;
+        setTimeout(function () { emailInput.focus(); }, 30);
+      }
+      function closeModal() { modal.hidden = true; msg.hidden = true; }
+
+      // CTAs: go straight to the app if already signed in, otherwise open the modal.
+      ctas.forEach(function (a) {
+        a.addEventListener("click", function (e) {
+          if (signedIn) return;            // signed in → follow href to app.html
+          e.preventDefault();
+          openModal("signin");
+        });
+      });
+
+      tabIn.addEventListener("click", function () { applyMode("signin"); });
+      tabUp.addEventListener("click", function () { applyMode("signup"); });
+      document.getElementById("authCloseBtn").addEventListener("click", closeModal);
+      modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
+
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        var email = emailInput.value.trim();
+        var password = pwInput.value;
+        if (!email || !password) return;
+        if (password.length < 6) {
+          msg.hidden = false; msg.className = "auth-msg err";
+          msg.textContent = "Password must be at least 6 characters.";
+          return;
+        }
+        var label = mode === "signup" ? "Create account" : "Sign in";
+        submit.disabled = true; submit.textContent = mode === "signup" ? "Creating…" : "Signing in…";
+        var res = mode === "signup"
+          ? await client.auth.signUp({ email: email, password: password, options: { emailRedirectTo: window.location.href } })
+          : await client.auth.signInWithPassword({ email: email, password: password });
+        submit.disabled = false; submit.textContent = label;
+        if (res.error) {
+          msg.hidden = false; msg.className = "auth-msg err";
+          msg.textContent = res.error.message || "Something went wrong. Please try again.";
+          return;
+        }
+        // Sign-up with email confirmation returns a user but no active session.
+        if (mode === "signup" && res.data && res.data.user && !res.data.session) {
+          msg.hidden = false; msg.className = "auth-msg ok";
+          msg.textContent = "Account created. Check your inbox to confirm your email, then sign in.";
+          applyMode("signin");
+          return;
+        }
+        window.location.href = "app.html";   // signed in → into the app
+      });
+
+      // Reflect current session: if already signed in, CTAs become direct links.
+      client.auth.getSession().then(function (r) {
+        signedIn = !!(r && r.data && r.data.session);
+        if (signedIn) {
+          ctas.forEach(function (a) { if (a.classList.contains("btn")) a.textContent = "Open app"; });
+        } else if (/[?&]signin=1/.test(window.location.search)) {
+          openModal("signin");   // bounced here by the app's gate
+        }
+      });
+      client.auth.onAuthStateChange(function (_e, session) { signedIn = !!session; });
+    })();
 
     /* ---- live demo questions (a small authentic sample; full bank is in the app) ---- */
     var DEMO = [

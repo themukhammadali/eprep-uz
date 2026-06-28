@@ -1,5 +1,5 @@
 /*
- * Supabase configuration for NewUU Prep.
+ * Supabase configuration for eprep.uz.
  *
  * Fill in the two values below with your project's credentials, then reload.
  * Find them in the Supabase dashboard: Project Settings -> API.

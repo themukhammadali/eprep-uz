@@ -1,4 +1,4 @@
--- NewUU Prep — Supabase schema
+-- eprep.uz — Supabase schema
 -- Run this once in the Supabase SQL editor (Dashboard -> SQL Editor -> New query).
 --
 -- It creates a single `progress` table that stores each user's entire progress

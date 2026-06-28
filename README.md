@@ -1,4 +1,4 @@
-# NewUU Entrance Prep — Mathematics
+# eprep.uz — NewUU Entrance Prep (Mathematics)
 
 A clean, light, Bluebook-style web app for practising the mathematics topics on the
 New Uzbekistan University (NewUU) entrance exam. Dashboard-first, with per-skill
@@ -56,11 +56,11 @@ to set up. To let students sign in and sync progress across devices, plug in a f
 2. In **Project Settings → API**, copy the **Project URL** and the **anon/public** key.
 3. Paste both into `supabase-config.js`.
 
-Reload the app and a **Sign in** button appears in the header. Sign-in is passwordless
-(magic link by email). On login the app merges local and cloud progress (most recent
-answer per question wins) and keeps them in sync from then on, and the dashboard greets
-you by your account name. Leave the config empty to stay local-only. The anon key is
-safe to ship in a static site — RLS ensures each user can only read/write their own row.
+Reload the app and a **Sign in** button appears in the header. Accounts use email +
+password (Sign in / Sign up). On login the app merges local and cloud progress (most
+recent answer per question wins) and keeps them in sync from then on, and the dashboard
+greets you by your account name. Leave the config empty to stay local-only. The anon key
+is safe to ship in a static site — RLS ensures each user can only read/write their own row.
 
 ## Structure
 

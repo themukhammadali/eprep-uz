@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NewUU Entrance Prep — Mathematics</title>
+<title>eprep.uz — NewUU entrance maths practice</title>
 
 <!-- MathJax (renders \( \) inline and \[ \] display) -->
 <script>
@@ -154,6 +154,11 @@
   .auth-close { position: absolute; top: 10px; right: 12px; background: none; border: none;
     font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; }
   .auth-card h2 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
+  .auth-tabs { display: flex; gap: 4px; background: var(--surface-3); border: 1px solid var(--line);
+    border-radius: 11px; padding: 3px; margin-bottom: 16px; }
+  .auth-tab { flex: 1; border: none; background: none; padding: 8px 10px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .auth-tab.is-active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.07); }
   .auth-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 16px; line-height: 1.5; }
   .auth-card form { display: flex; flex-direction: column; gap: 10px; }
   .auth-card input { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px;
@@ -167,6 +172,14 @@
   .auth-msg[hidden] { display: none; }
   .auth-msg.ok { color: var(--green); }
   .auth-msg.err { color: var(--red); }
+
+  /* ---------- Auth gate (shown while we confirm a session; covers the app) ---------- */
+  .auth-gate { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px; background: var(--bg); color: var(--muted); }
+  .auth-gate[hidden] { display: none; }
+  .auth-gate .gate-logo { display: inline-flex; align-items: center; justify-content: center; width: 44px;
+    height: 44px; border-radius: 12px; background: var(--blue); color: #fff; font-weight: 800; font-size: 20px; }
+  html.gated body > *:not(.auth-gate) { visibility: hidden; }
 
   #app { max-width: 1000px; margin: 0 auto; padding: 28px 24px 90px; }
 
@@ -398,7 +411,7 @@
 </head>
 <body>
   <header class="appbar">
-    <button class="brand" id="homeBtn"><span class="logo">N</span><span class="brand-name">NewUU Prep</span></button>
+    <button class="brand" id="homeBtn"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
     <nav class="topnav" id="topnav">
       <button class="tab" data-view="dashboard" id="tabHome">Home</button>
       <button class="tab" data-view="learn" id="tabLearn">Learn</button>
@@ -432,17 +445,28 @@
   <div class="auth-modal" id="authModal" hidden>
     <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
       <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
-      <h2 id="authTitle">Sign in to sync your progress</h2>
-      <p class="auth-sub">Save your answers, accuracy and review schedule across every device. We email you a one-time link — no password to remember.</p>
+      <div class="auth-tabs" role="tablist">
+        <button class="auth-tab is-active" id="authTabSignIn" data-mode="signin" role="tab">Sign in</button>
+        <button class="auth-tab" id="authTabSignUp" data-mode="signup" role="tab">Sign up</button>
+      </div>
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="auth-sub" id="authSub">Sign in to sync your answers, accuracy and review schedule across every device.</p>
       <form id="authForm">
         <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
-        <button type="submit" class="auth-submit" id="authSubmitBtn">Send magic link</button>
+        <input type="password" id="authPasswordInput" placeholder="Password (min 6 characters)" autocomplete="current-password" required minlength="6" />
+        <button type="submit" class="auth-submit" id="authSubmitBtn">Sign in</button>
       </form>
       <p class="auth-msg" id="authMsg" hidden></p>
     </div>
   </div>
 
   <main id="app"></main>
+
+  <!-- Auth gate overlay: covers the app until a session is confirmed (only when a backend is configured). -->
+  <div class="auth-gate" id="authGate" hidden>
+    <span class="gate-logo">i</span>
+    <p>Checking your session…</p>
+  </div>
 
   <!-- Course data (untouched) -->
   <script src="course-data.js"></script>
@@ -452,6 +476,27 @@
   <!-- Optional cloud accounts + cross-device sync (Supabase). Falls back to local-only if unconfigured. -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
+
+  <!-- Auth gate: when a backend is configured, app.html requires a signed-in session.
+       With no backend configured it stays open (local-only) so no one is locked out
+       before accounts are live. The client is reused by the sync module below. -->
+  <script>
+  (function () {
+    var cfg = window.SUPABASE_CONFIG || {};
+    var ready = !!(cfg.url && cfg.anonKey && window.supabase);
+    if (!ready) return;                       // no backend → open access, no gate
+    var gate = document.getElementById("authGate");
+    document.documentElement.classList.add("gated");
+    if (gate) gate.hidden = false;
+    var client = window.supabase.createClient(cfg.url, cfg.anonKey);
+    window.__supabaseClient = client;         // reused by the sync module
+    function open() { document.documentElement.classList.remove("gated"); if (gate) gate.hidden = true; }
+    client.auth.getSession().then(function (r) {
+      if (r && r.data && r.data.session) open();
+      else window.location.replace("index.html?signin=1");
+    }).catch(open);                           // backend error → fail open, don't trap the user
+  })();
+  </script>
 
   <script>
   (function () {
@@ -633,7 +678,7 @@
     const cloud = (function () {
       const cfg = window.SUPABASE_CONFIG || {};
       const ready = !!(cfg.url && cfg.anonKey && window.supabase);
-      const client = ready ? window.supabase.createClient(cfg.url, cfg.anonKey) : null;
+      const client = ready ? (window.__supabaseClient || window.supabase.createClient(cfg.url, cfg.anonKey)) : null;
       let user = null;
       let pushTimer = null;
 
@@ -707,16 +752,23 @@
       }
 
       // ---- auth actions
-      async function sendMagicLink(email) {
-        return client.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+      async function signInWithPassword(email, password) {
+        return client.auth.signInWithPassword({ email, password });
       }
-      async function signOut() { if (client) await client.auth.signOut(); }
+      async function signUpWithPassword(email, password) {
+        return client.auth.signUp({ email, password, options: { emailRedirectTo: window.location.href } });
+      }
+      async function signOut() {
+        if (client) await client.auth.signOut();
+        // When the backend gates the app, a signed-out user no longer belongs here.
+        if (ready) window.location.replace("index.html");
+      }
 
       // ---- boot
       function init() {
-        if (!ready) return;   // leave the account button hidden; local-only mode
-        renderAuthUI();
+        renderAuthUI();        // show the Sign in button even before a backend is wired
         wireUI();
+        if (!ready) return;    // no backend yet — button & modal show, but sign-in is inert
         client.auth.getSession().then(({ data }) => onAuth(data.session));
         client.auth.onAuthStateChange((_e, session) => onAuth(session));
       }
@@ -741,12 +793,32 @@
       function wireUI() {
         const btn = $("authBtn"), menu = $("authMenu");
         const modal = $("authModal"), form = $("authForm"), msg = $("authMsg");
+        const pwInput = $("authPasswordInput"), submit = $("authSubmitBtn");
+        const tabIn = $("authTabSignIn"), tabUp = $("authTabSignUp");
+        let mode = "signin";   // "signin" | "signup"
+
+        function applyMode(next) {
+          mode = next;
+          const signup = mode === "signup";
+          tabIn.classList.toggle("is-active", !signup);
+          tabUp.classList.toggle("is-active", signup);
+          $("authTitle").textContent = signup ? "Create your account" : "Welcome back";
+          $("authSub").textContent = signup
+            ? "Sign up to save your answers, accuracy and review schedule across every device."
+            : "Sign in to sync your answers, accuracy and review schedule across every device.";
+          submit.textContent = signup ? "Create account" : "Sign in";
+          pwInput.setAttribute("autocomplete", signup ? "new-password" : "current-password");
+          msg.hidden = true;
+        }
         function toggleMenu(open) {
           const show = open != null ? open : menu.hidden;
           menu.hidden = !show; btn.setAttribute("aria-expanded", String(show));
         }
         function openModal() { modal.hidden = false; setTimeout(() => $("authEmailInput").focus(), 30); }
         function closeModal() { modal.hidden = true; msg.hidden = true; }
+
+        tabIn.addEventListener("click", () => applyMode("signin"));
+        tabUp.addEventListener("click", () => applyMode("signup"));
 
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -763,14 +835,38 @@
         form.addEventListener("submit", async (e) => {
           e.preventDefault();
           const email = $("authEmailInput").value.trim();
-          if (!email) return;
-          const submit = $("authSubmitBtn");
-          submit.disabled = true; submit.textContent = "Sending…";
-          const { error } = await sendMagicLink(email);
-          submit.disabled = false; submit.textContent = "Send magic link";
-          msg.hidden = false;
-          if (error) { msg.className = "auth-msg err"; msg.textContent = error.message || "Could not send the link. Try again."; }
-          else { msg.className = "auth-msg ok"; msg.textContent = "Check your inbox for the sign-in link."; }
+          const password = pwInput.value;
+          if (!email || !password) return;
+          if (!client) {   // no backend wired yet — preview only
+            msg.hidden = false; msg.className = "auth-msg ok";
+            msg.textContent = "Accounts aren't connected yet — this is a preview. Sign-in is coming soon.";
+            return;
+          }
+          if (password.length < 6) {
+            msg.hidden = false; msg.className = "auth-msg err";
+            msg.textContent = "Password must be at least 6 characters.";
+            return;
+          }
+          const label = mode === "signup" ? "Create account" : "Sign in";
+          submit.disabled = true; submit.textContent = mode === "signup" ? "Creating…" : "Signing in…";
+          const { data, error } = mode === "signup"
+            ? await signUpWithPassword(email, password)
+            : await signInWithPassword(email, password);
+          submit.disabled = false; submit.textContent = label;
+          if (error) {
+            msg.hidden = false; msg.className = "auth-msg err";
+            msg.textContent = error.message || "Something went wrong. Please try again.";
+            return;
+          }
+          // Sign-up with email confirmation enabled returns a user but no active session.
+          if (mode === "signup" && data && data.user && !data.session) {
+            msg.hidden = false; msg.className = "auth-msg ok";
+            msg.textContent = "Account created. Check your inbox to confirm your email, then sign in.";
+            return;
+          }
+          // Signed in (or sign-up auto-confirmed): onAuthStateChange closes things out.
+          pwInput.value = "";
+          closeModal();
         });
       }
 
