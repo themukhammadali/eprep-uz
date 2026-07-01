@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>eprep.uz — Free Maths Practice for the New Uzbekistan University Entrance Exam</title>
-<meta name="description" content="Free, Bluebook-style practice for the New Uzbekistan University (NewUU) entrance maths exam. Every topic, worked solutions, timed tests, and progress that syncs across your devices." />
+<title>Nava — NewUU kirish imtihoniga bepul matematika mashqlari</title>
+<meta name="description" content="Yangi O'zbekiston universiteti (NewUU) kirish matematika imtihoniga bepul, Bluebook uslubidagi mashq. Har bir mavzu, batafsil yechimlar, vaqtli sinovlar va avtomatik progress kuzatuvi." />
+
+<!-- Accounts (no-ops until supabase-config.js is filled in). -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,21 +36,29 @@
   }
   button { font-family:inherit; cursor:pointer; }
   a { color:inherit; }
+  :focus-visible { outline:2px solid var(--blue); outline-offset:2px; border-radius:4px; }
+  .icon { width:18px; height:18px; display:inline-block; flex:none; stroke:currentColor; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round; fill:none; vertical-align:-.2em; }
+  .icon-sm { width:15px; height:15px; }
+  .icon-xs { width:13px; height:13px; }
 
   /* ---------- App bar ---------- */
   .appbar { display:flex; align-items:center; justify-content:space-between;
-    padding:14px 24px; border-bottom:1px solid var(--line); position:sticky; top:0;
+    padding:16px 28px; border-bottom:1px solid var(--line); position:sticky; top:0;
     background:var(--bg); z-index:30; }
   .brand { display:flex; align-items:center; gap:10px; background:none; border:none; font-size:18px; font-weight:700; color:var(--ink); }
   .logo { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
     border-radius:9px; background:var(--blue); color:#fff; font-weight:800; }
-  .appbar-actions { display:flex; align-items:center; gap:10px; }
+  .appbar-actions { display:flex; align-items:center; gap:12px; }
   .nav-links { display:flex; gap:6px; margin-right:6px; }
   .nav-links a { padding:7px 12px; border-radius:999px; font-size:14px; font-weight:600; color:var(--muted); text-decoration:none; }
   .nav-links a:hover { color:var(--ink); background:var(--surface-3); }
   .theme-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--surface);
     border:1px solid var(--line); border-radius:999px; width:36px; height:33px; font-size:15px; }
   .theme-btn:hover { border-color:var(--muted); }
+  .lang-btn { display:inline-flex; align-items:center; gap:6px; background:var(--surface);
+    border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:14px; font-weight:600; color:var(--ink); }
+  .lang-btn:hover { border-color:var(--muted); }
   .btn { display:inline-flex; align-items:center; gap:7px; border-radius:999px; font-weight:650;
     font-size:15px; padding:9px 18px; border:1px solid transparent; text-decoration:none; }
   .btn-primary { background:var(--blue); color:#fff; }
@@ -54,65 +66,106 @@
   .btn-ghost { background:var(--surface); color:var(--ink); border-color:var(--line); }
   .btn-ghost:hover { border-color:var(--muted); }
 
-  .wrap { max-width:1000px; margin:0 auto; padding:0 24px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 28px; }
 
   /* ---------- Hero ---------- */
-  .hero { text-align:center; padding:72px 0 40px; }
+  .hero { text-align:center; padding:88px 0 52px; }
   .pill { display:inline-block; font-size:13px; font-weight:650; color:var(--blue);
     background:var(--blue-soft); border-radius:999px; padding:5px 13px; margin-bottom:18px; }
-  .hero h1 { font-size:46px; line-height:1.1; font-weight:800; letter-spacing:-1px; max-width:780px; margin:0 auto; }
+  .hero h1 { font-size:46px; line-height:1.1; font-weight:800; letter-spacing:-1px; max-width:820px; margin:0 auto; }
   .hero h1 .accent { color:var(--blue); }
-  .hero p.lede { color:var(--muted); font-size:19px; max-width:620px; margin:18px auto 28px; }
+  .hero p.lede { color:var(--muted); font-size:19px; max-width:660px; margin:20px auto 30px; }
   .hero-cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
   .hero .btn { padding:12px 24px; font-size:16px; }
-  .trust { margin-top:22px; font-size:14px; color:var(--muted); }
+  .trust { margin-top:24px; font-size:14px; color:var(--muted); }
   .trust b { color:var(--ink); }
 
-  .statbar { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:38px; }
-  .statbar .s { border:1px solid var(--line); border-radius:var(--radius); padding:14px 22px; background:var(--surface); min-width:120px; }
+  .statbar { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:44px; }
+  .statbar .s { border:1px solid var(--line); border-radius:var(--radius); padding:16px 24px; background:var(--surface); min-width:124px; }
   .statbar .s b { display:block; font-size:26px; font-weight:800; letter-spacing:-.5px; }
   .statbar .s span { font-size:13px; color:var(--muted); }
 
   /* ---------- Section ---------- */
-  section.block { padding:54px 0; border-top:1px solid var(--line); }
+  section.block { padding:68px 0; border-top:1px solid var(--line); }
   .block h2 { font-size:30px; font-weight:750; letter-spacing:-.6px; text-align:center; }
-  .block .sub { text-align:center; color:var(--muted); margin:10px auto 32px; max-width:560px; }
+  .block .sub { text-align:center; color:var(--muted); margin:12px auto 38px; max-width:600px; }
 
-  /* ---------- Demo ---------- */
-  .demo-card { max-width:620px; margin:0 auto; border:1px solid var(--line); border-radius:var(--radius);
-    background:var(--surface); box-shadow:0 10px 30px var(--shadow); overflow:hidden; }
-  .demo-top { display:flex; align-items:center; justify-content:space-between; padding:13px 18px;
-    border-bottom:1px solid var(--line); background:var(--surface-2); font-size:13px; color:var(--muted); }
-  .demo-tag { font-weight:650; color:var(--blue); background:var(--blue-soft); border-radius:999px; padding:3px 11px; }
-  .demo-body { padding:22px 20px; }
-  .demo-q { font-size:19px; font-weight:600; margin-bottom:18px; }
-  .opt { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--surface);
-    border:1px solid var(--line); border-radius:12px; padding:13px 15px; margin-bottom:10px; font-size:16px; color:var(--ink); transition:border-color .15s, background .15s; }
-  .opt:hover:not(:disabled) { border-color:var(--blue); }
-  .opt .lbl { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px;
-    border-radius:50%; border:1px solid var(--line); font-size:13px; font-weight:700; flex:none; }
-  .opt.correct { border-color:var(--green); background:var(--green-soft); }
-  .opt.correct .lbl { border-color:var(--green); background:var(--green); color:#fff; }
-  .opt.wrong { border-color:var(--red); background:var(--red-soft); }
-  .opt.wrong .lbl { border-color:var(--red); background:var(--red); color:#fff; }
-  .opt:disabled { cursor:default; }
-  .demo-sol { margin-top:6px; padding:14px 15px; border-radius:12px; background:var(--surface-3);
-    font-size:15px; display:none; }
-  .demo-sol.show { display:block; }
-  .demo-sol b { color:var(--green); }
-  .demo-foot { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-top:1px solid var(--line); }
-  .demo-foot .count { font-size:13px; color:var(--muted); }
+  /* ---------- Feature showcases (alternating visual + text rows) ---------- */
+  .showcase { display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; padding:56px 0; }
+  .showcase + .showcase { border-top:1px solid var(--line); }
+  .showcase.flip .sc-visual { order:2; }
+  .sc-text .tag { display:inline-block; font-size:11px; font-weight:800; letter-spacing:.4px; color:var(--green);
+    background:var(--green-soft); border-radius:999px; padding:3px 10px; margin-bottom:12px; }
+  .feature-ic { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px;
+    border-radius:10px; background:var(--blue-soft); color:var(--blue); margin-bottom:14px; }
+  .sc-text h3 { font-size:25px; font-weight:760; letter-spacing:-.4px; margin:8px 0 12px; line-height:1.2; }
+  .sc-text p { color:var(--muted); font-size:16px; line-height:1.6; }
+  .sc-card { border:1px solid var(--line); border-radius:16px; background:var(--surface);
+    box-shadow:0 12px 34px var(--shadow); padding:22px; }
+  .sc-card .sc-cap { font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase;
+    letter-spacing:.5px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
 
-  /* ---------- Features ---------- */
-  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-  .feat { border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); padding:22px 20px; }
-  .feat .ic { font-size:22px; }
-  .feat h3 { font-size:17px; font-weight:700; margin:12px 0 6px; }
-  .feat p { font-size:14.5px; color:var(--muted); line-height:1.55; }
+  /* mini heatmap */
+  .mini-hm { width:100%; height:auto; display:block; }
+  .mini-hm rect.l0 { fill:var(--surface-3); }
+  .mini-hm rect.l1 { fill:#c6e9c9; } .mini-hm rect.l2 { fill:#7bc97f; }
+  .mini-hm rect.l3 { fill:#36a843; } .mini-hm rect.l4 { fill:#176c24; }
+  :root[data-theme="dark"] .mini-hm rect.l0 { fill:#20242e; }
+  :root[data-theme="dark"] .mini-hm rect.l1 { fill:#14401f; }
+  :root[data-theme="dark"] .mini-hm rect.l2 { fill:#1d6b30; }
+  :root[data-theme="dark"] .mini-hm rect.l3 { fill:#2f9d49; }
+  :root[data-theme="dark"] .mini-hm rect.l4 { fill:#45c46b; }
+  .hm-foot { display:flex; align-items:center; gap:4px; justify-content:flex-end; margin-top:10px; font-size:12px; color:var(--muted); }
+  .hm-foot .sw { width:12px; height:12px; border-radius:2px; display:inline-block; }
+
+  /* mini line chart */
+  .mini-chart { width:100%; height:auto; display:block; }
+  .mini-chart .grid { stroke:var(--line); stroke-width:1; }
+  .lc-legend { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+  .lc-legend span { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; color:var(--muted); }
+  .lc-legend i { width:11px; height:11px; border-radius:3px; display:inline-block; }
+
+  /* mini difficulty bars */
+  .sc-diff { display:flex; flex-direction:column; gap:14px; }
+  .sc-diff .row { display:grid; grid-template-columns:74px 1fr 64px; align-items:center; gap:12px; }
+  .sc-diff .bar { display:block; height:9px; border-radius:999px; background:var(--line); overflow:hidden; }
+  .sc-diff .fill { display:block; height:100%; border-radius:999px; }
+  .sc-diff .fill.easy { background:var(--green); } .sc-diff .fill.medium { background:var(--amber); } .sc-diff .fill.hard { background:var(--red); }
+  .sc-diff .tm { text-align:right; font-size:13px; font-weight:700; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .badge { display:inline-block; font-size:11px; font-weight:800; padding:2px 9px; border-radius:999px; text-transform:uppercase; letter-spacing:.4px; }
+  .badge.easy { color:var(--green); background:var(--green-soft); }
+  .badge.medium { color:var(--amber); background:var(--blue-soft); }
+  .badge.hard { color:var(--red); background:var(--red-soft); }
+
+  /* mini question card */
+  .sc-q .q { font-size:16px; font-weight:600; margin-bottom:14px; }
+  .sc-q .opt { display:flex; align-items:center; gap:12px; border:1.5px solid var(--line); border-radius:11px;
+    padding:11px 13px; margin-bottom:9px; font-size:15px; }
+  .sc-q .opt .l { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    border:1.5px solid var(--line); font-size:13px; font-weight:700; color:var(--muted); flex:none; }
+  .sc-q .opt.correct { border-color:var(--green); background:var(--green-soft); }
+  .sc-q .opt.correct .l { background:var(--green); color:#fff; border-color:var(--green); }
+  .sc-q .sol { margin-top:4px; font-size:13.5px; color:var(--muted); }
+  .sc-q .sol b { color:var(--green); }
+  .timer-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:var(--muted);
+    border:1px solid var(--line); border-radius:999px; padding:3px 10px; }
+
+  /* mini saved / mistakes list */
+  .sc-list { display:flex; flex-direction:column; }
+  .sc-list .item { display:flex; align-items:flex-start; gap:11px; padding:12px 4px; border-top:1px solid var(--line); }
+  .sc-list .item:first-child { border-top:none; }
+  .sc-list .mark { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px;
+    color:var(--amber); flex:none; }
+  .verdict .icon { margin-right:2px; }
+  .sc-list .body { min-width:0; flex:1; }
+  .sc-list .meta { display:flex; align-items:center; gap:9px; margin-bottom:4px; }
+  .sc-list .verdict { font-size:12.5px; font-weight:800; font-variant-numeric:tabular-nums; }
+  .sc-list .verdict.x { color:var(--red); } .sc-list .verdict.ok { color:var(--green); }
+  .sc-list .qt { font-size:13.5px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
   /* ---------- Topics ---------- */
-  .topics { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; max-width:720px; margin:0 auto; }
-  .topic { display:flex; align-items:center; gap:14px; border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:var(--surface); }
+  .topics { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:740px; margin:0 auto; }
+  .topic { display:flex; align-items:center; gap:16px; border:1px solid var(--line); border-radius:12px; padding:16px 18px; background:var(--surface); }
   .topic .n { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px;
     background:var(--blue-soft); color:var(--blue); font-weight:800; flex:none; }
   .topic .tt { font-weight:600; }
@@ -128,39 +181,16 @@
   footer a { color:var(--muted); text-decoration:none; }
   footer a:hover { color:var(--ink); }
 
-  /* ---------- Auth modal ---------- */
-  .auth-modal { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center;
-    padding:20px; background:rgba(0,0,0,.5); }
-  .auth-modal[hidden] { display:none; }
-  .auth-card { position:relative; width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line);
-    border-radius:var(--radius); padding:26px 24px 22px; box-shadow:0 20px 60px var(--shadow); }
-  .auth-close { position:absolute; top:10px; right:12px; background:none; border:none; font-size:22px; line-height:1;
-    color:var(--muted); }
-  .auth-close:hover { color:var(--ink); }
-  .auth-card h2 { font-size:21px; font-weight:750; letter-spacing:-.4px; }
-  .auth-tabs { display:flex; gap:4px; background:var(--surface-3); border:1px solid var(--line); border-radius:10px;
-    padding:4px; margin:16px 0 14px; }
-  .auth-tab { flex:1; border:none; background:none; padding:8px 10px; border-radius:8px; font-size:14px; font-weight:650;
-    color:var(--muted); }
-  .auth-tab.is-active { background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.07); }
-  .auth-sub { color:var(--muted); font-size:14px; margin:6px 0 16px; line-height:1.5; }
-  .auth-card form { display:flex; flex-direction:column; gap:10px; }
-  .auth-card input { border:1px solid var(--line); border-radius:10px; padding:11px 13px; font-size:15px;
-    background:var(--surface); color:var(--ink); }
-  .auth-card input:focus { outline:none; border-color:var(--blue); }
-  .auth-submit { background:var(--blue); color:#fff; border:none; border-radius:10px; padding:12px; font-size:15px;
-    font-weight:650; margin-top:2px; }
-  .auth-submit:hover { filter:brightness(.96); }
-  .auth-submit:disabled { opacity:.6; cursor:default; }
-  .auth-msg { margin-top:12px; font-size:13.5px; line-height:1.5; }
-  .auth-msg[hidden] { display:none; }
-  .auth-msg.ok { color:var(--green); }
-  .auth-msg.err { color:var(--red); }
-
   @media (max-width:760px) {
     .hero h1 { font-size:34px; }
     .hero p.lede { font-size:17px; }
-    .grid { grid-template-columns:1fr; }
+    .appbar { padding:12px 16px; }
+    .wrap { padding:0 20px; }
+    .hero { padding:58px 0 38px; }
+    section.block { padding:48px 0; }
+    .showcase { grid-template-columns:1fr; gap:28px; padding:40px 0; }
+    .showcase.flip .sc-visual { order:0; }
+    .sc-text h3 { font-size:22px; }
     .topics { grid-template-columns:1fr; }
     .nav-links { display:none; }
     .brand .bn { display:none; }
@@ -169,130 +199,296 @@
 </head>
 <body>
   <header class="appbar">
-    <a class="brand" href="#top" style="text-decoration:none"><span class="logo">e</span><span class="bn">eprep.uz</span></a>
+    <a class="brand" href="#top" style="text-decoration:none"><span class="logo">n</span><span class="bn">Nava</span></a>
     <div class="appbar-actions">
       <nav class="nav-links">
-        <a href="#demo">Try a question</a>
-        <a href="#features">Features</a>
-        <a href="#topics">Topics</a>
+        <a href="#features" data-i18n="navFeatures">Features</a>
+        <a href="#topics" data-i18n="navTopics">Topics</a>
       </nav>
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-      <a class="btn btn-primary js-cta" href="app.html">Open app</a>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+      <button class="lang-btn" id="langBtn" title="Til / Language"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg><span id="langLabel">UZ</span></button>
+      <button class="btn btn-ghost" id="signUpBtn" data-i18n="btnSignup">Sign up</button>
+      <a class="btn btn-primary js-cta" href="app.html" data-i18n="btnOpen">Open app</a>
     </div>
   </header>
 
   <main id="top">
     <section class="hero wrap">
-      <span class="pill">Built for the New Uzbekistan University entrance exam</span>
-      <h1>Ace the NewUU <span class="accent">entrance maths</span> — for free.</h1>
-      <p class="lede">Every topic on the exam, in a clean Bluebook-style practice app: timed tests, worked solutions, and progress that remembers you across devices.</p>
+      <span class="pill" data-i18n="heroPill">Built for the New Uzbekistan University entrance exam</span>
+      <h1 data-i18n-html="heroH1">Ace the NewUU <span class="accent">entrance maths</span> — for free.</h1>
+      <p class="lede" data-i18n="heroLede">Every topic on the exam, in a clean Bluebook-style practice app: timed tests, worked solutions, and progress that remembers where you left off.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary js-cta" href="app.html">Start practicing — free</a>
-        <a class="btn btn-ghost" href="#demo">Try a question ↓</a>
+        <a class="btn btn-primary js-cta" href="app.html" data-i18n="heroCta">Start practicing — free</a>
       </div>
-      <p class="trust">Made by a student who used it to prep — and it worked. <b>No paywall.</b></p>
+      <p class="trust" data-i18n-html="trust">Made by a student who used it to prep — and it worked. <b>No paywall.</b></p>
       <div class="statbar">
-        <div class="s"><b>6</b><span>units</span></div>
-        <div class="s"><b>34</b><span>skills</span></div>
-        <div class="s"><b>270+</b><span>questions</span></div>
-        <div class="s"><b>EN · RU</b><span>languages</span></div>
-      </div>
-    </section>
-
-    <section class="block" id="demo">
-      <div class="wrap">
-        <h2>See it in action</h2>
-        <p class="sub">A real question from the bank. Pick an answer — you'll see the worked solution instantly, just like in the app.</p>
-        <div class="demo-card">
-          <div class="demo-top">
-            <span class="demo-tag" id="dTag">Topic</span>
-            <span id="dProgress">Question 1</span>
-          </div>
-          <div class="demo-body">
-            <div class="demo-q" id="dQ"></div>
-            <div id="dOpts"></div>
-            <div class="demo-sol" id="dSol"></div>
-          </div>
-          <div class="demo-foot">
-            <span class="count" id="dHint">Choose the correct answer</span>
-            <button class="btn btn-ghost" id="dNext" hidden>Next question →</button>
-          </div>
-        </div>
+        <div class="s"><b>6</b><span data-i18n="statUnits">units</span></div>
+        <div class="s"><b>34</b><span data-i18n="statSkills">skills</span></div>
+        <div class="s"><b>270+</b><span data-i18n="statQuestions">questions</span></div>
+        <div class="s"><b>EN · UZ</b><span data-i18n="statLangs">languages</span></div>
       </div>
     </section>
 
     <section class="block" id="features">
       <div class="wrap">
-        <h2>Everything you need, nothing you don't</h2>
-        <p class="sub">The focused parts of a great prep tool — without the gimmicks or the price tag.</p>
-        <div class="grid">
-          <div class="feat"><div class="ic">📚</div><h3>Every exam topic</h3><p>All 6 units and 34 skills mapped to the NewUU maths syllabus — probability, polynomials, geometry, functions, series, and logic.</p></div>
-          <div class="feat"><div class="ic">⏱️</div><h3>Bluebook-style tests</h3><p>One question at a time, lettered choices, a per-question timer, and timed unit challenges that feel like the real thing.</p></div>
-          <div class="feat"><div class="ic">💡</div><h3>Worked solutions</h3><p>Every question comes with a step-by-step explanation, so you learn the method — not just the answer.</p></div>
-          <div class="feat"><div class="ic">📈</div><h3>Progress that remembers</h3><p>Accuracy, completion, and spaced-repetition review dates, all tracked automatically and surfaced when a skill is due.</p></div>
-          <div class="feat"><div class="ic">☁️</div><h3>Sign in &amp; sync</h3><p id="featSync">Create a free account and your progress follows you to every device. No account? It still works, saved in your browser.</p></div>
-          <div class="feat"><div class="ic">🌗</div><h3>Yours to use</h3><p>English and Russian, light and dark mode, free and open. No subscriptions, no ads, no catch.</p></div>
+        <h2 data-i18n="featuresH2">Everything you need, nothing you don't</h2>
+        <p class="sub" data-i18n="featuresSub">The focused parts of a great prep tool — without the gimmicks or the price tag.</p>
+
+        <!-- Bluebook-style tests — live question card -->
+        <div class="showcase">
+          <div class="sc-visual">
+            <div class="sc-card sc-q">
+              <div class="sc-cap"><span data-i18n="capQuestion">Question 7 of 12</span><span class="timer-chip"><svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2"></path><path d="M9 2h6"></path></svg>01:12</span></div>
+              <div class="q">Two fair dice are rolled. Find the probability that the sum is 7.</div>
+              <div class="opt"><span class="l">A</span><span>1/12</span></div>
+              <div class="opt correct"><span class="l">B</span><span>1/6</span></div>
+              <div class="opt"><span class="l">C</span><span>5/36</span></div>
+              <div class="opt"><span class="l">D</span><span>7/36</span></div>
+              <div class="sol"><b data-i18n="capSolution">Solution.</b> 6 ways to roll a 7 out of 36 outcomes → 6/36 = 1/6.</div>
+            </div>
+          </div>
+          <div class="sc-text">
+            <div class="feature-ic"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2"></path><path d="M9 2h6"></path></svg></div>
+            <h3 data-i18n="scTestsTitle">Practice that feels like the real exam</h3>
+            <p data-i18n="scTestsBody">One question at a time with lettered choices, a per-question timer, and a step-by-step worked solution the moment you answer — the same Bluebook-style layout you'll meet on test day.</p>
+          </div>
+        </div>
+
+        <!-- Progress monitoring — live activity chart -->
+        <div class="showcase flip">
+          <div class="sc-visual">
+            <div class="sc-card">
+              <div class="sc-cap"><span data-i18n="capActivity">Daily activity</span><span>30 days</span></div>
+              <div id="scChart"></div>
+              <div class="lc-legend">
+                <span><i style="background:var(--blue)"></i><span data-i18n="legAttempted">Attempted</span></span>
+                <span><i style="background:var(--green)"></i><span data-i18n="legCorrect">Correct</span></span>
+                <span><i style="background:var(--red)"></i><span data-i18n="legWrong">Wrong</span></span>
+                <span><i style="background:var(--amber)"></i><span data-i18n="legSaved">Saved</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="sc-text">
+            <span class="tag" data-i18n="tagNew">New</span>
+            <h3 data-i18n="scMonitorTitle">See every day of progress</h3>
+            <p data-i18n="scMonitorBody">A monitoring dashboard tracks questions attempted, correct, wrong and saved — plotted day by day in one colour-coded chart. Hover any day to see exactly what you did.</p>
+          </div>
+        </div>
+
+        <!-- Heatmap — live, randomly-filled -->
+        <div class="showcase">
+          <div class="sc-visual">
+            <div class="sc-card">
+              <div class="sc-cap"><span data-i18n="capHeatmap">Activity heatmap</span><span>6 months</span></div>
+              <div id="scHeatmap"></div>
+              <div class="hm-foot"><span data-i18n="hmLess">Less</span>
+                <span class="sw" style="background:var(--surface-3)"></span>
+                <span class="sw" style="background:#c6e9c9"></span>
+                <span class="sw" style="background:#7bc97f"></span>
+                <span class="sw" style="background:#36a843"></span>
+                <span class="sw" style="background:#176c24"></span>
+                <span data-i18n="hmMore">More</span></div>
+            </div>
+          </div>
+          <div class="sc-text">
+            <span class="tag" data-i18n="tagNew">New</span>
+            <h3 data-i18n="scHeatTitle">Build a streak you can see</h3>
+            <p data-i18n="scHeatBody">Every day you practise lights up a square — a GitHub-style heatmap of the last six months. Watch your consistency grow and keep the streak alive.</p>
+          </div>
+        </div>
+
+        <!-- Difficulty — live bars -->
+        <div class="showcase flip">
+          <div class="sc-visual">
+            <div class="sc-card">
+              <div class="sc-cap"><span data-i18n="byDifficulty">By difficulty</span><span data-i18n="avgTime">avg time</span></div>
+              <div class="sc-diff">
+                <div class="row"><span class="badge easy" data-i18n="diffEasy">Easy</span><span class="bar"><span class="fill easy" style="width:92%"></span></span><span class="tm">8s</span></div>
+                <div class="row"><span class="badge medium" data-i18n="diffMedium">Medium</span><span class="bar"><span class="fill medium" style="width:74%"></span></span><span class="tm">21s</span></div>
+                <div class="row"><span class="badge hard" data-i18n="diffHard">Hard</span><span class="bar"><span class="fill hard" style="width:58%"></span></span><span class="tm">47s</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-text">
+            <span class="tag" data-i18n="tagNew">New</span>
+            <h3 data-i18n="scDiffTitle">Know exactly what to drill</h3>
+            <p data-i18n="scDiffBody">Every question is graded easy, medium or hard. See your accuracy and average time at each level, so you spend time where it counts most.</p>
+          </div>
+        </div>
+
+        <!-- Save & mistakes — live list -->
+        <div class="showcase">
+          <div class="sc-visual">
+            <div class="sc-card">
+              <div class="sc-cap"><span data-i18n="mistakeLog">Mistake log</span><span>3</span></div>
+              <div class="sc-list">
+                <div class="item"><span class="mark"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></span><div class="body"><div class="meta"><span class="badge hard" data-i18n="diffHard">Hard</span><span class="verdict x"><svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>C · <svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>A</span></div><div class="qt">Find the largest domain of f(x) = 1/(x−4).</div></div></div>
+                <div class="item"><span class="mark"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></span><div class="body"><div class="meta"><span class="badge medium" data-i18n="diffMedium">Medium</span><span class="verdict x"><svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18"></path><path d="M6 6l12 12"></path></svg>A · <svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>B</span></div><div class="qt">An AP has first term 3, difference 4. Find the 10th term.</div></div></div>
+                <div class="item"><span class="mark" style="opacity:.35"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></span><div class="body"><div class="meta"><span class="badge easy" data-i18n="diffEasy">Easy</span><span class="verdict ok"><svg class="icon icon-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg></span></div><div class="qt">P(not green) from 3 red, 4 blue, 5 green.</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="sc-text">
+            <span class="tag" data-i18n="tagNew">New</span>
+            <h3 data-i18n="scSaveTitle">Never lose a tricky question</h3>
+            <p data-i18n="scSaveBody">Bookmark any question with one tap, and every wrong answer is collected in a mistake log — review the worked solution or retry it until it sticks.</p>
+          </div>
         </div>
       </div>
     </section>
 
     <section class="block" id="topics">
       <div class="wrap">
-        <h2>What you'll practice</h2>
-        <p class="sub">Six units covering the full breadth of the entrance maths exam.</p>
+        <h2 data-i18n="topicsH2">What you'll practice</h2>
+        <p class="sub" data-i18n="topicsSub">Six units covering the full breadth of the entrance maths exam.</p>
         <div class="topics">
-          <div class="topic"><span class="n">1</span><div><div class="tt">Probability &amp; Statistics</div><div class="sk">8 skills</div></div></div>
-          <div class="topic"><span class="n">2</span><div><div class="tt">Polynomials</div><div class="sk">5 skills</div></div></div>
-          <div class="topic"><span class="n">3</span><div><div class="tt">Geometry</div><div class="sk">6 skills</div></div></div>
-          <div class="topic"><span class="n">4</span><div><div class="tt">Functions</div><div class="sk">5 skills</div></div></div>
-          <div class="topic"><span class="n">5</span><div><div class="tt">Series, Powers, Roots</div><div class="sk">5 skills</div></div></div>
-          <div class="topic"><span class="n">6</span><div><div class="tt">Logical Thinking</div><div class="sk">5 skills</div></div></div>
+          <div class="topic"><span class="n">1</span><div><div class="tt">Probability &amp; Statistics</div><div class="sk" data-skills="8">8 skills</div></div></div>
+          <div class="topic"><span class="n">2</span><div><div class="tt">Polynomials</div><div class="sk" data-skills="5">5 skills</div></div></div>
+          <div class="topic"><span class="n">3</span><div><div class="tt">Geometry</div><div class="sk" data-skills="6">6 skills</div></div></div>
+          <div class="topic"><span class="n">4</span><div><div class="tt">Functions</div><div class="sk" data-skills="5">5 skills</div></div></div>
+          <div class="topic"><span class="n">5</span><div><div class="tt">Series, Powers, Roots</div><div class="sk" data-skills="5">5 skills</div></div></div>
+          <div class="topic"><span class="n">6</span><div><div class="tt">Logical Thinking</div><div class="sk" data-skills="5">5 skills</div></div></div>
         </div>
       </div>
     </section>
 
     <section class="block cta-band">
       <div class="wrap">
-        <h2>Ready to start?</h2>
-        <p class="sub" id="ctaSub">Jump straight in — no sign-up required to begin practicing.</p>
-        <a class="btn btn-primary js-cta" href="app.html">Open eprep.uz</a>
+        <h2 data-i18n="ctaH2">Ready to start?</h2>
+        <p class="sub" data-i18n="ctaSub">Create your profile and start practicing in seconds.</p>
+        <a class="btn btn-primary js-cta" href="app.html" data-i18n="ctaBtn">Open Nava</a>
       </div>
     </section>
   </main>
 
-  <!-- Auth modal — shown only when a backend is configured (see supabase-config.js). -->
-  <div class="auth-modal" id="authModal" hidden>
-    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
-      <div class="auth-tabs" role="tablist">
-        <button class="auth-tab is-active" id="authTabSignIn" data-mode="signin" role="tab">Sign in</button>
-        <button class="auth-tab" id="authTabSignUp" data-mode="signup" role="tab">Sign up</button>
-      </div>
-      <h2 id="authTitle">Welcome back</h2>
-      <p class="auth-sub" id="authSub">Sign in to open the app and sync your progress across every device.</p>
-      <form id="authForm">
-        <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
-        <input type="password" id="authPasswordInput" placeholder="Password (min 6 characters)" autocomplete="current-password" required minlength="6" />
-        <button type="submit" class="auth-submit" id="authSubmitBtn">Sign in</button>
-      </form>
-      <p class="auth-msg" id="authMsg" hidden></p>
-    </div>
-  </div>
-
   <footer>
-    <p>eprep.uz — free practice for the New Uzbekistan University entrance exam. <a href="app.html" class="js-cta">Open the app</a></p>
+    <p data-i18n-html="footer">Nava — free practice for the New Uzbekistan University entrance exam. <a href="app.html" class="js-cta">Open the app</a></p>
   </footer>
-
-  <!-- Optional cloud accounts (Supabase). When configured, the app requires a free account. -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
 
   <script>
   (function () {
     "use strict";
 
-    /* ---- theme (shared with the app via localStorage key newuu_theme) ---- */
-    var THEME_STORE = "newuu_theme";
+    /* ---- language (EN / UZ; shared with the app via localStorage key nava_lang) ---- */
+    var LANG_STORE = "nava_lang";
+    var LANG = "uz";   // O'zbek is the default
+    try { var sl = localStorage.getItem(LANG_STORE); if (sl === "en" || sl === "uz") LANG = sl; } catch (e) {}
+
+    var DICT = {
+      en: {
+        navFeatures: "Features", navTopics: "Topics",
+        btnSignup: "Sign up", btnOpen: "Open app",
+        heroPill: "Built for the New Uzbekistan University entrance exam",
+        heroH1: 'Ace the NewUU <span class="accent">entrance maths</span> — for free.',
+        heroLede: "Every topic on the exam, in a clean Bluebook-style practice app: timed tests, worked solutions, and progress that remembers where you left off.",
+        heroCta: "Start practicing — free",
+        trust: "Made by a student who used it to prep — and it worked. <b>No paywall.</b>",
+        statUnits: "units", statSkills: "skills", statQuestions: "questions", statLangs: "languages",
+        featuresH2: "Everything you need, nothing you don't",
+        featuresSub: "The focused parts of a great prep tool — without the gimmicks or the price tag.",
+        capQuestion: "Question 7 of 12", capSolution: "Solution.",
+        legAttempted: "Attempted", legCorrect: "Correct", legWrong: "Wrong", legSaved: "Saved",
+        capActivity: "Daily activity", capHeatmap: "Activity heatmap",
+        byDifficulty: "By difficulty", avgTime: "avg time",
+        diffEasy: "Easy", diffMedium: "Medium", diffHard: "Hard",
+        mistakeLog: "Mistake log", hmLess: "Less", hmMore: "More", tagNew: "New",
+        scTestsTitle: "Practice that feels like the real exam",
+        scTestsBody: "One question at a time with lettered choices, a per-question timer, and a step-by-step worked solution the moment you answer — the same Bluebook-style layout you'll meet on test day.",
+        scMonitorTitle: "See every day of progress",
+        scMonitorBody: "A monitoring dashboard tracks questions attempted, correct, wrong and saved — plotted day by day in one colour-coded chart. Hover any day to see exactly what you did.",
+        scHeatTitle: "Build a streak you can see",
+        scHeatBody: "Every day you practise lights up a square — a GitHub-style heatmap of the last six months. Watch your consistency grow and keep the streak alive.",
+        scDiffTitle: "Know exactly what to drill",
+        scDiffBody: "Every question is graded easy, medium or hard. See your accuracy and average time at each level, so you spend time where it counts most.",
+        scSaveTitle: "Never lose a tricky question",
+        scSaveBody: "Bookmark any question with one tap, and every wrong answer is collected in a mistake log — review the worked solution or retry it until it sticks.",
+        topicsH2: "What you'll practice",
+        topicsSub: "Six units covering the full breadth of the entrance maths exam.",
+        skillsWord: "skills",
+        ctaH2: "Ready to start?",
+        ctaSub: "Create your profile and start practicing in seconds.",
+        ctaBtn: "Open Nava",
+        footer: 'Nava — free practice for the New Uzbekistan University entrance exam. <a href="app.html" class="js-cta">Open the app</a>'
+      },
+      uz: {
+        navFeatures: "Imkoniyatlar", navTopics: "Mavzular",
+        btnSignup: "Hisob yaratish", btnOpen: "Ilovani ochish",
+        heroPill: "Yangi O'zbekiston universiteti kirish imtihoni uchun",
+        heroH1: 'NewUU <span class="accent">kirish matematikasi</span>dan a\'lo bahoga — bepul.',
+        heroLede: "Imtihondagi har bir mavzu — toza, Bluebook uslubidagi mashq ilovasida: vaqtli sinovlar, batafsil yechimlar va to'xtagan joyingizni eslab qoladigan progress.",
+        heroCta: "Bepul mashqni boshlash",
+        trust: "Imtihonga tayyorlangan talaba tomonidan yaratilgan — va u natija berdi. <b>To'lovsiz.</b>",
+        statUnits: "bo'lim", statSkills: "ko'nikma", statQuestions: "savol", statLangs: "til",
+        featuresH2: "Kerakli hamma narsa, ortiqchasiz",
+        featuresSub: "Yaxshi tayyorgarlik vositasining eng muhim qismlari — hiyla-nayrangsiz va to'lovsiz.",
+        capQuestion: "7-savol / 12", capSolution: "Yechim.",
+        legAttempted: "Yechilgan", legCorrect: "To'g'ri", legWrong: "Noto'g'ri", legSaved: "Saqlangan",
+        capActivity: "Kunlik faollik", capHeatmap: "Faollik xaritasi",
+        byDifficulty: "Qiyinligi bo'yicha", avgTime: "o'rtacha vaqt",
+        diffEasy: "Oson", diffMedium: "O'rta", diffHard: "Qiyin",
+        mistakeLog: "Xatolar jurnali", hmLess: "Kam", hmMore: "Ko'p", tagNew: "Yangi",
+        scTestsTitle: "Haqiqiy imtihonga o'xshash mashq",
+        scTestsBody: "Bittadan savol, harf bilan belgilangan variantlar, har bir savol uchun taymer va javob bergan zahoti bosqichma-bosqich yechim — xuddi imtihon kunidagidek Bluebook uslubidagi ko'rinish.",
+        scMonitorTitle: "Har kungi progressni ko'ring",
+        scMonitorBody: "Statistika paneli yechilgan, to'g'ri, noto'g'ri va saqlangan savollarni kuzatadi — barchasi kun bo'yicha bitta rangli diagrammada. Istalgan kun ustiga olib borsangiz, o'sha kun ma'lumotini ko'rsatadi.",
+        scHeatTitle: "Ko'rinadigan seriya yarating",
+        scHeatBody: "Mashq qilgan har bir kuningiz bitta katakchani yoritadi — so'nggi olti oyning GitHub uslubidagi faollik xaritasi. Izchilligingiz o'sib borishini kuzating va seriyani uzmang.",
+        scDiffTitle: "Nimani mashq qilishni aniq biling",
+        scDiffBody: "Har bir savol oson, o'rta yoki qiyin deb baholanadi. Har bir darajadagi aniqlik va o'rtacha vaqtni ko'rib, vaqtingizni eng kerakli joyga sarflang.",
+        scSaveTitle: "Qiyin savolni boy bermang",
+        scSaveBody: "Istalgan savolni bir teginishda belgilab qo'ying; har bir noto'g'ri javob esa xatolar jurnaliga yig'iladi — yechimni ko'rib chiqing yoki yodda qolguncha qayta yeching.",
+        topicsH2: "Nimani mashq qilasiz",
+        topicsSub: "Kirish matematika imtihonini to'liq qamrab oluvchi olti bo'lim.",
+        skillsWord: "ko'nikma",
+        ctaH2: "Boshlashga tayyormisiz?",
+        ctaSub: "Profilingizni yarating va bir necha soniyada mashqni boshlang.",
+        ctaBtn: "Nava'ni ochish",
+        footer: 'Nava — Yangi O\'zbekiston universiteti kirish imtihoniga bepul mashq. <a href="app.html" class="js-cta">Ilovani ochish</a>'
+      }
+    };
+    function icon(name) {
+      var paths = {
+        moon: '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8z"></path>',
+        sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M6.34 17.66l-1.41 1.41"></path><path d="M19.07 4.93l-1.41 1.41"></path>'
+      };
+      return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + paths[name] + '</svg>';
+    }
+
+    var PROFILE = "nava_profile";
+    function hasProfile() {
+      try { var p = JSON.parse(localStorage.getItem(PROFILE) || "null"); return !!(p && p.name); }
+      catch (e) { return false; }
+    }
+    var signUpBtn = document.getElementById("signUpBtn");
+
+    function applyI18n() {
+      var d = DICT[LANG] || DICT.uz;
+      document.documentElement.lang = LANG;
+      document.querySelectorAll("[data-i18n]").forEach(function (n) {
+        var v = d[n.getAttribute("data-i18n")]; if (v != null) n.textContent = v;
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach(function (n) {
+        var v = d[n.getAttribute("data-i18n-html")]; if (v != null) n.innerHTML = v;
+      });
+      document.querySelectorAll("[data-skills]").forEach(function (n) {
+        n.textContent = n.getAttribute("data-skills") + " " + d.skillsWord;
+      });
+      var lb = document.getElementById("langLabel"); if (lb) lb.textContent = LANG === "uz" ? "UZ" : "EN";
+      // Returning users (profile saved): every CTA opens the app; hide "Sign up".
+      if (hasProfile()) {
+        signUpBtn.hidden = true;
+        document.querySelectorAll("a.js-cta.btn").forEach(function (a) { a.textContent = d.btnOpen; });
+      }
+    }
+
+    document.getElementById("langBtn").addEventListener("click", function () {
+      LANG = LANG === "uz" ? "en" : "uz";
+      try { localStorage.setItem(LANG_STORE, LANG); } catch (e) {}
+      applyI18n();
+    });
+
+    /* ---- theme (shared with the app via localStorage key nava_theme) ---- */
+    var THEME_STORE = "nava_theme";
     var theme = "light";
     try {
       var saved = localStorage.getItem(THEME_STORE);
@@ -302,7 +498,7 @@
     function applyTheme() {
       document.documentElement.setAttribute("data-theme", theme);
       var b = document.getElementById("themeBtn");
-      if (b) b.textContent = theme === "dark" ? "☀️" : "🌙";
+      if (b) b.innerHTML = icon(theme === "dark" ? "sun" : "moon");
     }
     applyTheme();
     document.getElementById("themeBtn").addEventListener("click", function () {
@@ -311,166 +507,74 @@
       applyTheme();
     });
 
-    /* ---- accounts (Supabase) ----
-       When supabase-config.js is filled in, a free account is required: the CTAs
-       open the sign-in/up modal and the app (app.html) is gated. While it's empty,
-       the CTAs link straight to app.html and the app stays open (local-only). */
-    (function authSetup() {
-      var cfg = window.SUPABASE_CONFIG || {};
-      var ready = !!(cfg.url && cfg.anonKey && window.supabase);
-      var ctas = Array.prototype.slice.call(document.querySelectorAll(".js-cta"));
-      if (!ready) return;   // no backend → leave CTAs linking to app.html as-is
+    /* ---- sign up (local profile) ----
+       Sign-up is a dedicated clean page (signup.html): name → goal → login. A local
+       profile is required to enter the app (app.html) and is saved in this browser;
+       accounts & sync will replace this later. Here we just route to that page. */
+    var ctas = Array.prototype.slice.call(document.querySelectorAll(".js-cta"));
+    signUpBtn.addEventListener("click", function () { window.location.href = "signup.html"; });
 
-      var client = window.supabase.createClient(cfg.url, cfg.anonKey);
-      var modal = document.getElementById("authModal");
-      var form = document.getElementById("authForm");
-      var msg = document.getElementById("authMsg");
-      var emailInput = document.getElementById("authEmailInput");
-      var pwInput = document.getElementById("authPasswordInput");
-      var submit = document.getElementById("authSubmitBtn");
-      var tabIn = document.getElementById("authTabSignIn");
-      var tabUp = document.getElementById("authTabSignUp");
-      var signedIn = false;
-      var mode = "signin";   // "signin" | "signup"
-
-      // Reflect the account-required reality in the marketing copy.
-      var ctaSub = document.getElementById("ctaSub");
-      if (ctaSub) ctaSub.textContent = "Create a free account to start practicing and keep your progress on every device.";
-      var featSync = document.getElementById("featSync");
-      if (featSync) featSync.textContent = "Create a free account — it's how your answers, accuracy and review schedule follow you to every device.";
-
-      function applyMode(next) {
-        mode = next;
-        var up = mode === "signup";
-        tabIn.classList.toggle("is-active", !up);
-        tabUp.classList.toggle("is-active", up);
-        document.getElementById("authTitle").textContent = up ? "Create your free account" : "Welcome back";
-        document.getElementById("authSub").textContent = up
-          ? "Sign up to open the app and save your progress across every device."
-          : "Sign in to open the app and sync your progress across every device.";
-        submit.textContent = up ? "Create account" : "Sign in";
-        pwInput.setAttribute("autocomplete", up ? "new-password" : "current-password");
-        msg.hidden = true;
-      }
-      function openModal(next) {
-        applyMode(next || "signin");
-        modal.hidden = false;
-        setTimeout(function () { emailInput.focus(); }, 30);
-      }
-      function closeModal() { modal.hidden = true; msg.hidden = true; }
-
-      // CTAs: go straight to the app if already signed in, otherwise open the modal.
-      ctas.forEach(function (a) {
-        a.addEventListener("click", function (e) {
-          if (signedIn) return;            // signed in → follow href to app.html
-          e.preventDefault();
-          openModal("signin");
-        });
+    // CTAs: enter the app if a profile exists, otherwise go to the sign-up page.
+    ctas.forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        if (hasProfile()) return;        // follow href → app.html
+        e.preventDefault(); window.location.href = "signup.html";
       });
-
-      tabIn.addEventListener("click", function () { applyMode("signin"); });
-      tabUp.addEventListener("click", function () { applyMode("signup"); });
-      document.getElementById("authCloseBtn").addEventListener("click", closeModal);
-      modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
-      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
-
-      form.addEventListener("submit", async function (e) {
-        e.preventDefault();
-        var email = emailInput.value.trim();
-        var password = pwInput.value;
-        if (!email || !password) return;
-        if (password.length < 6) {
-          msg.hidden = false; msg.className = "auth-msg err";
-          msg.textContent = "Password must be at least 6 characters.";
-          return;
-        }
-        var label = mode === "signup" ? "Create account" : "Sign in";
-        submit.disabled = true; submit.textContent = mode === "signup" ? "Creating…" : "Signing in…";
-        var res = mode === "signup"
-          ? await client.auth.signUp({ email: email, password: password, options: { emailRedirectTo: window.location.href } })
-          : await client.auth.signInWithPassword({ email: email, password: password });
-        submit.disabled = false; submit.textContent = label;
-        if (res.error) {
-          msg.hidden = false; msg.className = "auth-msg err";
-          msg.textContent = res.error.message || "Something went wrong. Please try again.";
-          return;
-        }
-        // Sign-up with email confirmation returns a user but no active session.
-        if (mode === "signup" && res.data && res.data.user && !res.data.session) {
-          msg.hidden = false; msg.className = "auth-msg ok";
-          msg.textContent = "Account created. Check your inbox to confirm your email, then sign in.";
-          applyMode("signin");
-          return;
-        }
-        window.location.href = "app.html";   // signed in → into the app
-      });
-
-      // Reflect current session: if already signed in, CTAs become direct links.
-      client.auth.getSession().then(function (r) {
-        signedIn = !!(r && r.data && r.data.session);
-        if (signedIn) {
-          ctas.forEach(function (a) { if (a.classList.contains("btn")) a.textContent = "Open app"; });
-        } else if (/[?&]signin=1/.test(window.location.search)) {
-          openModal("signin");   // bounced here by the app's gate
-        }
-      });
-      client.auth.onAuthStateChange(function (_e, session) { signedIn = !!session; });
-    })();
-
-    /* ---- live demo questions (a small authentic sample; full bank is in the app) ---- */
-    var DEMO = [
-      { tag:"Probability", q:"Two fair dice are rolled. Find the probability that the sum is 7.",
-        options:["1/12","1/6","5/36","7/36"], answer:1, solution:"There are 6 ways to roll a 7 out of 36 outcomes, so 6/36 = 1/6." },
-      { tag:"Geometry", q:"An isosceles triangle has two sides of 7 and perimeter 25. Find the base.",
-        options:["9","18","11","12"], answer:2, solution:"The two equal sides total 14, so the base is 25 − 14 = 11." },
-      { tag:"Series", q:"An arithmetic progression has first term 3 and common difference 4. Find the 10th term.",
-        options:["43","39","36","40"], answer:1, solution:"a₁₀ = 3 + 9 × 4 = 39." },
-      { tag:"Functions", q:"Find the largest possible domain of f(x) = 1 / (x − 4).",
-        options:["all x except 4","x > 4","all x except 0","all real x"], answer:0, solution:"The denominator can't be zero, so every value works except x = 4." },
-      { tag:"Probability", q:"P(A) = 0.3, P(B) = 0.4, and P(A or B) = 0.5. Find P(A and B).",
-        options:["0.1","0.2","0.7","0.12"], answer:1, solution:"P(A and B) = P(A) + P(B) − P(A or B) = 0.3 + 0.4 − 0.5 = 0.2." }
-    ];
-    var LABELS = ["A","B","C","D"];
-    var idx = 0;
-    var dTag = document.getElementById("dTag"), dQ = document.getElementById("dQ"),
-        dOpts = document.getElementById("dOpts"), dSol = document.getElementById("dSol"),
-        dNext = document.getElementById("dNext"), dHint = document.getElementById("dHint"),
-        dProgress = document.getElementById("dProgress");
-
-    function loadQ() {
-      var item = DEMO[idx];
-      dTag.textContent = item.tag;
-      dProgress.textContent = "Question " + (idx + 1) + " of " + DEMO.length;
-      dQ.textContent = item.q;
-      dHint.textContent = "Choose the correct answer";
-      dSol.className = "demo-sol";
-      dSol.innerHTML = "";
-      dNext.hidden = true;
-      dOpts.innerHTML = "";
-      item.options.forEach(function (opt, i) {
-        var b = document.createElement("button");
-        b.className = "opt";
-        b.innerHTML = '<span class="lbl">' + LABELS[i] + '</span><span>' + opt + '</span>';
-        b.addEventListener("click", function () { choose(i, b); });
-        dOpts.appendChild(b);
-      });
+    });
+    // Bounced here from the app's gate without a profile → straight to sign-up.
+    if (!hasProfile() && /[?&]signup=1/.test(window.location.search)) {
+      window.location.replace("signup.html");
     }
-    function choose(i, btn) {
-      var item = DEMO[idx];
-      var buttons = dOpts.querySelectorAll(".opt");
-      buttons.forEach(function (b, j) {
-        b.disabled = true;
-        if (j === item.answer) b.classList.add("correct");
-      });
-      if (i !== item.answer) btn.classList.add("wrong");
-      dHint.textContent = i === item.answer ? "Correct! 🎉" : "Not quite — here's why:";
-      dSol.innerHTML = "<b>Solution.</b> " + item.solution;
-      dSol.className = "demo-sol show";
-      dNext.hidden = false;
+
+    /* ---- live feature visuals (self-contained mockups, no app data) ---- */
+    function buildHeatmap() {
+      var host = document.getElementById("scHeatmap"); if (!host) return;
+      var weeks = 26, cell = 11, gap = 3, unit = cell + gap, pad = 2;
+      var W = pad + weeks * unit, H = pad + 7 * unit;
+      var svg = '<svg class="mini-hm" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true">';
+      for (var c = 0; c < weeks; c++) {
+        for (var r = 0; r < 7; r++) {
+          // weighted random level — sparser in the past, denser recently
+          var recency = c / weeks, rnd = Math.random(), lvl;
+          if (rnd < 0.34 - 0.18 * recency) lvl = 0;
+          else if (rnd < 0.58) lvl = 1;
+          else if (rnd < 0.80) lvl = 2;
+          else if (rnd < 0.93) lvl = 3;
+          else lvl = 4;
+          svg += '<rect class="l' + lvl + '" x="' + (pad + c * unit) + '" y="' + (pad + r * unit) +
+            '" width="' + cell + '" height="' + cell + '" rx="2"/>';
+        }
+      }
+      host.innerHTML = svg + '</svg>';
     }
-    dNext.addEventListener("click", function () { idx = (idx + 1) % DEMO.length; loadQ(); });
-    loadQ();
+    function buildChart() {
+      var host = document.getElementById("scChart"); if (!host) return;
+      var n = 30, W = 440, H = 150, padL = 4, padR = 4, padT = 8, padB = 8;
+      var plotW = W - padL - padR, plotH = H - padT - padB;
+      var att = [], cor = [], wr = [], sv = [], base = 3, maxV = 1;
+      for (var i = 0; i < n; i++) {
+        base = Math.max(1, Math.min(13, base + (Math.random() * 4 - 1.7)));
+        var a = Math.round(base + Math.random() * 2);
+        var co = Math.round(a * (0.6 + Math.random() * 0.35));
+        att.push(a); cor.push(co); wr.push(a - co); sv.push(Math.round(Math.random() * 1.6));
+        if (a > maxV) maxV = a;
+      }
+      var X = function (i) { return padL + (i / (n - 1)) * plotW; };
+      var Y = function (v) { return padT + plotH - (v / maxV) * plotH; };
+      function poly(arr, color) {
+        var pts = arr.map(function (v, i) { return X(i).toFixed(1) + ',' + Y(v).toFixed(1); }).join(' ');
+        return '<polyline fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="' + pts + '"/>';
+      }
+      var grid = '';
+      [0, 0.5, 1].forEach(function (f) { var y = (padT + plotH - f * plotH).toFixed(1); grid += '<line class="grid" x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '"/>'; });
+      host.innerHTML = '<svg class="mini-chart" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+        grid + poly(att, 'var(--blue)') + poly(cor, 'var(--green)') + poly(wr, 'var(--red)') + poly(sv, 'var(--amber)') + '</svg>';
+    }
+    buildHeatmap();
+    buildChart();
+
+    applyI18n();
   })();
-  </script>
+</script>
 </body>
 </html>
