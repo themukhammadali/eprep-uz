@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Ro'yxatdan o'tish — eprep.uz</title>
-<meta name="description" content="Bepul eprep.uz hisobingizni yarating va Yangi O'zbekiston universiteti kirish imtihoniga tayyorlanishni boshlang." />
+<title>Ro'yxatdan o'tish — Nava</title>
+<meta name="description" content="Bepul Nava hisobingizni yarating va Yangi O'zbekiston universiteti kirish imtihoniga tayyorlanishni boshlang." />
 
 <!-- Supabase: when supabase-config.js is filled in, sign-up creates a real account
      and progress syncs across devices. Until then, the page falls back to a local
@@ -40,49 +40,51 @@
   button { font-family:inherit; cursor:pointer; }
   a { color:inherit; }
   :focus-visible { outline:2px solid var(--blue); outline-offset:2px; border-radius:4px; }
+  .icon { width:18px; height:18px; display:inline-block; flex:none; stroke:currentColor; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round; fill:none; vertical-align:-.2em; }
+  .icon-sm { width:15px; height:15px; }
 
   /* ---------- App bar ---------- */
   .appbar { display:flex; align-items:center; justify-content:space-between;
-    padding:14px 24px; border-bottom:1px solid var(--line); background:var(--bg); }
+    padding:16px 28px; border-bottom:1px solid var(--line); background:var(--bg); }
   .brand { display:flex; align-items:center; gap:10px; text-decoration:none; font-size:18px; font-weight:700; color:var(--ink); }
   .logo { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
     border-radius:9px; background:var(--blue); color:#fff; font-weight:800; }
-  .appbar-actions { display:flex; align-items:center; gap:10px; }
+  .appbar-actions { display:flex; align-items:center; gap:12px; }
   .theme-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--surface);
     border:1px solid var(--line); border-radius:999px; width:36px; height:33px; font-size:15px; }
   .theme-btn:hover { border-color:var(--muted); }
   .lang-btn { display:inline-flex; align-items:center; gap:6px; background:var(--surface);
     border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:14px; font-weight:600; color:var(--ink); }
   .lang-btn:hover { border-color:var(--muted); }
-  .lang-btn .globe { font-size:14px; }
 
   /* ---------- Sign-up wizard (full clean page) ---------- */
-  main { flex:1; display:flex; align-items:center; justify-content:center; padding:32px 20px; }
-  .wizard { width:100%; max-width:420px; }
+  main { flex:1; display:flex; align-items:center; justify-content:center; padding:48px 24px; }
+  .wizard { width:100%; max-width:440px; }
 
-  .steps-dots { display:flex; gap:7px; justify-content:center; margin-bottom:22px; }
+  .steps-dots { display:flex; gap:8px; justify-content:center; margin-bottom:30px; }
   .steps-dots span { width:26px; height:4px; border-radius:999px; background:var(--line); transition:background .2s ease; }
   .steps-dots span.is-active { background:var(--blue); }
   .steps-dots[hidden] { display:none; }
 
-  .step h1 { font-size:27px; font-weight:780; letter-spacing:-.5px; }
-  .step .sub { color:var(--muted); font-size:15px; margin:8px 0 22px; line-height:1.5; }
+  .step h1 { font-size:29px; font-weight:780; letter-spacing:-.5px; }
+  .step .sub { color:var(--muted); font-size:15px; margin:10px 0 28px; line-height:1.5; }
   .step[hidden] { display:none; }
 
-  form { display:flex; flex-direction:column; gap:12px; }
-  input { width:100%; border:1px solid var(--line); border-radius:11px; padding:13px 14px; font-size:16px;
+  form { display:flex; flex-direction:column; gap:14px; }
+  input { width:100%; border:1px solid var(--line); border-radius:11px; padding:14px 15px; font-size:16px;
     background:var(--surface); color:var(--ink); }
   input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
   input:disabled { opacity:.6; }
   #pCode { letter-spacing:.4em; text-align:center; font-size:22px; font-weight:700; }
 
-  .track-choice { display:flex; gap:12px; }
-  .track-opt { flex:1; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:20px 12px;
+  .track-choice { display:flex; gap:14px; }
+  .track-opt { flex:1; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:22px 14px;
     font-size:16px; font-weight:680; color:var(--ink); transition:border-color .15s ease,background .15s ease; }
   .track-opt:hover { border-color:var(--blue); }
   .track-opt.is-active { border-color:var(--blue); background:var(--blue-soft); color:var(--blue); }
 
-  .actions { display:flex; gap:12px; margin-top:18px; }
+  .actions { display:flex; gap:12px; margin-top:22px; }
   .btn-back { flex:0 0 auto; background:var(--surface); border:1px solid var(--line); color:var(--ink);
     border-radius:11px; padding:13px 22px; font-size:16px; font-weight:660; }
   .btn-back:hover { border-color:var(--muted); }
@@ -96,22 +98,24 @@
   .linklike:hover { text-decoration:underline; }
   .linklike[hidden] { display:none; }
 
-  .msg { margin-top:16px; font-size:14px; line-height:1.5; min-height:1.2em; }
+  .msg { margin-top:20px; font-size:14px; line-height:1.5; min-height:1.2em; }
   .msg[hidden] { display:none; }
   .msg.err { color:var(--red); }
   .msg.ok { color:var(--green); }
 
   @media (max-width:480px) {
+    .appbar { padding:12px 16px; }
+    main { padding:36px 20px; align-items:flex-start; }
     .step h1 { font-size:24px; }
   }
 </style>
 </head>
 <body>
   <header class="appbar">
-    <a class="brand" href="index.html"><span class="logo">e</span><span>eprep.uz</span></a>
+    <a class="brand" href="index.html"><span class="logo">n</span><span>Nava</span></a>
     <div class="appbar-actions">
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
-      <button class="lang-btn" id="langBtn" title="Til / Language"><span class="globe">🌐</span><span id="langLabel">UZ</span></button>
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode"></button>
+      <button class="lang-btn" id="langBtn" title="Til / Language"><svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path></svg><span id="langLabel">UZ</span></button>
     </div>
   </header>
 
@@ -130,7 +134,7 @@
           <input type="text" id="pSurname" data-i18n-ph="phSurname" placeholder="Surname (optional)" autocomplete="family-name" />
           <div class="actions">
             <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
-            <button type="submit" class="btn-next" data-i18n="nextArrow">Next →</button>
+            <button type="submit" class="btn-next" data-i18n="nextArrow">Next</button>
           </div>
         </form>
         <button type="button" class="linklike" id="toLogin" data-i18n="toLogin" hidden>Already have an account? Log in</button>
@@ -146,7 +150,7 @@
         </div>
         <div class="actions">
           <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
-          <button type="button" class="btn-next" id="goalNext" data-i18n="nextArrow">Next →</button>
+          <button type="button" class="btn-next" id="goalNext" data-i18n="nextArrow">Next</button>
         </div>
       </section>
 
@@ -159,7 +163,7 @@
           <input type="password" id="pPassword" data-i18n-ph="phPassword" placeholder="Password (min 6 characters)" autocomplete="new-password" required />
           <div class="actions">
             <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
-            <button type="submit" class="btn-next" id="credsNext" data-i18n="nextArrow">Next →</button>
+            <button type="submit" class="btn-next" id="credsNext" data-i18n="nextArrow">Next</button>
           </div>
         </form>
       </section>
@@ -173,7 +177,7 @@
                  pattern="[0-9]*" placeholder="000000" required />
           <div class="actions">
             <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
-            <button type="submit" class="btn-next" id="otpVerify" data-i18n="verifyArrow">Verify →</button>
+            <button type="submit" class="btn-next" id="otpVerify" data-i18n="verifyArrow">Verify</button>
           </div>
         </form>
         <button type="button" class="linklike" id="resendCode" data-i18n="resend">Resend code</button>
@@ -188,7 +192,7 @@
           <input type="password" id="lPassword" data-i18n-ph="phLPassword" placeholder="Password" autocomplete="current-password" required />
           <div class="actions">
             <button type="button" class="btn-back" id="loginBack" data-i18n="back">Back</button>
-            <button type="submit" class="btn-next" id="loginSubmit" data-i18n="loginArrow">Log in →</button>
+            <button type="submit" class="btn-next" id="loginSubmit" data-i18n="loginArrow">Log in</button>
           </div>
         </form>
       </section>
@@ -201,8 +205,8 @@
   (function () {
     "use strict";
 
-    /* ---- language (EN / UZ; shared with the app via localStorage key newuu_lang) ---- */
-    var LANG_STORE = "newuu_lang";
+    /* ---- language (EN / UZ; shared with the app via localStorage key nava_lang) ---- */
+    var LANG_STORE = "nava_lang";
     var LANG = "uz";
     try { var sl = localStorage.getItem(LANG_STORE); if (sl === "en" || sl === "uz") LANG = sl; } catch (e) {}
 
@@ -210,14 +214,14 @@
       en: {
         s1Title: "What is your name?", s1Sub: "Tell us what to call you.",
         phName: "First name", phSurname: "Surname (optional)",
-        back: "Back", nextArrow: "Next →", toLogin: "Already have an account? Log in",
+        back: "Back", nextArrow: "Next", toLogin: "Already have an account? Log in",
         s2Title: "Choose your goal", s2Sub: "Which exam are you preparing for?",
         s3Title: "Create your login", s3Sub: "Your email and a password — we'll use these to save your progress.",
         phEmail: "Email", phPassword: "Password (min 6 characters)",
         s4Title: "Check your email", otpSentTo: "We sent a 6-digit code to", otpEnter: "Enter it to finish.",
-        verifyArrow: "Verify →", resend: "Resend code",
+        verifyArrow: "Verify", resend: "Resend code",
         loginTitle: "Welcome back", loginSub: "Log in to pick up your progress on this device.",
-        phLPassword: "Password", loginArrow: "Log in →", startPracticing: "Start practicing →",
+        phLPassword: "Password", loginArrow: "Log in", startPracticing: "Start practicing",
         sending: "Sending…", verifying: "Verifying…", loggingIn: "Logging in…",
         errName: "Please enter your first name.",
         errTrack: "Please choose which exam you're preparing for.",
@@ -233,14 +237,14 @@
       uz: {
         s1Title: "Ismingiz nima?", s1Sub: "Sizni qanday chaqirishimizni ayting.",
         phName: "Ism", phSurname: "Familiya (ixtiyoriy)",
-        back: "Orqaga", nextArrow: "Keyingi →", toLogin: "Hisobingiz bormi? Kirish",
+        back: "Orqaga", nextArrow: "Keyingi", toLogin: "Hisobingiz bormi? Kirish",
         s2Title: "Maqsadingizni tanlang", s2Sub: "Qaysi imtihonga tayyorlanyapsiz?",
         s3Title: "Hisob yarating", s3Sub: "Email va parol — progressingizni saqlash uchun ulardan foydalanamiz.",
         phEmail: "Email", phPassword: "Parol (kamida 6 ta belgi)",
         s4Title: "Emailingizni tekshiring", otpSentTo: "6 xonali kodni yubordik:", otpEnter: "Tugatish uchun uni kiriting.",
-        verifyArrow: "Tasdiqlash →", resend: "Kodni qayta yuborish",
+        verifyArrow: "Tasdiqlash", resend: "Kodni qayta yuborish",
         loginTitle: "Xush kelibsiz", loginSub: "Ushbu qurilmada progressingizni davom ettirish uchun kiring.",
-        phLPassword: "Parol", loginArrow: "Kirish →", startPracticing: "Mashqni boshlash →",
+        phLPassword: "Parol", loginArrow: "Kirish", startPracticing: "Mashqni boshlash",
         sending: "Yuborilmoqda…", verifying: "Tekshirilmoqda…", loggingIn: "Kirilmoqda…",
         errName: "Iltimos, ismingizni kiriting.",
         errTrack: "Iltimos, qaysi imtihonga tayyorlanayotganingizni tanlang.",
@@ -255,9 +259,16 @@
       }
     };
     var t = function (k) { return (DICT[LANG] && DICT[LANG][k] != null) ? DICT[LANG][k] : DICT.en[k]; };
+    function icon(name) {
+      var paths = {
+        moon: '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8z"></path>',
+        sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M6.34 17.66l-1.41 1.41"></path><path d="M19.07 4.93l-1.41 1.41"></path>'
+      };
+      return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">' + paths[name] + '</svg>';
+    }
 
-    /* ---- theme (shared with the rest of the site via newuu_theme) ---- */
-    var THEME_STORE = "newuu_theme";
+    /* ---- theme (shared with the rest of the site via nava_theme) ---- */
+    var THEME_STORE = "nava_theme";
     var theme = "light";
     try {
       var saved = localStorage.getItem(THEME_STORE);
@@ -267,7 +278,7 @@
     function applyTheme() {
       document.documentElement.setAttribute("data-theme", theme);
       var b = document.getElementById("themeBtn");
-      if (b) b.textContent = theme === "dark" ? "☀️" : "🌙";
+      if (b) b.innerHTML = icon(theme === "dark" ? "sun" : "moon");
     }
     applyTheme();
     document.getElementById("themeBtn").addEventListener("click", function () {
@@ -306,7 +317,7 @@
     });
 
     /* ---- sign-up wizard ---- */
-    var PROFILE = "eprep_profile";
+    var PROFILE = "nava_profile";
     var msg = document.getElementById("authMsg");
     var dots = document.querySelectorAll("#dots span");
     var steps = [
@@ -357,13 +368,18 @@
 
     // Persist a small local profile — keeps the in-app greeting working and powers
     // the local-only fallback. The real source of truth (when signed in) is Supabase.
+    // Merges onto whatever's already stored (rather than overwriting) so extended
+    // profile fields added later from the app's Profile page survive a revisit here.
     function saveLocalProfile() {
-      var profile = {
+      var prev = {}; try { prev = JSON.parse(localStorage.getItem(PROFILE) || "null") || {}; } catch (e) {}
+      var profile = Object.assign({}, prev, {
         name: nameInput.value.trim(),
         surname: surnameInput.value.trim(),
         track: track,
-        email: emailInput.value.trim()
-      };
+        email: emailInput.value.trim(),
+        joinedAt: prev.joinedAt || Date.now(),
+        updatedAt: Date.now()
+      });
       try { localStorage.setItem(PROFILE, JSON.stringify(profile)); } catch (e) {}
     }
     function goToApp() { window.location.href = "app.html"; }

@@ -1,5 +1,5 @@
 /*
- * Supabase configuration for eprep.uz.
+ * Supabase configuration for Nava.
  *
  * Fill in the two values below with your project's credentials, then reload.
  * Find them in the Supabase dashboard: Project Settings -> API.

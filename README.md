@@ -1,9 +1,9 @@
-# eprep.uz
+# Nava
 
 Free, Bluebook-style exam prep for Uzbekistan university entrance exams.
 
 It started as a personal study tool for the New Uzbekistan University (NewUU)
-entrance exam — built, used, and it worked. It's now growing into eprep.uz: a
+entrance exam — built, used, and it worked. It's now growing into Nava: a
 multi-exam prep platform, with **NewUU Mathematics** live today and **WIUT** and
 **DTM** tracks on the way.
 

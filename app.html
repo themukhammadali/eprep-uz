@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>eprep.uz — NewUU entrance maths practice</title>
+<title>Nava — NewUU entrance maths practice</title>
 
 <!-- MathJax (renders \( \) inline and \[ \] display) -->
 <script>
@@ -76,6 +76,10 @@
 
   /* Visible keyboard focus on every custom control (UA outline is invisible on dark surfaces). */
   :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+  .icon { width: 18px; height: 18px; display: inline-block; flex: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: -.2em; }
+  .icon-sm { width: 15px; height: 15px; }
+  .icon-xs { width: 13px; height: 13px; }
 
   /* ---------- Brand / logo / runner timer ---------- */
   .brand { display: flex; align-items: center; gap: 10px; background: none; border: none;
@@ -90,13 +94,13 @@
 
   /* ---------- Test results ---------- */
   .results { max-width: 720px; margin: 0 auto; }
-  .results h2 { font-size: 26px; font-weight: 650; letter-spacing: -.3px; margin-bottom: 6px; }
+  .results h2 { font-size: 28px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 8px; }
   .results .res-sub { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
   .res-score { display: flex; align-items: baseline; gap: 10px; margin-bottom: 22px; }
   .res-score .big { font-size: 48px; font-weight: 800; letter-spacing: -1px; }
   .res-score .pct { font-size: 18px; color: var(--muted); font-weight: 600; }
-  .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
-  .res-cell { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: var(--surface); }
+  .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+  .res-cell { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--surface); }
   .res-cell .l { font-size: 13px; color: var(--muted); font-weight: 600; }
   .res-cell .v { font-size: 26px; font-weight: 700; margin-top: 6px; }
   .res-cell.correct .v { color: var(--green); }
@@ -106,14 +110,14 @@
   .res-actions { display: flex; flex-wrap: wrap; gap: 12px; }
   @media (max-width: 620px) { .res-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  #app { flex: 1 1 auto; min-width: 0; max-width: 1000px; margin: 0 auto; padding: 28px 28px 90px; width: 100%; }
+  #app { flex: 1 1 auto; min-width: 0; max-width: 1040px; margin: 0 auto; padding: 36px 32px 96px; width: 100%; }
 
   /* ---------- Dashboard ---------- */
-  .greeting h1 { font-size: 27px; font-weight: 700; letter-spacing: -.4px; }
-  .greeting .subtitle { color: var(--muted); margin-top: 5px; font-size: 15px; }
+  .greeting h1 { font-size: 30px; font-weight: 750; letter-spacing: -.5px; }
+  .greeting .subtitle { color: var(--muted); margin-top: 7px; font-size: 15px; }
 
-  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 26px 0; }
-  .stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; background: var(--surface); }
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin: 30px 0; }
+  .stat { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--surface); }
   .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; }
   .stat-val { font-size: 28px; font-weight: 700; margin-top: 6px; letter-spacing: -.5px; }
   .stat-sub { font-size: 15px; color: var(--muted); font-weight: 600; }
@@ -124,11 +128,11 @@
 
   /* ---------- Due for review ---------- */
   .due { border: 1px solid var(--line); background: var(--blue-soft); border-radius: var(--radius);
-    padding: 16px 18px; margin-bottom: 26px; }
+    padding: 18px 20px; margin: 6px 0 32px; }
   .due h3 { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
   .due h3 .badge { background: var(--blue); color: #fff; border-radius: 999px; font-size: 12px;
     padding: 1px 9px; font-weight: 700; }
-  .due-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .due-list { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
   .due-chip { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line);
     background: var(--surface); border-radius: 999px; padding: 7px 14px; cursor: pointer; font-size: 14px; color: var(--ink); }
   .due-chip:hover { border-color: var(--blue); }
@@ -136,7 +140,7 @@
 
   /* ---------- Topic tracker ---------- */
   .tracker-title { font-size: 14px; font-weight: 700; color: var(--muted); text-transform: uppercase;
-    letter-spacing: .6px; margin-bottom: 12px; }
+    letter-spacing: .6px; margin-bottom: 14px; }
   .tracker { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
   .unit-header { display: flex; align-items: center; justify-content: space-between;
     padding: 12px 18px; background: var(--surface-2); border-top: 1px solid var(--line);
@@ -181,6 +185,34 @@
   .reset-link { background: none; border: none; color: var(--muted); font-size: 13px; cursor: pointer; }
   .reset-link:hover { color: var(--red); text-decoration: underline; }
 
+  /* ---------- Profile + Timeline ---------- */
+  .profile-head { display: flex; align-items: center; gap: 18px; }
+  .profile-head .subtitle { margin-top: 4px; }
+  .profile-avatar { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px;
+    border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: 26px;
+    text-transform: uppercase; flex: none; }
+  .profile-meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+  .profile-form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 20px; }
+  .profile-field { display: flex; flex-direction: column; gap: 6px; }
+  .profile-field.full { grid-column: 1 / -1; }
+  .profile-field label { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .profile-field input, .profile-field textarea { font: inherit; color: var(--ink); background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .profile-field textarea { resize: vertical; min-height: 80px; }
+  .profile-field input:focus, .profile-field textarea:focus { outline: none; border-color: var(--blue); }
+  .profile-form > .btn-primary { grid-column: 1 / -1; justify-self: start; margin-top: 4px; }
+  @media (max-width: 860px) { .profile-form { grid-template-columns: 1fr; } }
+
+  .timeline { display: flex; flex-direction: column; }
+  .tl-row { position: relative; padding: 0 0 24px 24px; }
+  .tl-row:last-child { padding-bottom: 0; }
+  .tl-row::before { content: ""; position: absolute; left: 4px; top: 14px; bottom: -2px; width: 2px; background: var(--line); }
+  .tl-row:last-child::before { display: none; }
+  .tl-dot { position: absolute; left: 0; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+  .tl-label { font-weight: 600; }
+  .tl-date { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
   /* ---------- Topic / skill screen ---------- */
   .back { background: none; border: none; color: var(--blue); cursor: pointer; font-size: 14px;
     font-weight: 600; padding: 0; margin-bottom: 14px; }
@@ -191,7 +223,7 @@
 
   .reading { max-width: 860px; margin-top: 22px; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 24px 26px; margin-bottom: 18px; }
+    padding: 26px 28px; margin-bottom: 22px; }
   .card h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted);
     margin-bottom: 14px; font-weight: 700; }
   .prose { font-size: 18px; line-height: 1.65; }
@@ -215,11 +247,11 @@
   /* ---------- Bluebook question runner ---------- */
   .runner { max-width: 720px; margin: 0 auto; }
   .runner-top { display: flex; align-items: center; justify-content: space-between;
-    padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 28px; }
+    padding-bottom: 16px; border-bottom: 1px solid var(--line); margin-bottom: 34px; }
   .runner-title { font-size: 14px; color: var(--muted); font-weight: 600; }
   .stage { min-height: 280px; }
   .q-big { font-size: 22px; line-height: 1.45; margin-bottom: 28px; }
-  .choices { display: flex; flex-direction: column; gap: 14px; }
+  .choices { display: flex; flex-direction: column; gap: 16px; }
   .choice { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; background: var(--surface);
     border: 1.5px solid var(--line); border-radius: 14px; padding: 17px 20px; font-size: 18px;
     color: var(--ink); cursor: pointer; transition: border-color .12s, background .12s; }
@@ -237,7 +269,7 @@
   .choice.correct::after { content: "✓"; margin-left: auto; color: var(--green); font-weight: 800; font-size: 19px; line-height: 1; }
   .choice.wrong::after { content: "✗"; margin-left: auto; color: var(--red); font-weight: 800; font-size: 19px; line-height: 1; }
 
-  .explain { margin-top: 24px; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--surface-2); }
+  .explain { margin-top: 28px; border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; background: var(--surface-2); }
   .explain-verdict { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
   .explain-verdict.ok { color: var(--green); }
   .explain-verdict.bad { color: var(--red); }
@@ -246,19 +278,19 @@
   .explain-body { font-size: 16px; line-height: 1.55; }
 
   .runner-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 1px solid var(--line);
-    display: flex; align-items: center; justify-content: space-between; padding: 14px 0; margin-top: 32px; }
+    display: flex; align-items: center; justify-content: space-between; padding: 16px 0; margin-top: 38px; }
   .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
   .bar-actions { display: flex; gap: 10px; }
 
   /* ---------- Top nav tabs ---------- */
 
   /* ---------- Page header (Learn / Practice) ---------- */
-  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
-    margin-bottom: 6px; flex-wrap: wrap; }
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px;
+    margin-bottom: 10px; flex-wrap: wrap; }
   .page-head h1 { font-size: 30px; font-weight: 750; letter-spacing: -.6px; }
   .page-head .ph-sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
   .section-title { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase;
-    letter-spacing: .6px; margin: 30px 0 12px; }
+    letter-spacing: .6px; margin: 36px 0 14px; }
 
   /* ---------- Refined analytics cards ---------- */
   .stats { gap: 16px; margin: 24px 0 8px; }
@@ -268,7 +300,7 @@
   .stat-ic { position: absolute; right: 14px; bottom: 10px; font-size: 30px; opacity: .07; }
 
   /* ---------- Units overview cards ---------- */
-  .unit-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .unit-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .ucard { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
     padding: 18px 18px 16px; cursor: pointer; color: var(--ink); transition: border-color .15s, transform .1s; }
   .ucard:hover { border-color: var(--blue); transform: translateY(-1px); }
@@ -280,9 +312,9 @@
     color: var(--muted); margin-bottom: 8px; }
 
   /* ---------- "Practice all topics" hero card ---------- */
-  .practice-all { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  .practice-all { display: flex; align-items: center; justify-content: space-between; gap: 18px;
     border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2);
-    padding: 22px 24px; margin: 20px 0 26px; }
+    padding: 24px 26px; margin: 24px 0 30px; }
   .practice-all .pa-text h3 { font-size: 18px; font-weight: 700; }
   .practice-all .pa-text p { color: var(--muted); font-size: 14px; margin-top: 4px; }
 
@@ -295,10 +327,10 @@
   .seg button.active { background: var(--blue); color: #fff; }
 
   /* ---------- Grouped list (Learn / Practice) — airy variant of the tracker ---------- */
-  .group { margin-top: 26px; }
-  .group-head { font-size: 18px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 6px; }
+  .group { margin-top: 32px; }
+  .group-head { font-size: 18px; font-weight: 700; letter-spacing: -.2px; margin-bottom: 10px; }
   .listcard { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
-  .lrow { display: grid; grid-template-columns: 26px 1fr 150px 56px 100px; align-items: center; gap: 16px;
+  .lrow { display: grid; grid-template-columns: 26px 1fr 150px 56px 100px; align-items: center; gap: 18px;
     width: 100%; text-align: left; background: var(--surface); border: none; border-top: 1px solid var(--line);
     padding: 16px 20px; cursor: pointer; font-size: 15.5px; color: var(--ink); }
   .lrow:first-child { border-top: none; }
@@ -308,7 +340,14 @@
   .lrow .lr-check.done { background: var(--green); border-color: var(--green); color: #fff; }
   .lrow .lr-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 550; }
   .lrow .lr-go { font-size: 13.5px; font-weight: 650; color: var(--blue); text-align: right; white-space: nowrap; }
-  .empty { padding: 26px; text-align: center; color: var(--muted); font-size: 14px; }
+  .empty { padding: 36px 28px; text-align: center; color: var(--muted); font-size: 14px;
+    border: 1px dashed var(--line); border-radius: 16px; background: var(--surface-2); margin-top: 20px; }
+  .empty-state { max-width: 560px; margin: 26px auto 0; padding: 38px 32px; text-align: center;
+    border: 1px dashed var(--line); border-radius: 16px; background: var(--surface-2); }
+  .empty-ic { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px;
+    border-radius: 13px; background: var(--blue-soft); color: var(--blue); margin-bottom: 16px; }
+  .empty-state h2 { font-size: 21px; line-height: 1.25; letter-spacing: -.2px; margin-bottom: 8px; }
+  .empty-state p { color: var(--muted); font-size: 15px; max-width: 380px; margin: 0 auto 22px; }
 
   /* ---------- Responsive ---------- */
   @media (max-width: 860px) {
@@ -316,7 +355,7 @@
     .unit-cards { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 620px) {
-    #app { padding: 22px 16px 80px; }
+    #app { padding: 26px 18px 84px; }
     .brand .brand-name { display: none; }
     .trow { grid-template-columns: 1fr 64px 82px; gap: 10px; padding: 12px 14px; font-size: 14px; }
     .trow .trow-count { display: none; }
@@ -340,9 +379,9 @@
   .runner-tools { display: inline-flex; align-items: center; gap: 10px; }
   .bookmark-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 33px;
     border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
-    font-size: 15px; line-height: 1; filter: grayscale(1) opacity(.55); transition: filter .12s, border-color .12s, background .12s; }
-  .bookmark-btn:hover { border-color: var(--amber); filter: grayscale(.3) opacity(.85); }
-  .bookmark-btn.on { filter: none; border-color: var(--amber); background: var(--green-soft); }
+    color: var(--muted); line-height: 1; transition: color .12s, border-color .12s, background .12s; }
+  .bookmark-btn:hover { border-color: var(--amber); color: var(--amber); }
+  .bookmark-btn.on { color: var(--amber); border-color: var(--amber); background: var(--green-soft); }
 
   /* ---------------- Line chart ---------------- */
   .card.chartcard, .card.heatcard, .card.diffcard { padding: 18px 18px 14px; }
@@ -453,7 +492,7 @@
     border: none; border-radius: 10px; padding: 10px 12px; font-size: 14.5px; font-weight: 600; color: var(--ink); cursor: pointer; }
   .sb-item:hover { background: var(--surface-3); }
   .sb-item.active { color: var(--blue); background: var(--blue-soft); }
-  .sb-item .di-ic { font-size: 16px; width: 20px; text-align: center; flex: none; }
+  .sb-item .di-ic { width: 20px; display: inline-flex; align-items: center; justify-content: center; color: currentColor; flex: none; }
   .sb-item .di-label { flex: 1; min-width: 0; }
   .sb-val { font-size: 12px; color: var(--muted); font-weight: 600; }
   .sb-chev { color: var(--muted); font-size: 10px; transition: transform .15s ease; }
@@ -496,8 +535,8 @@
 <body>
   <!-- Mobile-only top bar to open the sidebar on narrow screens -->
   <header class="topbar">
-    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="sidebar">☰</button>
-    <button class="brand js-home"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="sidebar"><span data-icon="menu"></span></button>
+    <button class="brand js-home"><span class="logo">n</span><span class="brand-name">Nava</span></button>
   </header>
 
   <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
@@ -505,7 +544,7 @@
   <div class="layout">
     <!-- Permanent left sidebar -->
     <aside class="sidebar" id="sidebar" aria-label="Main menu">
-      <button class="sb-brand js-home"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
+      <button class="sb-brand js-home"><span class="logo">n</span><span class="brand-name">Nava</span></button>
 
       <!-- Exam track chooser -->
       <div class="sb-tracks" role="radiogroup" aria-label="Exam">
@@ -515,32 +554,32 @@
       </div>
 
       <nav class="sb-nav">
-        <button class="sb-item" data-view="home" data-i18n="navHome"><span class="di-ic">🏠</span><span class="di-label">Home</span></button>
-        <button class="sb-item" data-view="analytics" data-i18n="navAnalytics"><span class="di-ic">📊</span><span class="di-label">Analytics</span></button>
-        <button class="sb-item" data-view="practice" data-i18n="navQuestionBank"><span class="di-ic">✏️</span><span class="di-label">Question Bank</span></button>
-        <button class="sb-item" data-view="learn" data-i18n="navLessons"><span class="di-ic">📚</span><span class="di-label">Lessons</span></button>
-        <button class="sb-item" data-view="saved" data-i18n="navSaved"><span class="di-ic">🔖</span><span class="di-label">Saved</span></button>
-        <button class="sb-item" data-view="mistakes" data-i18n="navMistakes"><span class="di-ic">⚠️</span><span class="di-label">Mistakes Log</span></button>
+        <button class="sb-item" data-view="home" data-i18n="navHome"><span class="di-ic" data-icon="home"></span><span class="di-label">Home</span></button>
+        <button class="sb-item" data-view="analytics" data-i18n="navAnalytics"><span class="di-ic" data-icon="chart"></span><span class="di-label">Analytics</span></button>
+        <button class="sb-item" data-view="practice" data-i18n="navQuestionBank"><span class="di-ic" data-icon="pencil"></span><span class="di-label">Question Bank</span></button>
+        <button class="sb-item" data-view="learn" data-i18n="navLessons"><span class="di-ic" data-icon="book"></span><span class="di-label">Lessons</span></button>
+        <button class="sb-item" data-view="saved" data-i18n="navSaved"><span class="di-ic" data-icon="bookmark"></span><span class="di-label">Saved</span></button>
+        <button class="sb-item" data-view="mistakes" data-i18n="navMistakes"><span class="di-ic" data-icon="alert"></span><span class="di-label">Mistakes Log</span></button>
 
         <div class="sb-sep"></div>
 
-        <button class="sb-item" id="themeItem"><span class="di-ic" id="themeIc">🌙</span><span class="di-label" data-i18n="theme">Theme</span><span class="sb-val" id="themeVal"></span></button>
-        <button class="sb-item" id="langItem"><span class="di-ic">🌐</span><span class="di-label" data-i18n="language">Language</span><span class="sb-val" id="langVal"></span></button>
-        <button class="sb-item" id="moreBtn" aria-expanded="false"><span class="di-ic">⋯</span><span class="di-label" data-i18n="more">More</span><span class="sb-chev">▾</span></button>
+        <button class="sb-item" id="themeItem"><span class="di-ic" id="themeIc"></span><span class="di-label" data-i18n="theme">Theme</span><span class="sb-val" id="themeVal"></span></button>
+        <button class="sb-item" id="langItem"><span class="di-ic" data-icon="globe"></span><span class="di-label" data-i18n="language">Language</span><span class="sb-val" id="langVal"></span></button>
+        <button class="sb-item" id="moreBtn" aria-expanded="false"><span class="di-ic" data-icon="more"></span><span class="di-label" data-i18n="more">More</span><span class="sb-chev">▾</span></button>
         <div class="sb-sub" id="moreMenu" hidden>
-          <button class="sb-item sub" data-view="feedback" data-i18n="feedback"><span class="di-ic">💬</span><span class="di-label">Give feedback</span></button>
-          <button class="sb-item sub" data-view="join" data-i18n="joinUs"><span class="di-ic">🤝</span><span class="di-label">Join us</span></button>
+          <button class="sb-item sub" data-view="feedback" data-i18n="feedback"><span class="di-ic" data-icon="message"></span><span class="di-label">Give feedback</span></button>
+          <button class="sb-item sub" data-view="join" data-i18n="joinUs"><span class="di-ic" data-icon="users"></span><span class="di-label">Join us</span></button>
         </div>
       </nav>
 
       <div class="sb-bottom">
-        <button class="sb-item" data-view="options" data-i18n="options"><span class="di-ic">⚙️</span><span class="di-label">Settings</span></button>
+        <button class="sb-item" data-view="options" data-i18n="options"><span class="di-ic" data-icon="settings"></span><span class="di-label">Profile</span></button>
         <div class="sb-profile">
-          <button class="pf-open" data-view="options" aria-label="Settings">
+          <button class="pf-open" data-view="options" aria-label="Profile">
             <span class="pf-avatar" id="pfAvatar">?</span>
             <span class="pf-meta"><span class="pf-name" id="pfName">Guest</span><span class="pf-sub" id="pfSub"></span></span>
           </button>
-          <button class="pf-logout" id="logoutBtn" title="Log out" aria-label="Log out">⎋</button>
+          <button class="pf-logout" id="logoutBtn" title="Log out" aria-label="Log out"><span data-icon="logout"></span></button>
         </div>
       </div>
     </aside>
@@ -569,7 +608,7 @@
     }
     // Local-only fallback (no backend yet): require a local profile.
     try {
-      var p = JSON.parse(localStorage.getItem("eprep_profile") || "null");
+      var p = JSON.parse(localStorage.getItem("nava_profile") || "null");
       if (!p || !p.name) window.location.replace("signup.html");
     } catch (e) { window.location.replace("signup.html"); }
   })();
@@ -591,10 +630,45 @@
     const LABELS = ["A", "B", "C", "D", "E", "F"];
     const PLACEHOLDER = /^\s*(\[.*\]|<p>\s*\[.*\]\s*<\/p>)\s*$/;
     let STUDENT = "";   // set from the local profile (sign-up); empty = no name in greeting
-    const PROFILE_STORE = "eprep_profile";
+    const PROFILE_STORE = "nava_profile";
     const INTERVALS = [1, 2, 4, 7, 15, 30]; // spaced-repetition days by stage
     const scroll0 = () => window.scrollTo(0, 0);
     const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    function icon(name, cls) {
+      const paths = {
+        alert: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path>',
+        arrowLeft: '<path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path>',
+        book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>',
+        bookmark: '<path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>',
+        chart: '<path d="M3 3v18h18"></path><path d="M7 14l4-4 3 3 5-7"></path>',
+        check: '<path d="M20 6L9 17l-5-5"></path>',
+        clock: '<circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l3 2"></path><path d="M9 2h6"></path>',
+        flame: '<path d="M8.5 14.5A4.5 4.5 0 0 0 13 19a4.5 4.5 0 0 0 4.5-4.5c0-2.6-1.3-4.3-3.2-6.1-.4 1.8-1.6 2.8-3.2 3.6.2-2.6-.9-4.9-3.1-7C7.4 8 5 10.6 5 14a7 7 0 0 0 14 0"></path>',
+        flag: '<path d="M4 22V4"></path><path d="M4 4h13l-1.5 4L17 12H4"></path>',
+        globe: '<circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 0 20"></path><path d="M12 2a15.3 15.3 0 0 0 0 20"></path>',
+        home: '<path d="M3 10.5 12 3l9 7.5"></path><path d="M5 10v10h14V10"></path><path d="M9 20v-6h6v6"></path>',
+        logout: '<path d="M10 17l5-5-5-5"></path><path d="M15 12H3"></path><path d="M21 3v18"></path>',
+        menu: '<path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>',
+        message: '<path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"></path>',
+        moon: '<path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8z"></path>',
+        more: '<circle cx="5" cy="12" r="1.5"></circle><circle cx="12" cy="12" r="1.5"></circle><circle cx="19" cy="12" r="1.5"></circle>',
+        pencil: '<path d="M12 20h9"></path><path d="m16.5 3.5 4 4L7 21H3v-4z"></path>',
+        refresh: '<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"></path><path d="M3 21v-5h5"></path><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"></path><path d="M21 3v5h-5"></path>',
+        settings: '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.3a2 2 0 1 1-4 0V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1A2 2 0 1 1 4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H2.7a2 2 0 1 1 0-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 1 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.6v-.3a2 2 0 1 1 4 0V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 1 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.6 1h.3a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.6 1z"></path>',
+        sun: '<circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M4.93 4.93l1.41 1.41"></path><path d="M17.66 17.66l1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="M6.34 17.66l-1.41 1.41"></path><path d="M19.07 4.93l-1.41 1.41"></path>',
+        target: '<circle cx="12" cy="12" r="9"></circle><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1"></circle>',
+        trash: '<path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="M19 6l-1 15H6L5 6"></path>',
+        users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9"></path><path d="M16 3.1a4 4 0 0 1 0 7.8"></path>',
+        x: '<path d="M18 6L6 18"></path><path d="M6 6l12 12"></path>',
+        zap: '<path d="M13 2 3 14h8l-1 8 10-12h-8z"></path>'
+      };
+      return '<svg class="icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" aria-hidden="true">' + (paths[name] || "") + '</svg>';
+    }
+    function hydrateIcons(root) {
+      (root || document).querySelectorAll("[data-icon]").forEach((node) => {
+        node.innerHTML = icon(node.dataset.icon);
+      });
+    }
 
     /* ---------------- i18n (UI strings only — questions stay in their original language) ---------------- */
     const I18N = {
@@ -602,7 +676,7 @@
         hello: "Hello", prepStands: "here's where your prep stands.",
         topicsCompleted: "Topics completed", questionsAttempted: "Questions attempted",
         correct: "Correct", wrong: "Wrong", accuracy: "Accuracy",
-        dueForReview: "Due for review", review: "Review →",
+        dueForReview: "Due for review", review: "Review",
         topicTracker: "Topic tracker", topics: "topics",
         unitChallenge: "Unit Challenge", hardQs: "hard Qs",
         finalChallenge: "Final Challenge", finalConfirm: "Start the full 120-minute mock exam? It is timed and auto-submits when the clock runs out.",
@@ -627,10 +701,18 @@
         theme: "Theme", language: "Language", more: "More",
         feedback: "Give feedback", joinUs: "Join us", soon: "soon",
         themeDark: "Dark", themeLight: "Light",
-        options: "Options", logOut: "Log out", logOutConfirm: "Log out? Your progress stays saved on this device.",
+        options: "Profile", logOut: "Log out", logOutConfirm: "Log out? Your progress stays saved on this device.",
         comingSoon: "Coming soon — we're building this.",
         savedQuestions: "Saved questions", mistakeLog: "Mistake log",
-        yourProfile: "Your profile", name: "Name", exam: "Exam",
+        yourProfile: "Your profile", name: "Name", surname: "Surname", exam: "Exam",
+        school: "School", grade: "Grade", region: "Region", favoriteSubject: "Favorite subject",
+        dreamUniversity: "Dream university", dreamCareer: "Dream career", bio: "Bio",
+        saveProfile: "Save profile", identityDefault: "Nava student", identityDream: "Future {u} student",
+        viewTimeline: "View timeline", timelineTitle: "Timeline", timelineSub: "Your milestones, in order.",
+        timelineEmpty: "Nothing here yet — answer a few questions to start your timeline.",
+        tlJoined: "Joined Nava", tlFirstQuestion: "Solved your first question",
+        tlStreak: "Hit a {n}-day streak", tlUnitDone: "Completed {u}",
+        tlChallengeDone: "Completed the {u} Unit Challenge", tlFinalDone: "Completed the Final Challenge",
         learnTitle: "Learn", learnSub: "Read the lesson for any skill, then practise it.",
         practiceTitle: "Practice", practiceSub: "Pick a skill to drill, or practise everything at once.",
         readLesson: "Read lesson", continueLesson: "Continue", lessonDone: "Reviewed",
@@ -642,8 +724,8 @@
         saveQuestion: "Save this question", savedRemove: "Remove from saved", retry: "Try again",
         diffEasy: "Easy", diffMedium: "Medium", diffHard: "Hard",
         savedSub: "Questions you bookmarked to revisit.", mistakeSub: "Questions you got wrong — review and retry them.",
-        savedEmpty: "No saved questions yet. Tap the 🔖 on any question to save it.",
-        mistakeEmpty: "No mistakes logged yet. Wrong answers will show up here.",
+        savedEmptyTitle: "No saved questions yet", savedEmpty: "Use the save button on any practice question to build a personal review list.",
+        mistakeEmptyTitle: "No mistakes logged yet", mistakeEmpty: "Wrong answers will appear here automatically, ready for focused review.",
         practiceSaved: "Practice saved questions", reviewMistakes: "Review your mistakes",
         reviewAll: "Review all", questions: "questions",
         streak: "Day streak", days: "days", longest: "Best:", viewAll: "View all",
@@ -658,7 +740,7 @@
         hello: "Salom", prepStands: "tayyorgarligingiz holati.",
         topicsCompleted: "Tugatilgan mavzular", questionsAttempted: "Yechilgan savollar",
         correct: "To'g'ri", wrong: "Noto'g'ri", accuracy: "Aniqlik",
-        dueForReview: "Takrorlash vaqti keldi", review: "Takrorlash →",
+        dueForReview: "Takrorlash vaqti keldi", review: "Takrorlash",
         topicTracker: "Mavzular bo'yicha progress", topics: "mavzu",
         unitChallenge: "Bo'lim sinovi", hardQs: "qiyin savol",
         finalChallenge: "Yakuniy sinov", finalConfirm: "To'liq 120 daqiqalik sinov boshlansinmi? U vaqt bilan cheklangan va vaqt tugaganda avtomatik topshiriladi.",
@@ -683,10 +765,18 @@
         theme: "Ko'rinish", language: "Til", more: "Yana",
         feedback: "Fikr bildirish", joinUs: "Bizga qo'shiling", soon: "tez orada",
         themeDark: "Qorong'i", themeLight: "Yorug'",
-        options: "Sozlamalar", logOut: "Chiqish", logOutConfirm: "Chiqasizmi? Progressingiz ushbu qurilmada saqlanib qoladi.",
+        options: "Profil", logOut: "Chiqish", logOutConfirm: "Chiqasizmi? Progressingiz ushbu qurilmada saqlanib qoladi.",
         comingSoon: "Tez orada — ustida ishlayapmiz.",
         savedQuestions: "Saqlangan savollar", mistakeLog: "Xatolar jurnali",
-        yourProfile: "Profilingiz", name: "Ism", exam: "Imtihon",
+        yourProfile: "Profilingiz", name: "Ism", surname: "Familiya", exam: "Imtihon",
+        school: "Maktab", grade: "Sinf", region: "Viloyat", favoriteSubject: "Sevimli fan",
+        dreamUniversity: "Orzudagi universitet", dreamCareer: "Orzudagi kasb", bio: "O'zingiz haqingizda",
+        saveProfile: "Profilni saqlash", identityDefault: "Nava talabasi", identityDream: "Bo'lajak {u} talabasi",
+        viewTimeline: "Vaqt jadvalini ko'rish", timelineTitle: "Vaqt jadvali", timelineSub: "Yutuqlaringiz tartib bilan.",
+        timelineEmpty: "Hali hech narsa yo'q — vaqt jadvalingizni boshlash uchun bir nechta savolga javob bering.",
+        tlJoined: "Nava'ga qo'shildingiz", tlFirstQuestion: "Birinchi savolingizni yechdingiz",
+        tlStreak: "{n} kunlik ketma-ketlikka erishdingiz", tlUnitDone: "{u} bo'limini tugatdingiz",
+        tlChallengeDone: "{u} bo'lim sinovini tugatdingiz", tlFinalDone: "Yakuniy sinovni tugatdingiz",
         learnTitle: "O'rganish", learnSub: "Istalgan mavzu darsini o'qing, so'ng mashq qiling.",
         practiceTitle: "Mashq", practiceSub: "Mashq uchun mavzu tanlang yoki hammasini birga yeching.",
         readLesson: "Darsni o'qish", continueLesson: "Davom etish", lessonDone: "O'rganildi",
@@ -698,8 +788,8 @@
         saveQuestion: "Savolni saqlash", savedRemove: "Saqlanganlardan olib tashlash", retry: "Qayta urinish",
         diffEasy: "Oson", diffMedium: "O'rta", diffHard: "Qiyin",
         savedSub: "Keyin qaytish uchun belgilab qo'ygan savollaringiz.", mistakeSub: "Xato qilgan savollaringiz — ko'rib chiqing va qayta yeching.",
-        savedEmpty: "Hali saqlangan savollar yo'q. Saqlash uchun istalgan savoldagi 🔖 belgisini bosing.",
-        mistakeEmpty: "Hali xatolar yo'q. Noto'g'ri javoblar shu yerda ko'rinadi.",
+        savedEmptyTitle: "Hali saqlangan savollar yo'q", savedEmpty: "Shaxsiy takrorlash ro'yxatini tuzish uchun mashqdagi saqlash tugmasidan foydalaning.",
+        mistakeEmptyTitle: "Hali xatolar yo'q", mistakeEmpty: "Noto'g'ri javoblar bu yerda avtomatik yig'iladi va takrorlashga tayyor bo'ladi.",
         practiceSaved: "Saqlangan savollarni mashq qilish", reviewMistakes: "Xatolaringizni ko'rib chiqish",
         reviewAll: "Hammasini ko'rib chiqish", questions: "savol",
         streak: "Ketma-ket kunlar", days: "kun", longest: "Rekord:", viewAll: "Hammasini ochish",
@@ -711,7 +801,7 @@
         locale: "uz-UZ"
       }
     };
-    const LANG_STORE = "newuu_lang";
+    const LANG_STORE = "nava_lang";
     let LANG = "uz";   // O'zbek is the default; English is the alternative
     try { const l = localStorage.getItem(LANG_STORE); if (l === "en" || l === "uz") LANG = l; } catch (e) {}
     const t = (k) => (I18N[LANG] && I18N[LANG][k] != null) ? I18N[LANG][k] : I18N.en[k];
@@ -747,13 +837,13 @@
     function toggleLang() { setLang(LANG === "uz" ? "en" : "uz"); }
 
     /* ---------------- theme (light / dark) ---------------- */
-    const THEME_STORE = "newuu_theme";
+    const THEME_STORE = "nava_theme";
     let THEME = "light";
     try { const tm = localStorage.getItem(THEME_STORE); if (tm === "light" || tm === "dark") THEME = tm; } catch (e) {}
     function applyTheme() {
       document.documentElement.setAttribute("data-theme", THEME);
       const ic = document.getElementById("themeIc");
-      if (ic) ic.textContent = THEME === "dark" ? "☀️" : "🌙";
+      if (ic) ic.innerHTML = icon(THEME === "dark" ? "sun" : "moon");
       const tv = document.getElementById("themeVal");
       if (tv) tv.textContent = THEME === "dark" ? t("themeDark") : t("themeLight");
     }
@@ -784,20 +874,31 @@
          review   — { [skillId]: { stage, due, last, acc } }  spaced repetition
          activity — [ { ts, qid, correct, diff, ms } ]  append-only attempt log
                     (powers daily charts, heatmap, streaks and avg-time-by-difficulty)
-         saved    — { [qid]: { on, ts } }   bookmarked questions (ts → last-write-wins sync) */
-    const STORE = "newuu_stats_v2";
-    let DB = { answers: {}, review: {}, activity: [], saved: {} };
+         saved    — { [qid]: { on, ts } }   bookmarked questions (ts → last-write-wins sync)
+         profile  — { name, surname, email, track, bio, school, grade, region,
+                      favoriteSubject, dreamUniversity, dreamCareer, joinedAt, updatedAt }
+                    identity fields shown on the Profile page; a single object,
+                    not a per-key map, so it merges as a whole by `updatedAt` */
+    const STORE = "nava_stats_v2";
+    let DB = { answers: {}, review: {}, activity: [], saved: {}, profile: {} };
     try {
       const raw = JSON.parse(localStorage.getItem(STORE));
       if (raw && typeof raw === "object") DB = {
         answers: raw.answers || {}, review: raw.review || {},
         activity: Array.isArray(raw.activity) ? raw.activity : [],
-        saved: raw.saved || {}, activitySeeded: !!raw.activitySeeded
+        saved: raw.saved || {}, profile: raw.profile || {},
+        activitySeeded: !!raw.activitySeeded
       };
     } catch (e) {}
     const saveLocal = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
     // save() persists locally always, and (when signed in) pushes to the cloud on a debounce.
     const save = () => { saveLocal(); cloud.schedulePush(); };
+    // Whole-object last-write-wins (unlike mergeBy()/mergeActivity() below, which merge
+    // per-key/append — profile is a single object, not a map of independent records).
+    function mergeProfile(a, b) {
+      a = a || {}; b = b || {};
+      return (Number(b.updatedAt) || 0) >= (Number(a.updatedAt) || 0) ? b : a;
+    }
 
     /* ---------------- cloud accounts + sync (Supabase) ---------------- */
     // Self-contained: if Supabase isn't configured/loaded, every method no-ops and
@@ -841,6 +942,7 @@
           review: mergeBy(local.review, remote.review, "last"),
           activity: mergeActivity(local.activity, remote.activity),
           saved: mergeBy(local.saved, remote.saved, "ts"),
+          profile: mergeProfile(local.profile, remote.profile),
           activitySeeded: !!(local.activitySeeded || remote.activitySeeded),
         };
       }
@@ -874,12 +976,18 @@
         setStatus("Syncing…");
         const { data, error } = await client.from("progress").select("data").eq("user_id", user.id).maybeSingle();
         if (error) { setStatus("Sync error"); return; }
-        const remote = (data && data.data) || { answers: {}, review: {}, activity: [], saved: {} };
+        const remote = (data && data.data) || { answers: {}, review: {}, activity: [], saved: {}, profile: {} };
         DB = merge(DB, remote);
         trimActivity();
         saveLocal();
+        // Mirror the merged profile back into the standalone profile-store key and
+        // refresh the UI — otherwise a name/bio set on one device would never show
+        // up on another (only quiz progress used to make this round-trip).
+        if (DB.profile && DB.profile.name) STUDENT = DB.profile.name;
+        try { localStorage.setItem(PROFILE_STORE, JSON.stringify(DB.profile || {})); } catch (e) {}
         await push();           // write the merged result straight back up
         if (typeof render === "function") render();
+        if (typeof updateProfileUI === "function") updateProfileUI();
         setStatus("Synced ✓");
       }
       async function push() {
@@ -1082,6 +1190,72 @@
       return { total: list.length, done, correct, wrong: done - correct,
                acc: done ? correct / done : 0, complete: list.length > 0 && done === list.length };
     }
+
+    /* ---------------- Timeline (milestone history, derived from existing data) ----------------
+       No new event log — everything here is read off answers/activity/review that
+       already exist, plus the one new profile.joinedAt field. */
+    // activityStreak() only returns *current* counts — this mirrors its exact
+    // day-diffing loop but records the day a threshold is first crossed, keeping
+    // only the earliest crossing per threshold.
+    function streakMilestoneDates() {
+      const days = [...new Set(DB.activity.map((e) => dayKey(e.ts)))].sort();
+      const THRESHOLDS = [7, 30, 100], found = {};
+      let run = 1;
+      for (let i = 1; i < days.length; i++) {
+        const diff = Math.round((new Date(days[i]) - new Date(days[i - 1])) / 86400000);
+        run = (diff === 1) ? run + 1 : 1;
+        THRESHOLDS.forEach((n) => { if (run === n && !(n in found)) found[n] = days[i]; });
+      }
+      return found;
+    }
+    // Completion date = latest answer ts among the unit's questions, once every
+    // skill in the unit is complete. A re-attempt after completion nudges the date
+    // forward — acceptable since this derives from per-question `ts` only; no
+    // separate "completed on" event is ever recorded.
+    function unitCompletionDate(unit) {
+      let complete = true, maxTs = 0;
+      unit.skills.forEach((s) => {
+        if (!practiceStats(s.id).complete) { complete = false; return; }
+        questionsFor("practiceQuestions", s.id).forEach((q, i) => {
+          const a = DB.answers["practiceQuestions|" + s.id + "|" + i];
+          if (a && a.ts > maxTs) maxTs = a.ts;
+        });
+      });
+      return complete ? maxTs : null;
+    }
+    function unitChallengeCompletionDate(unit) {
+      if (!unitChallengeStats(unit).complete) return null;
+      let maxTs = 0;
+      unit.skills.forEach((s) => {
+        questionsFor("hardQuestions", s.id).forEach((q, i) => {
+          const a = DB.answers["hardQuestions|" + s.id + "|" + i];
+          if (a && a.ts > maxTs) maxTs = a.ts;
+        });
+      });
+      return maxTs;
+    }
+    function finalChallengeCompletionDate() {
+      if (!finalChallengeStats().complete) return null;
+      const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+      let maxTs = 0;
+      list.forEach((q, i) => { const a = DB.answers["finalChallenge|" + i]; if (a && a.ts > maxTs) maxTs = a.ts; });
+      return maxTs;
+    }
+    function timelineEvents() {
+      const events = [], p = DB.profile || {};
+      if (p.joinedAt) events.push({ ts: p.joinedAt, label: t("tlJoined") });
+      if (DB.activity.length) events.push({ ts: DB.activity[0].ts, label: t("tlFirstQuestion") });
+      const streaks = streakMilestoneDates();
+      [7, 30, 100].forEach((n) => { if (streaks[n]) events.push({ ts: new Date(streaks[n]).getTime(), label: t("tlStreak").replace("{n}", n) }); });
+      COURSE_DATA.units.forEach((u) => {
+        const d = unitCompletionDate(u); if (d) events.push({ ts: d, label: t("tlUnitDone").replace("{u}", esc(locUnitName(u))) });
+        const cd = unitChallengeCompletionDate(u); if (cd) events.push({ ts: cd, label: t("tlChallengeDone").replace("{u}", esc(locUnitName(u))) });
+      });
+      const fd = finalChallengeCompletionDate(); if (fd) events.push({ ts: fd, label: t("tlFinalDone") });
+      events.sort((a, b) => a.ts - b.ts);
+      return events;
+    }
+
     // Global stats (every answered question, practice + challenge)
     function globalStats() {
       let topics = 0;
@@ -1168,6 +1342,21 @@
       DB.activity.sort((x, y) => x.ts - y.ts);
       trimActivity();
       DB.activitySeeded = true;
+      saveLocal();
+    }
+
+    // Reconciles the two local copies of the profile: the profile-store key written
+    // by signup.html, and DB.profile inside the stats blob written by the in-app
+    // Profile page — same "adopt on read" spirit as seedActivity() above. Also
+    // backfills joinedAt for any profile that predates this field. Cheap enough to
+    // run every boot (unlike seedActivity()'s one-time O(n) backfill, gated above).
+    function reconcileProfile() {
+      let local = null;
+      try { local = JSON.parse(localStorage.getItem(PROFILE_STORE) || "null"); } catch (e) {}
+      DB.profile = mergeProfile(DB.profile, local);
+      if (!DB.profile.joinedAt) DB.profile.joinedAt = (DB.activity[0] && DB.activity[0].ts) || Date.now();
+      if (!DB.profile.updatedAt) DB.profile.updatedAt = Date.now();
+      try { localStorage.setItem(PROFILE_STORE, JSON.stringify(DB.profile)); } catch (e) {}
       saveLocal();
     }
 
@@ -1430,6 +1619,13 @@
       while (days.has(dayKey(probe.getTime()))) { current++; probe.setDate(probe.getDate() - 1); }
       return { current: current, longest: longest, active: days.size };
     }
+    // Shared streak stat-card markup — used on both Analytics and Profile.
+    function streakCard() {
+      const streak = activityStreak();
+      return '<div class="stat"><div class="stat-label">' + icon("flame", "icon-sm") + ' ' + t("streak") + '</div>' +
+        '<div class="stat-val">' + streak.current + '<span class="stat-sub"> ' + t("days") + '</span></div>' +
+        '<div class="stat-foot">' + t("longest") + ' ' + streak.longest + '</div></div>';
+    }
 
     /* ---------------- SVG: multi-series daily line chart ---------------- */
     function lineChartSVG(days) {
@@ -1552,14 +1748,14 @@
     function renderHome() {
       const today = new Date().toLocaleDateString(t("locale"), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
-      let html = '<section class="greeting"><h1>' + t("hello") + (STUDENT ? ', ' + esc(STUDENT) : '') + ' 👋</h1>' +
+      let html = '<section class="greeting"><h1>' + t("hello") + (STUDENT ? ', ' + esc(STUDENT) : '') + '</h1>' +
               '<p class="subtitle">' + today + ' — ' + t("prepStands") + '</p></section>';
 
       html += statsRow();
 
       const due = dueSkills();
       if (due.length) {
-        html += '<section class="due"><h3>' + t("dueForReview") + ' <span class="badge">' + due.length + '</span></h3>' +
+        html += '<section class="due"><h3>' + icon("clock", "icon-sm") + t("dueForReview") + ' <span class="badge">' + due.length + '</span></h3>' +
           '<div class="due-list">' +
           due.map(({ skill }) => '<button class="due-chip" data-due="' + skill.id + '">' +
             esc(locTitle(skill)) + ' <span class="go">' + t("review") + '</span></button>').join("") +
@@ -1587,7 +1783,7 @@
         if (!cs.total) return;
         const cpct = cs.total ? Math.round((cs.done / cs.total) * 100) : 0;
         html += '<button class="trow challenge-row" data-unit="' + u.unit + '">' +
-          '<span class="trow-name"><span class="bolt">⚡</span><span class="txt">' + esc(locUnitName(u)) + ' · ' + t("unitChallenge") + '</span></span>' +
+          '<span class="trow-name"><span class="bolt">' + icon("zap", "icon-sm") + '</span><span class="txt">' + esc(locUnitName(u)) + ' · ' + t("unitChallenge") + '</span></span>' +
           '<span class="pbar"><span class="pfill" style="width:' + cpct + '%"></span></span>' +
           '<span class="trow-count">' + cs.done + '/' + cs.total + '</span>' +
           '<span class="trow-acc"><span class="dot ' + dotClass(cs) + '"></span>' +
@@ -1600,7 +1796,7 @@
         const fpct = fs.total ? Math.round((fs.done / fs.total) * 100) : 0;
         const fmeta = fc.subtitle || "";
         html += '<button class="trow final-row" data-final="1">' +
-          '<span class="trow-name"><span class="bolt">🏁</span><span class="txt">' + t("finalChallenge") + '</span>' +
+          '<span class="trow-name"><span class="bolt">' + icon("flag", "icon-sm") + '</span><span class="txt">' + t("finalChallenge") + '</span>' +
             '<span class="ch-meta">' + esc(fmeta) + '</span></span>' +
           '<span class="pbar"><span class="pfill" style="width:' + fpct + '%"></span></span>' +
           '<span class="trow-count">' + fs.done + '/' + fs.total + '</span>' +
@@ -1620,7 +1816,7 @@
       app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => reviewSkill(b.dataset.due)));
       const reset = document.getElementById("resetBtn");
       if (reset) reset.addEventListener("click", () => {
-        if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {}, activity: [], saved: {}, activitySeeded: true }; save(); render(); }
+        if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {}, activity: [], saved: {}, activitySeeded: true, profile: DB.profile }; save(); render(); }
       });
     }
 
@@ -1632,16 +1828,13 @@
       html += statsRow();
 
       // ---- Snapshot row: streak + quick links to Saved / Mistakes
-      const streak = activityStreak();
       const savedN = savedQids().length, mistakeN = mistakeQids().length;
       html += '<section class="stats snap">' +
-        '<div class="stat"><div class="stat-label">🔥 ' + t("streak") + '</div>' +
-          '<div class="stat-val">' + streak.current + '<span class="stat-sub"> ' + t("days") + '</span></div>' +
-          '<div class="stat-foot">' + t("longest") + ' ' + streak.longest + '</div></div>' +
-        '<button class="stat go" data-go="saved"><div class="stat-label">🔖 ' + t("savedQuestions") + '</div>' +
-          '<div class="stat-val">' + savedN + '</div><div class="stat-foot">' + t("viewAll") + ' →</div></button>' +
-        '<button class="stat go" data-go="mistakes"><div class="stat-label">⚠️ ' + t("mistakeLog") + '</div>' +
-          '<div class="stat-val">' + mistakeN + '</div><div class="stat-foot">' + t("viewAll") + ' →</div></button>' +
+        streakCard() +
+        '<button class="stat go" data-go="saved"><div class="stat-label">' + icon("bookmark", "icon-sm") + ' ' + t("savedQuestions") + '</div>' +
+          '<div class="stat-val">' + savedN + '</div><div class="stat-foot">' + t("viewAll") + '</div></button>' +
+        '<button class="stat go" data-go="mistakes"><div class="stat-label">' + icon("alert", "icon-sm") + ' ' + t("mistakeLog") + '</div>' +
+          '<div class="stat-val">' + mistakeN + '</div><div class="stat-foot">' + t("viewAll") + '</div></button>' +
       '</section>';
 
       // ---- Daily activity line chart (attempted / correct / wrong / saved)
@@ -1707,11 +1900,11 @@
       const st = practiceStats(s.id);
       const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
       const last = mode === "learn"
-        ? '<span class="lr-go">' + t("readLesson") + ' →</span>'
+        ? '<span class="lr-go">' + t("readLesson") + '</span>'
         : '<span class="trow-acc"><span class="dot ' + dotClass(st) + '"></span>' +
             (st.done ? Math.round(st.acc * 100) + '%' : '—') + '</span>';
       return '<button class="lrow" data-skill="' + s.id + '" data-mode="' + mode + '">' +
-        '<span class="lr-check' + (st.complete ? ' done' : '') + '">✓</span>' +
+        '<span class="lr-check' + (st.complete ? ' done' : '') + '">' + icon("check", "icon-xs") + '</span>' +
         '<span class="lr-name">' + esc(locTitle(s)) + (isDue(s.id) ? ' <span class="tag-due">Due</span>' : '') + '</span>' +
         '<span class="pbar lr-bar"><span class="pfill" style="width:' + pct + '%"></span></span>' +
         '<span class="trow-count">' + st.done + '/' + st.total + '</span>' +
@@ -1790,7 +1983,7 @@
     function renderTopic() {
       const { unit, skill } = findSkill(state.skillId);
       app.innerHTML =
-        '<button class="back" id="backBtn">← ' + t("navLearn") + '</button>' +
+        '<button class="back" id="backBtn">' + icon("arrowLeft", "icon-sm") + ' ' + t("navLearn") + '</button>' +
         '<div class="topic-head"><span class="unit-tag">' + t("unit") + ' ' + unit.unit + ' · ' + esc(locUnitName(unit)) + '</span>' +
         '<h2>' + esc(locTitle(skill)) + '</h2></div>' +
         '<div id="learn"></div>';
@@ -1865,12 +2058,12 @@
       actions += '<button class="btn-ghost" id="nextBtn">' + t("next") + '</button>';
 
       app.innerHTML =
-        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<button class="back" id="backBtn">' + icon("arrowLeft", "icon-sm") + ' ' + t("dashboard") + '</button>' +
         '<div class="runner">' +
           '<div class="runner-top"><div class="runner-title">' + esc(title) + '</div>' +
             '<div class="runner-tools">' +
-              '<button class="bookmark-btn" id="bookmarkBtn" aria-pressed="false" title="' + esc(t("saveQuestion")) + '">🔖</button>' +
-              (showTimer ? '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div>' : '') +
+              '<button class="bookmark-btn" id="bookmarkBtn" aria-pressed="false" title="' + esc(t("saveQuestion")) + '">' + icon("bookmark", "icon-sm") + '</button>' +
+              (showTimer ? '<div class="timer"><span class="ic">' + icon("clock", "icon-xs") + '</span><span id="quizTimer">00:00</span></div>' : '') +
             '</div>' +
           '</div>' +
           '<div id="stage" class="stage"></div>' +
@@ -2014,11 +2207,11 @@
       const subTitle = session.isFinal ? finalChallengeTitle() : challengeTitle(u.unit, locUnitName(u));
       const r = session.results;
       app.innerHTML =
-        '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
+        '<button class="back" id="backBtn">' + icon("arrowLeft", "icon-sm") + ' ' + t("dashboard") + '</button>' +
         '<div class="results">' +
           '<h2>' + t("testResults") + '</h2>' +
           '<div class="res-sub">' + esc(subTitle) + '</div>' +
-          (session.timeUp ? '<div class="res-banner">⏱ ' + t("timeUpMsg") + '</div>' : '') +
+          (session.timeUp ? '<div class="res-banner">' + icon("clock", "icon-sm") + ' ' + t("timeUpMsg") + '</div>' : '') +
           '<div class="res-score"><span class="big">' + r.correct + ' / ' + r.total + '</span>' +
             '<span class="pct">' + r.acc + '% ' + t("accuracy") + '</span></div>' +
           '<div class="res-grid">' +
@@ -2062,14 +2255,14 @@
         const it = questionByQid(qid);
         const your = (it.q.options && it.q.options[a.sel] != null) ? LABELS[a.sel] : "—";
         const corr = LABELS[it.q.answer];
-        meta += '<span class="qrow-ans"><span class="x">✗ ' + your + '</span> · <span class="ok">✓ ' + corr + '</span></span>';
+        meta += '<span class="qrow-ans"><span class="x">' + icon("x", "icon-xs") + ' ' + your + '</span> · <span class="ok">' + icon("check", "icon-xs") + ' ' + corr + '</span></span>';
       } else if (kind === "saved" && a) {
         meta += '<span class="qrow-ans ' + (a.correct ? "ok" : "x") + '">' +
-          (a.correct ? "✓ " + t("verdictOk") : "✗ " + t("verdictBad")) + '</span>';
+          (a.correct ? icon("check", "icon-xs") + ' ' + t("verdictOk") : icon("x", "icon-xs") + ' ' + t("verdictBad")) + '</span>';
       }
       const action = kind === "saved"
-        ? '<button class="qrow-x" data-unsave="' + esc(qid) + '" title="' + esc(t("savedRemove")) + '">✕</button>'
-        : '<button class="qrow-x" data-retry="' + esc(qid) + '" title="' + esc(t("retry")) + '">↻</button>';
+        ? '<button class="qrow-x" data-unsave="' + esc(qid) + '" title="' + esc(t("savedRemove")) + '">' + icon("x", "icon-sm") + '</button>'
+        : '<button class="qrow-x" data-retry="' + esc(qid) + '" title="' + esc(t("retry")) + '">' + icon("refresh", "icon-sm") + '</button>';
       return '<div class="qrow">' +
         '<button class="qrow-main" data-open="' + esc(qid) + '">' +
           '<div class="qrow-top">' + diffBadge(diff) + meta + '</div>' +
@@ -2082,13 +2275,19 @@
       const qids = isSavedView ? savedQids() : mistakeQids();
       const titleKey = isSavedView ? "savedQuestions" : "mistakeLog";
       const subKey = isSavedView ? "savedSub" : "mistakeSub";
-      const icon = isSavedView ? "🔖" : "⚠️";
-      let html = '<div class="page-head"><div><h1>' + icon + ' ' + esc(t(titleKey)) + '</h1>' +
+      const pageIcon = isSavedView ? "bookmark" : "alert";
+      let html = '<div class="page-head"><div><h1>' + icon(pageIcon) + ' ' + esc(t(titleKey)) + '</h1>' +
         '<div class="ph-sub">' + esc(t(subKey)) + '</div></div></div>';
 
       if (!qids.length) {
-        html += '<div class="empty">' + esc(t(isSavedView ? "savedEmpty" : "mistakeEmpty")) + '</div>';
-        app.innerHTML = html; return;
+        html += '<div class="empty-state"><div class="empty-ic">' + icon(pageIcon) + '</div>' +
+          '<h2>' + esc(t(isSavedView ? "savedEmptyTitle" : "mistakeEmptyTitle")) + '</h2>' +
+          '<p>' + esc(t(isSavedView ? "savedEmpty" : "mistakeEmpty")) + '</p>' +
+          '<button class="btn-primary" id="emptyPracticeBtn">' + esc(t("startSession")) + '</button></div>';
+        app.innerHTML = html;
+        const emptyPracticeBtn = document.getElementById("emptyPracticeBtn");
+        if (emptyPracticeBtn) emptyPracticeBtn.addEventListener("click", () => goView("practice"));
+        return;
       }
 
       html += '<div class="practice-all"><div class="pa-text"><h3>' +
@@ -2120,43 +2319,112 @@
       else if (state.view === "results") renderResults();
       else if (state.view === "saved") renderQList("saved");
       else if (state.view === "mistakes") renderQList("mistakes");
-      else if (state.view === "options") renderOptions();
-      else if (state.view === "feedback") renderPlaceholder("feedback", "💬");
-      else if (state.view === "join") renderPlaceholder("joinUs", "🤝");
+      else if (state.view === "options") renderProfile();
+      else if (state.view === "timeline") renderTimeline();
+      else if (state.view === "feedback") renderPlaceholder("feedback", "message");
+      else if (state.view === "join") renderPlaceholder("joinUs", "users");
       else renderQuiz();
       updateNav();
       updateTimers();
     }
 
     // Simple placeholder for sections we haven't built yet (keeps the menu honest).
-    function renderPlaceholder(titleKey, icon) {
+    function renderPlaceholder(titleKey, iconName) {
       app.innerHTML =
-        '<section class="greeting"><h1>' + (icon ? icon + ' ' : '') + esc(t(titleKey)) + '</h1>' +
+        '<section class="greeting"><h1>' + (iconName ? icon(iconName) + ' ' : '') + esc(t(titleKey)) + '</h1>' +
         '<p class="subtitle">' + esc(t("comingSoon")) + '</p></section>';
     }
-    function renderOptions() {
-      let p = {}; try { p = JSON.parse(localStorage.getItem(PROFILE_STORE) || "{}") || {}; } catch (e) {}
-      const full = [p.name, p.surname].filter(Boolean).map(esc).join(" ");
-      const exam = p.track === "dtm" ? "DTM" : (p.track === "newuu" ? "NewUU" : "—");
+    // "Future {university} student" once set, else a generic default — the concrete
+    // expression of the brand ("I'm a Nava student"), not just a list of features.
+    function identityLine(p) {
+      return (p && p.dreamUniversity) ? t("identityDream").replace("{u}", esc(p.dreamUniversity)) : t("identityDefault");
+    }
+    const PROFILE_FORM_FIELDS = ["name", "surname", "school", "grade", "region", "favoriteSubject", "dreamUniversity", "dreamCareer"];
+    function renderProfile() {
+      const p = DB.profile || {};
+      const full = [p.name, p.surname].filter(Boolean).map(esc).join(" ") || esc(STUDENT || "") || "—";
+      const examName = ({ newuu: "NewUU", wiut: "WIUT", dtm: "DTM" })[p.track] || "—";
+      const avatarLetter = ((p.name || STUDENT || "?")[0] || "?").toUpperCase();
+
       app.innerHTML =
-        '<section class="greeting"><h1>⚙️ ' + esc(t("options")) + '</h1>' +
-        '<p class="subtitle">' + esc(t("yourProfile")) + '</p></section>' +
-        '<section class="stats" style="grid-template-columns:repeat(2,1fr)">' +
-          statCard(t("name"), full || "—") +
-          statCard(t("exam"), exam) +
+        '<section class="profile-head greeting">' +
+          '<div class="profile-avatar">' + esc(avatarLetter) + '</div>' +
+          '<div><h1>' + full + '</h1>' +
+            '<p class="subtitle">' + identityLine(p) + '</p>' +
+            '<p class="profile-meta">' + [esc(p.email || ""), esc(examName)].filter(Boolean).join(" · ") + '</p>' +
+          '</div>' +
         '</section>' +
+        statsRow() +
+        '<section class="stats" style="grid-template-columns:repeat(2,1fr)">' +
+          streakCard() +
+          '<button class="stat go" data-go="timeline"><div class="stat-label">' + icon("clock", "icon-sm") + ' ' + esc(t("viewTimeline")) + '</div>' +
+            '<div class="stat-val">' + activityStreak().active + '<span class="stat-sub"> ' + esc(t("days")) + '</span></div>' +
+            '<div class="stat-foot">' + esc(t("viewAll")) + '</div></button>' +
+        '</section>' +
+        '<div class="section-title">' + esc(t("yourProfile")) + '</div>' +
+        '<form id="profileForm" class="card profile-form">' +
+          PROFILE_FORM_FIELDS.map((k) =>
+            '<div class="profile-field"><label for="pf_' + k + '">' + esc(t(k)) + '</label>' +
+              '<input type="text" id="pf_' + k + '" /></div>'
+          ).join("") +
+          '<div class="profile-field full"><label for="pf_bio">' + esc(t("bio")) + '</label>' +
+            '<textarea id="pf_bio" rows="3"></textarea></div>' +
+          '<button type="submit" class="btn-primary">' + esc(t("saveProfile")) + '</button>' +
+        '</form>' +
         '<div class="dash-foot" style="text-align:left;margin-top:24px">' +
-          '<button class="btn-ghost danger-btn" id="optLogout">🚪 ' + esc(t("logOut")) + '</button>' +
+          '<button class="btn-ghost danger-btn" id="optLogout">' + icon("logout", "icon-sm") + ' ' + esc(t("logOut")) + '</button>' +
         '</div>';
+
+      // Values are set here in JS, not via value="" attributes in the template above —
+      // esc() doesn't escape quotes, and these are free-text fields that could
+      // otherwise break out of the attribute.
+      PROFILE_FORM_FIELDS.forEach((k) => { const el = document.getElementById("pf_" + k); if (el) el.value = p[k] || ""; });
+      const bioEl = document.getElementById("pf_bio"); if (bioEl) bioEl.value = p.bio || "";
+
+      const form = document.getElementById("profileForm");
+      if (form) form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        const next = Object.assign({}, DB.profile);
+        PROFILE_FORM_FIELDS.forEach((k) => { next[k] = document.getElementById("pf_" + k).value.trim(); });
+        next.bio = document.getElementById("pf_bio").value.trim();
+        next.updatedAt = Date.now();
+        DB.profile = next;
+        try { localStorage.setItem(PROFILE_STORE, JSON.stringify(DB.profile)); } catch (e) {}
+        STUDENT = DB.profile.name || STUDENT;
+        save();
+        updateProfileUI();
+        renderProfile();
+      });
+
+      app.querySelectorAll(".stat.go[data-go]").forEach((b) => b.addEventListener("click", () => goView(b.dataset.go)));
       const lo = document.getElementById("optLogout");
       if (lo) lo.addEventListener("click", doLogout);
+    }
+
+    function timelineRow(ev) {
+      const dateStr = new Date(ev.ts).toLocaleDateString(t("locale"), { day: "numeric", month: "short", year: "numeric" });
+      return '<div class="tl-row"><div class="tl-dot"></div><div class="tl-body">' +
+        '<div class="tl-label">' + ev.label + '</div><div class="tl-date">' + esc(dateStr) + '</div>' +
+      '</div></div>';
+    }
+    function renderTimeline() {
+      const events = timelineEvents();
+      app.innerHTML =
+        '<button class="back" id="backBtn">' + icon("arrowLeft", "icon-sm") + ' ' + esc(t("yourProfile")) + '</button>' +
+        '<section class="greeting"><h1>' + icon("clock") + ' ' + esc(t("timelineTitle")) + '</h1>' +
+        '<p class="subtitle">' + esc(t("timelineSub")) + '</p></section>' +
+        (events.length
+          ? '<div class="card timeline">' + events.map(timelineRow).join("") + '</div>'
+          : '<div class="empty-state"><h2>' + esc(t("timelineEmpty")) + '</h2></div>');
+      document.getElementById("backBtn").addEventListener("click", () => goView("options"));
     }
 
     // highlight the sidebar item matching the current top-level section
     function updateNav() {
       const map = { home: "home", analytics: "analytics", learn: "learn", lesson: "learn",
                     practice: "practice", topic: "learn", saved: "saved",
-                    mistakes: "mistakes", options: "options", feedback: "feedback", join: "join" };
+                    mistakes: "mistakes", options: "options", timeline: "options",
+                    feedback: "feedback", join: "join" };
       const active = map[state.view] || "home";
       document.querySelectorAll(".sb-item[data-view]").forEach((b) =>
         b.classList.toggle("active", b.dataset.view === active));
@@ -2173,12 +2441,12 @@
     }
     // Reflect the local profile in the bottom-of-sidebar profile card.
     function updateProfileUI() {
-      let p = {}; try { p = JSON.parse(localStorage.getItem(PROFILE_STORE) || "{}") || {}; } catch (e) {}
+      const p = DB.profile || {};
       const name = [p.name, p.surname].filter(Boolean).join(" ") || STUDENT || "Guest";
       const av = document.getElementById("pfAvatar"); if (av) av.textContent = (name[0] || "?");
       const nm = document.getElementById("pfName"); if (nm) nm.textContent = name;
       const sub = document.getElementById("pfSub");
-      if (sub) sub.textContent = p.email || (p.track === "dtm" ? "DTM" : p.track === "newuu" ? "NewUU" : "");
+      if (sub) sub.textContent = p.email || ({ newuu: "NewUU", wiut: "WIUT", dtm: "DTM" }[p.track] || "");
     }
 
     /* ---------------- left sidebar wiring ---------------- */
@@ -2214,17 +2482,14 @@
     const logoutBtn = document.getElementById("logoutBtn");
     if (logoutBtn) logoutBtn.addEventListener("click", (e) => { e.stopPropagation(); doLogout(); });
 
-    // Load the local profile (created at sign-up) for the greeting + profile card.
-    try {
-      const profile = JSON.parse(localStorage.getItem(PROFILE_STORE) || "null");
-      if (profile && profile.name) STUDENT = profile.name;
-    } catch (e) {}
-
     document.documentElement.lang = LANG;
+    hydrateIcons(document);
     updateLangUI();
     applyTheme();
-    updateProfileUI();
     seedActivity();
+    reconcileProfile();
+    if (DB.profile && DB.profile.name) STUDENT = DB.profile.name;
+    updateProfileUI();
     render();
     cloud.init();
   })();
