@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,6 +14,10 @@
   };
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+<!-- Accounts + cross-device progress sync (no-ops until supabase-config.js is filled in). -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -70,12 +74,10 @@
   }
   button { font-family: inherit; }
 
-  /* ---------- App bar ---------- */
-  .appbar {
-    position: sticky; top: 0; z-index: 30;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--line);
-  }
+  /* Visible keyboard focus on every custom control (UA outline is invisible on dark surfaces). */
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- Brand / logo / runner timer ---------- */
   .brand { display: flex; align-items: center; gap: 10px; background: none; border: none;
     cursor: pointer; color: var(--ink); font-size: 16px; font-weight: 650; }
   .logo { width: 30px; height: 30px; border-radius: 8px; background: var(--blue); color: #fff;
@@ -104,84 +106,7 @@
   .res-actions { display: flex; flex-wrap: wrap; gap: 12px; }
   @media (max-width: 620px) { .res-grid { grid-template-columns: repeat(2, 1fr); } }
 
-  /* ---------- Language switcher ---------- */
-  .lang-wrap { position: relative; }
-  .lang-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; cursor: pointer;
-    font-size: 14px; font-weight: 600; color: var(--ink); }
-  .lang-btn:hover { border-color: var(--muted); }
-  .lang-btn .globe { font-size: 14px; }
-  .lang-btn .chev { color: var(--muted); font-size: 10px; }
-  .lang-menu { position: absolute; right: 0; top: calc(100% + 8px); background: var(--surface);
-    border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px var(--shadow);
-    padding: 6px; min-width: 210px; z-index: 40; }
-  .lang-menu[hidden] { display: none; }
-  .lang-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    width: 100%; text-align: left; background: none; border: none; border-radius: 8px;
-    padding: 10px 12px; cursor: pointer; font-size: 14px; color: var(--ink); }
-  .lang-opt:hover { background: var(--surface-3); }
-  .lang-opt.active { color: var(--blue); font-weight: 650; }
-  .lang-opt .tick { color: var(--blue); font-weight: 700; visibility: hidden; }
-  .lang-opt.active .tick { visibility: visible; }
-
-  /* ---------- App-bar actions + theme toggle ---------- */
-  .appbar-actions { display: flex; align-items: center; gap: 10px; }
-  .theme-btn { display: inline-flex; align-items: center; justify-content: center;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-    width: 36px; height: 33px; cursor: pointer; font-size: 15px; line-height: 1; }
-  .theme-btn:hover { border-color: var(--muted); }
-
-  /* ---------- Auth (account button, menu, modal) ---------- */
-  .auth-wrap { position: relative; }
-  .auth-wrap[hidden] { display: none; }
-  .auth-btn .auth-avatar { display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 999px; background: var(--blue); color: #fff;
-    font-size: 11px; font-weight: 700; text-transform: uppercase; }
-  .auth-btn .auth-avatar[hidden] { display: none; }
-  .auth-menu { min-width: 220px; }
-  .auth-menu[hidden] { display: none; }
-  .auth-email { padding: 8px 12px 2px; font-size: 13px; font-weight: 650; color: var(--ink);
-    word-break: break-all; }
-  .auth-status { padding: 0 12px 8px; font-size: 12px; color: var(--muted);
-    border-bottom: 1px solid var(--line); margin-bottom: 4px; }
-
-  .auth-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center;
-    justify-content: center; padding: 20px; background: rgba(0,0,0,.45); }
-  .auth-modal[hidden] { display: none; }
-  .auth-card { position: relative; width: 100%; max-width: 380px; background: var(--surface);
-    border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px 24px;
-    box-shadow: 0 20px 60px var(--shadow); }
-  .auth-close { position: absolute; top: 10px; right: 12px; background: none; border: none;
-    font-size: 24px; line-height: 1; color: var(--muted); cursor: pointer; }
-  .auth-card h2 { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
-  .auth-tabs { display: flex; gap: 4px; background: var(--surface-3); border: 1px solid var(--line);
-    border-radius: 11px; padding: 3px; margin-bottom: 16px; }
-  .auth-tab { flex: 1; border: none; background: none; padding: 8px 10px; border-radius: 8px;
-    font-size: 14px; font-weight: 600; color: var(--muted); cursor: pointer; }
-  .auth-tab.is-active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.07); }
-  .auth-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 16px; line-height: 1.5; }
-  .auth-card form { display: flex; flex-direction: column; gap: 10px; }
-  .auth-card input { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px;
-    font-size: 15px; color: var(--ink); background: var(--surface-2); }
-  .auth-card input:focus { outline: none; border-color: var(--blue); }
-  .auth-submit { background: var(--blue); color: #fff; border: none; border-radius: 10px;
-    padding: 11px 13px; font-size: 15px; font-weight: 650; cursor: pointer; }
-  .auth-submit:hover { filter: brightness(.96); }
-  .auth-submit:disabled { opacity: .6; cursor: default; }
-  .auth-msg { margin-top: 12px; font-size: 13.5px; line-height: 1.5; }
-  .auth-msg[hidden] { display: none; }
-  .auth-msg.ok { color: var(--green); }
-  .auth-msg.err { color: var(--red); }
-
-  /* ---------- Auth gate (shown while we confirm a session; covers the app) ---------- */
-  .auth-gate { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 14px; background: var(--bg); color: var(--muted); }
-  .auth-gate[hidden] { display: none; }
-  .auth-gate .gate-logo { display: inline-flex; align-items: center; justify-content: center; width: 44px;
-    height: 44px; border-radius: 12px; background: var(--blue); color: #fff; font-weight: 800; font-size: 20px; }
-  html.gated body > *:not(.auth-gate) { visibility: hidden; }
-
-  #app { max-width: 1000px; margin: 0 auto; padding: 28px 24px 90px; }
+  #app { flex: 1 1 auto; min-width: 0; max-width: 1000px; margin: 0 auto; padding: 28px 28px 90px; width: 100%; }
 
   /* ---------- Dashboard ---------- */
   .greeting h1 { font-size: 27px; font-weight: 700; letter-spacing: -.4px; }
@@ -284,6 +209,8 @@
   .btn-ghost:hover:not(:disabled) { border-color: var(--muted); }
   .btn-ghost:disabled { opacity: .4; cursor: default; }
   .btn-ghost.active { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+  .btn-ghost.danger-btn { color: var(--red); }
+  .btn-ghost.danger-btn:hover { border-color: var(--red); background: var(--red-soft); }
 
   /* ---------- Bluebook question runner ---------- */
   .runner { max-width: 720px; margin: 0 auto; }
@@ -306,6 +233,9 @@
   .choice.correct .ch-letter { background: var(--green); color: #fff; border-color: var(--green); }
   .choice.wrong { border-color: var(--red); background: var(--red-soft); }
   .choice.wrong .ch-letter { background: var(--red); color: #fff; border-color: var(--red); }
+  /* Non-colour cue for correct/incorrect (accessibility) */
+  .choice.correct::after { content: "✓"; margin-left: auto; color: var(--green); font-weight: 800; font-size: 19px; line-height: 1; }
+  .choice.wrong::after { content: "✗"; margin-left: auto; color: var(--red); font-weight: 800; font-size: 19px; line-height: 1; }
 
   .explain { margin-top: 24px; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; background: var(--surface-2); }
   .explain-verdict { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
@@ -321,11 +251,6 @@
   .bar-actions { display: flex; gap: 10px; }
 
   /* ---------- Top nav tabs ---------- */
-  .topnav { display: flex; gap: 4px; margin-left: 8px; }
-  .topnav .tab { background: none; border: none; border-radius: 999px; padding: 8px 15px;
-    font-size: 14.5px; font-weight: 600; color: var(--muted); cursor: pointer; }
-  .topnav .tab:hover { color: var(--ink); background: var(--surface-3); }
-  .topnav .tab.active { color: var(--blue); background: var(--blue-soft); }
 
   /* ---------- Page header (Learn / Practice) ---------- */
   .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
@@ -392,10 +317,7 @@
   }
   @media (max-width: 620px) {
     #app { padding: 22px 16px 80px; }
-    .appbar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
     .brand .brand-name { display: none; }
-    .topnav { order: 3; width: 100%; margin-left: 0; justify-content: center;
-      border-top: 1px solid var(--line); padding-top: 8px; }
     .trow { grid-template-columns: 1fr 64px 82px; gap: 10px; padding: 12px 14px; font-size: 14px; }
     .trow .trow-count { display: none; }
     .unit-header { padding: 11px 14px; }
@@ -407,94 +329,249 @@
     .choice { font-size: 17px; padding: 15px 16px; }
     .greeting h1 { font-size: 23px; }
   }
+
+  /* ---------------- Monitoring: snapshot cards ---------------- */
+  .stats.snap { grid-template-columns: repeat(3, 1fr); margin: 8px 0 4px; }
+  .stat.go { cursor: pointer; text-align: left; font: inherit; color: var(--ink); }
+  .stat.go:hover { border-color: var(--blue); }
+  .stat-foot { font-size: 12.5px; color: var(--muted); margin-top: 8px; font-weight: 600; }
+
+  /* ---------------- Bookmark toggle in the runner ---------------- */
+  .runner-tools { display: inline-flex; align-items: center; gap: 10px; }
+  .bookmark-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 33px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer;
+    font-size: 15px; line-height: 1; filter: grayscale(1) opacity(.55); transition: filter .12s, border-color .12s, background .12s; }
+  .bookmark-btn:hover { border-color: var(--amber); filter: grayscale(.3) opacity(.85); }
+  .bookmark-btn.on { filter: none; border-color: var(--amber); background: var(--green-soft); }
+
+  /* ---------------- Line chart ---------------- */
+  .card.chartcard, .card.heatcard, .card.diffcard { padding: 18px 18px 14px; }
+  .chart-wrap { width: 100%; overflow: hidden; }
+  .linechart { width: 100%; height: auto; display: block; }
+  .lc-grid { stroke: var(--line); stroke-width: 1; }
+  .lc-ytick, .lc-xtick { fill: var(--muted); font-size: 11px; font-family: inherit; }
+  .lc-cursor { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; opacity: .7; }
+  .lc-band { cursor: crosshair; }
+  .lc-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+  .lc-leg { display: inline-flex; align-items: center; gap: 7px; background: var(--surface-2);
+    border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13px; font-weight: 600;
+    color: var(--ink); cursor: pointer; }
+  .lc-leg:hover { border-color: var(--muted); }
+  .lc-leg.off { opacity: .42; }
+  .lc-leg.off .lc-swatch { background: var(--muted) !important; }
+  .lc-swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+
+  /* ---------------- Heatmap ---------------- */
+  .heat-scroll { overflow-x: auto; padding-bottom: 4px; }
+  .heatmap { display: block; }
+  .hm-month, .hm-dow { fill: var(--muted); font-size: 10px; font-family: inherit; }
+  .hm-cell { stroke: rgba(0,0,0,.04); shape-rendering: geometricPrecision; }
+  .hm-cell[data-count] { cursor: pointer; }
+  .hm-cell.hm--1 { fill: transparent; stroke: none; }
+  .hm-0 { fill: var(--surface-3); }
+  .hm-1 { fill: #c6e9c9; } .hm-2 { fill: #7bc97f; } .hm-3 { fill: #36a843; } .hm-4 { fill: #176c24; }
+  :root[data-theme="dark"] .hm-0 { fill: #20242e; }
+  :root[data-theme="dark"] .hm-1 { fill: #14401f; }
+  :root[data-theme="dark"] .hm-2 { fill: #1d6b30; }
+  :root[data-theme="dark"] .hm-3 { fill: #2f9d49; }
+  :root[data-theme="dark"] .hm-4 { fill: #45c46b; }
+  :root[data-theme="dark"] .hm-cell { stroke: rgba(255,255,255,.04); }
+  .hm-legend { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 8px;
+    font-size: 12px; color: var(--muted); }
+  .hm-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 2px; }
+
+  /* ---------------- Difficulty breakdown ---------------- */
+  .diffcard { display: flex; flex-direction: column; gap: 4px; }
+  .diffrow { display: grid; grid-template-columns: 84px 1fr 78px 86px; align-items: center; gap: 14px;
+    padding: 12px 4px; border-top: 1px solid var(--line); }
+  .diffrow:first-child { border-top: none; }
+  .dr-bar { height: 8px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .dr-fill { height: 100%; border-radius: 999px; transition: width .4s ease; background: var(--blue); }
+  .dr-fill.easy { background: var(--green); } .dr-fill.medium { background: var(--amber); } .dr-fill.hard { background: var(--red); }
+  .dr-cell { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.25; }
+  .dr-v { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .dr-sub { font-size: 11.5px; color: var(--muted); }
+
+  /* ---------------- Difficulty badge (shared) ---------------- */
+  .diff-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
+    text-transform: uppercase; letter-spacing: .4px; flex: none; }
+  .diff-badge.easy { color: var(--green); background: var(--green-soft); }
+  .diff-badge.medium { color: var(--amber); background: var(--blue-soft); }
+  .diff-badge.hard { color: var(--red); background: var(--red-soft); }
+
+  /* ---------------- Saved / Mistakes lists ---------------- */
+  .qlist { margin-top: 18px; }
+  .qrow { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+  .qrow:first-child { border-top: none; }
+  .qrow-main { flex: 1; min-width: 0; text-align: left; background: none; border: none; cursor: pointer;
+    padding: 15px 16px; color: var(--ink); }
+  .qrow-main:hover { background: var(--surface-2); }
+  .qrow-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .qrow-skill { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .qrow-ans { font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .qrow-ans .x, .qrow-ans.x { color: var(--red); }
+  .qrow-ans .ok, .qrow-ans.ok { color: var(--green); }
+  .qrow-q { font-size: 15px; line-height: 1.45; overflow: hidden; text-overflow: ellipsis;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .qrow-x { flex: none; width: 46px; border: none; border-left: 1px solid var(--line); background: none;
+    color: var(--muted); font-size: 16px; cursor: pointer; }
+  .qrow-x:hover { background: var(--surface-3); color: var(--red); }
+
+  /* ---------------- Shared hover tooltip (chart + heatmap) ---------------- */
+  .mon-tip { position: fixed; z-index: 120; pointer-events: none; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 8px 24px var(--shadow);
+    padding: 9px 11px; font-size: 12.5px; min-width: 140px; color: var(--ink); }
+  .mon-tip[hidden] { display: none; }
+  .tip-date { font-weight: 700; margin-bottom: 5px; }
+  .tip-row { display: flex; align-items: center; gap: 7px; line-height: 1.7; }
+  .tip-row b { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .tip-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+
+  @media (max-width: 620px) {
+    .stats.snap { grid-template-columns: 1fr 1fr; }
+    .diffrow { grid-template-columns: 70px 1fr 64px; gap: 10px; }
+    .diffrow .dr-cell:last-child { display: none; }
+  }
+
+  /* ---------------- Left sidebar shell ---------------- */
+  .topbar { display: none; }
+  .layout { display: flex; align-items: flex-start; min-height: 100vh; }
+  .sidebar { position: sticky; top: 0; align-self: flex-start; height: 100vh; width: 252px; flex: 0 0 252px;
+    border-right: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column;
+    padding: 16px 12px; overflow-y: auto; z-index: 50; }
+  .sb-brand { display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer;
+    color: var(--ink); font-size: 17px; font-weight: 700; padding: 6px 8px 14px; }
+  .sb-tracks { display: flex; gap: 6px; margin-bottom: 14px; }
+  .trk { flex: 1; border: 1px solid var(--line); background: var(--surface); border-radius: 10px;
+    padding: 8px 4px; font-size: 12.5px; font-weight: 700; color: var(--ink); cursor: pointer; line-height: 1.15; }
+  .trk.is-active { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+  .trk[disabled] { cursor: default; color: var(--muted); }
+  .trk .soon { display: block; font-size: 9px; font-weight: 700; color: var(--amber);
+    text-transform: uppercase; margin-top: 2px; letter-spacing: .3px; }
+  .sb-nav { display: flex; flex-direction: column; gap: 2px; }
+  .sb-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: none;
+    border: none; border-radius: 10px; padding: 10px 12px; font-size: 14.5px; font-weight: 600; color: var(--ink); cursor: pointer; }
+  .sb-item:hover { background: var(--surface-3); }
+  .sb-item.active { color: var(--blue); background: var(--blue-soft); }
+  .sb-item .di-ic { font-size: 16px; width: 20px; text-align: center; flex: none; }
+  .sb-item .di-label { flex: 1; min-width: 0; }
+  .sb-val { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .sb-chev { color: var(--muted); font-size: 10px; transition: transform .15s ease; }
+  .sb-item[aria-expanded="true"] .sb-chev { transform: rotate(180deg); }
+  .sb-sep { height: 1px; background: var(--line); margin: 8px 6px; }
+  .sb-sub { display: flex; flex-direction: column; gap: 2px; }
+  .sb-sub[hidden] { display: none; }
+  .sb-item.sub { font-size: 14px; font-weight: 550; color: var(--muted); padding-left: 18px; }
+  .sb-item.sub:hover { color: var(--ink); }
+  .sb-bottom { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+  .sb-profile { display: flex; align-items: center; gap: 4px; }
+  .pf-open { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-align: left;
+    background: none; border: none; border-radius: 10px; padding: 9px 10px; cursor: pointer; color: var(--ink); }
+  .pf-open:hover { background: var(--surface-3); }
+  .pf-avatar { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+    border-radius: 50%; background: var(--blue); color: #fff; font-weight: 700; font-size: 14px; text-transform: uppercase; flex: none; }
+  .pf-meta { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.25; }
+  .pf-name { font-weight: 650; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-sub { font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pf-logout { flex: none; background: none; border: none; cursor: pointer; color: var(--muted);
+    font-size: 15px; padding: 8px 9px; border-radius: 8px; }
+  .pf-logout:hover { color: var(--red); background: var(--red-soft); }
+
+  @media (max-width: 860px) {
+    .topbar { display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 60;
+      background: var(--surface); border-bottom: 1px solid var(--line); padding: 10px 16px; }
+    .nav-toggle { background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+      width: 38px; height: 34px; font-size: 17px; color: var(--ink); cursor: pointer; }
+    .topbar .brand { background: none; border: none; cursor: pointer; color: var(--ink); font-size: 16px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 9px; }
+    .layout { display: block; }
+    .sidebar { position: fixed; top: 0; left: 0; height: 100%; transform: translateX(-100%);
+      transition: transform .22s ease; box-shadow: 6px 0 30px var(--shadow); width: 270px; flex-basis: 270px; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 45; }
+    .sidebar-backdrop[hidden] { display: none; }
+  }
 </style>
 </head>
 <body>
-  <header class="appbar">
-    <button class="brand" id="homeBtn"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
-    <nav class="topnav" id="topnav">
-      <button class="tab" data-view="dashboard" id="tabHome">Home</button>
-      <button class="tab" data-view="learn" id="tabLearn">Learn</button>
-      <button class="tab" data-view="practice" id="tabPractice">Practice</button>
-    </nav>
-    <div class="appbar-actions">
-      <div class="auth-wrap" id="authWrap" hidden>
-        <button class="lang-btn auth-btn" id="authBtn" aria-haspopup="true" aria-expanded="false">
-          <span class="auth-avatar" id="authAvatar" hidden></span>
-          <span id="authLabel">Sign in</span>
-        </button>
-        <div class="lang-menu auth-menu" id="authMenu" role="menu" hidden>
-          <div class="auth-email" id="authEmail"></div>
-          <div class="auth-status" id="authStatus"></div>
-          <button class="lang-opt" role="menuitem" id="signOutBtn">Sign out</button>
-        </div>
-      </div>
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">🌙</button>
-      <div class="lang-wrap">
-        <button class="lang-btn" id="langBtn" aria-haspopup="true" aria-expanded="false">
-          <span class="globe">🌐</span><span id="langLabel">EN</span><span class="chev">▾</span>
-        </button>
-        <div class="lang-menu" id="langMenu" role="menu" hidden>
-          <button class="lang-opt" role="menuitem" data-lang="en">English (original)<span class="tick">✓</span></button>
-          <button class="lang-opt" role="menuitem" data-lang="ru">Русский<span class="tick">✓</span></button>
-        </div>
-      </div>
-    </div>
+  <!-- Mobile-only top bar to open the sidebar on narrow screens -->
+  <header class="topbar">
+    <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="sidebar">☰</button>
+    <button class="brand js-home"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
   </header>
 
-  <div class="auth-modal" id="authModal" hidden>
-    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-      <button class="auth-close" id="authCloseBtn" aria-label="Close">×</button>
-      <div class="auth-tabs" role="tablist">
-        <button class="auth-tab is-active" id="authTabSignIn" data-mode="signin" role="tab">Sign in</button>
-        <button class="auth-tab" id="authTabSignUp" data-mode="signup" role="tab">Sign up</button>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" hidden></div>
+
+  <div class="layout">
+    <!-- Permanent left sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Main menu">
+      <button class="sb-brand js-home"><span class="logo">e</span><span class="brand-name">eprep.uz</span></button>
+
+      <!-- Exam track chooser -->
+      <div class="sb-tracks" role="radiogroup" aria-label="Exam">
+        <button class="trk is-active" data-track="newuu" aria-checked="true">NewUU</button>
+        <button class="trk" data-track="wiut" disabled>WIUT<span class="soon" data-i18n="soon">soon</span></button>
+        <button class="trk" data-track="dtm" disabled>DTM<span class="soon" data-i18n="soon">soon</span></button>
       </div>
-      <h2 id="authTitle">Welcome back</h2>
-      <p class="auth-sub" id="authSub">Sign in to sync your answers, accuracy and review schedule across every device.</p>
-      <form id="authForm">
-        <input type="email" id="authEmailInput" placeholder="you@example.com" autocomplete="email" required />
-        <input type="password" id="authPasswordInput" placeholder="Password (min 6 characters)" autocomplete="current-password" required minlength="6" />
-        <button type="submit" class="auth-submit" id="authSubmitBtn">Sign in</button>
-      </form>
-      <p class="auth-msg" id="authMsg" hidden></p>
-    </div>
-  </div>
 
-  <main id="app"></main>
+      <nav class="sb-nav">
+        <button class="sb-item" data-view="home" data-i18n="navHome"><span class="di-ic">🏠</span><span class="di-label">Home</span></button>
+        <button class="sb-item" data-view="analytics" data-i18n="navAnalytics"><span class="di-ic">📊</span><span class="di-label">Analytics</span></button>
+        <button class="sb-item" data-view="practice" data-i18n="navQuestionBank"><span class="di-ic">✏️</span><span class="di-label">Question Bank</span></button>
+        <button class="sb-item" data-view="learn" data-i18n="navLessons"><span class="di-ic">📚</span><span class="di-label">Lessons</span></button>
+        <button class="sb-item" data-view="saved" data-i18n="navSaved"><span class="di-ic">🔖</span><span class="di-label">Saved</span></button>
+        <button class="sb-item" data-view="mistakes" data-i18n="navMistakes"><span class="di-ic">⚠️</span><span class="di-label">Mistakes Log</span></button>
 
-  <!-- Auth gate overlay: covers the app until a session is confirmed (only when a backend is configured). -->
-  <div class="auth-gate" id="authGate" hidden>
-    <span class="gate-logo">i</span>
-    <p>Checking your session…</p>
+        <div class="sb-sep"></div>
+
+        <button class="sb-item" id="themeItem"><span class="di-ic" id="themeIc">🌙</span><span class="di-label" data-i18n="theme">Theme</span><span class="sb-val" id="themeVal"></span></button>
+        <button class="sb-item" id="langItem"><span class="di-ic">🌐</span><span class="di-label" data-i18n="language">Language</span><span class="sb-val" id="langVal"></span></button>
+        <button class="sb-item" id="moreBtn" aria-expanded="false"><span class="di-ic">⋯</span><span class="di-label" data-i18n="more">More</span><span class="sb-chev">▾</span></button>
+        <div class="sb-sub" id="moreMenu" hidden>
+          <button class="sb-item sub" data-view="feedback" data-i18n="feedback"><span class="di-ic">💬</span><span class="di-label">Give feedback</span></button>
+          <button class="sb-item sub" data-view="join" data-i18n="joinUs"><span class="di-ic">🤝</span><span class="di-label">Join us</span></button>
+        </div>
+      </nav>
+
+      <div class="sb-bottom">
+        <button class="sb-item" data-view="options" data-i18n="options"><span class="di-ic">⚙️</span><span class="di-label">Settings</span></button>
+        <div class="sb-profile">
+          <button class="pf-open" data-view="options" aria-label="Settings">
+            <span class="pf-avatar" id="pfAvatar">?</span>
+            <span class="pf-meta"><span class="pf-name" id="pfName">Guest</span><span class="pf-sub" id="pfSub"></span></span>
+          </button>
+          <button class="pf-logout" id="logoutBtn" title="Log out" aria-label="Log out">⎋</button>
+        </div>
+      </div>
+    </aside>
+
+    <main id="app"></main>
   </div>
 
   <!-- Course data (untouched) -->
   <script src="course-data.js"></script>
-  <!-- Russian translations of titles / explanations / reviews / questions (optional; falls back to English per-field) -->
-  <script src="course-data-ru.js"></script>
 
-  <!-- Optional cloud accounts + cross-device sync (Supabase). Falls back to local-only if unconfigured. -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-
-  <!-- Auth gate: when a backend is configured, app.html requires a signed-in session.
-       With no backend configured it stays open (local-only) so no one is locked out
-       before accounts are live. The client is reused by the sync module below. -->
+  <!-- Sign-up gate: the app requires an account (when Supabase is configured) or a
+       local profile (fallback). No session/profile → bounce to the sign-up flow.
+       (Client-side convenience; real protection is Row-Level Security on the data.) -->
   <script>
   (function () {
     var cfg = window.SUPABASE_CONFIG || {};
     var ready = !!(cfg.url && cfg.anonKey && window.supabase);
-    if (!ready) return;                       // no backend → open access, no gate
-    var gate = document.getElementById("authGate");
-    document.documentElement.classList.add("gated");
-    if (gate) gate.hidden = false;
-    var client = window.supabase.createClient(cfg.url, cfg.anonKey);
-    window.__supabaseClient = client;         // reused by the sync module
-    function open() { document.documentElement.classList.remove("gated"); if (gate) gate.hidden = true; }
-    client.auth.getSession().then(function (r) {
-      if (r && r.data && r.data.session) open();
-      else window.location.replace("index.html?signin=1");
-    }).catch(open);                           // backend error → fail open, don't trap the user
+    if (ready) {
+      // Source of truth is the Supabase session; redirect if signed out.
+      var client = window.__supabaseClient ||
+        (window.__supabaseClient = window.supabase.createClient(cfg.url, cfg.anonKey));
+      client.auth.getSession().then(function (r) {
+        if (!r.data.session) window.location.replace("signup.html");
+      }).catch(function () { window.location.replace("signup.html"); });
+      return;
+    }
+    // Local-only fallback (no backend yet): require a local profile.
+    try {
+      var p = JSON.parse(localStorage.getItem("eprep_profile") || "null");
+      if (!p || !p.name) window.location.replace("signup.html");
+    } catch (e) { window.location.replace("signup.html"); }
   })();
   </script>
 
@@ -513,7 +590,8 @@
     const el = (t, c) => { const e = document.createElement(t); if (c) e.className = c; return e; };
     const LABELS = ["A", "B", "C", "D", "E", "F"];
     const PLACEHOLDER = /^\s*(\[.*\]|<p>\s*\[.*\]\s*<\/p>)\s*$/;
-    let STUDENT = "";   // set from the signed-in account; empty = no name in greeting
+    let STUDENT = "";   // set from the local profile (sign-up); empty = no name in greeting
+    const PROFILE_STORE = "eprep_profile";
     const INTERVALS = [1, 2, 4, 7, 15, 30]; // spaced-repetition days by stage
     const scroll0 = () => window.scrollTo(0, 0);
     const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -543,6 +621,16 @@
         leaveTestConfirm: "Leave the test? Your answers so far won't be saved.",
         timeLeft: "Time left",
         navHome: "Home", navLearn: "Learn", navPractice: "Practice",
+        navLessons: "Lessons", navPractices: "Practices", navMonitoring: "Monitoring",
+        navSaved: "Saved", navMistakes: "Mistakes Log",
+        navAnalytics: "Analytics", navQuestionBank: "Question Bank",
+        theme: "Theme", language: "Language", more: "More",
+        feedback: "Give feedback", joinUs: "Join us", soon: "soon",
+        themeDark: "Dark", themeLight: "Light",
+        options: "Options", logOut: "Log out", logOutConfirm: "Log out? Your progress stays saved on this device.",
+        comingSoon: "Coming soon — we're building this.",
+        savedQuestions: "Saved questions", mistakeLog: "Mistake log",
+        yourProfile: "Your profile", name: "Name", exam: "Exam",
         learnTitle: "Learn", learnSub: "Read the lesson for any skill, then practise it.",
         practiceTitle: "Practice", practiceSub: "Pick a skill to drill, or practise everything at once.",
         readLesson: "Read lesson", continueLesson: "Continue", lessonDone: "Reviewed",
@@ -550,69 +638,113 @@
         startSession: "Start practice",
         filterAll: "All", filterInProgress: "In progress", filterNotStarted: "Not started", filterMastered: "Mastered",
         unitsOverview: "Your units", tests: "Tests", noMatch: "No skills match this filter.",
+        // --- monitoring / saved / mistakes ---
+        saveQuestion: "Save this question", savedRemove: "Remove from saved", retry: "Try again",
+        diffEasy: "Easy", diffMedium: "Medium", diffHard: "Hard",
+        savedSub: "Questions you bookmarked to revisit.", mistakeSub: "Questions you got wrong — review and retry them.",
+        savedEmpty: "No saved questions yet. Tap the 🔖 on any question to save it.",
+        mistakeEmpty: "No mistakes logged yet. Wrong answers will show up here.",
+        practiceSaved: "Practice saved questions", reviewMistakes: "Review your mistakes",
+        reviewAll: "Review all", questions: "questions",
+        streak: "Day streak", days: "days", longest: "Best:", viewAll: "View all",
+        activity: "Daily activity", heatmapTitle: "Activity heatmap", byDifficulty: "By difficulty",
+        attemptsShort: "attempts", avgTime: "avg time",
+        leg_attempted: "Attempted", leg_correct: "Correct", leg_wrong: "Wrong", leg_saved: "Saved",
+        dow_mon: "Mon", dow_wed: "Wed", dow_fri: "Fri", hmLess: "Less", hmMore: "More",
+        attemptOne: "attempt", attemptsMany: "attempts",
         locale: "en-GB"
       },
-      ru: {
-        hello: "Привет", prepStands: "вот ваш текущий прогресс.",
-        topicsCompleted: "Тем пройдено", questionsAttempted: "Вопросов решено",
-        correct: "Верных", wrong: "Неверных", accuracy: "Точность",
-        dueForReview: "Пора повторить", review: "Повторить →",
-        topicTracker: "Прогресс по темам", topics: "тем",
-        unitChallenge: "Испытание раздела", hardQs: "сложных задач",
-        finalChallenge: "Финальное испытание", finalConfirm: "Начать полный пробный экзамен на 120 минут? Тест с таймером и отправляется автоматически по истечении времени.",
-        resetAll: "Сбросить весь прогресс",
-        resetConfirm: "Удалить все сохранённые ответы, статистику и даты повторения?",
-        dashboard: "Главная", topic: "Тема", unit: "Раздел",
-        explanation: "Объяснение", quickReview: "Краткое повторение",
-        startPractice: "Начать практику", practice: "Практика",
-        previous: "Назад", next: "Далее", finish: "Завершить", check: "Проверить", of: "из",
-        verdictOk: "Верно", verdictBad: "Неверно", workedSolution: "Разбор решения",
-        practiceAgain: "Пройти заново", reviewAnswers: "Посмотреть ответы",
-        resetSkillConfirm: "Сбросить эту тему и пройти вопросы заново?",
-        testResults: "Результаты теста", score: "Результат", skipped: "Пропущено", timeUsed: "Затрачено времени",
-        timeUpMsg: "Время вышло — тест отправлен автоматически.",
-        backToDash: "На главную",
-        leaveTestConfirm: "Выйти из теста? Текущие ответы не сохранятся.",
-        timeLeft: "Осталось времени",
-        navHome: "Главная", navLearn: "Уроки", navPractice: "Практика",
-        learnTitle: "Уроки", learnSub: "Прочитайте объяснение к любой теме, затем потренируйтесь.",
-        practiceTitle: "Практика", practiceSub: "Выберите тему для тренировки или решайте всё сразу.",
-        readLesson: "Открыть урок", continueLesson: "Продолжить", lessonDone: "Изучено",
-        practiceAllTitle: "Все темы сразу", practiceAllSub: "Смешать вопросы из всех тем в одну сессию.",
-        startSession: "Начать практику",
-        filterAll: "Все", filterInProgress: "В процессе", filterNotStarted: "Не начато", filterMastered: "Освоено",
-        unitsOverview: "Ваши разделы", tests: "Тесты", noMatch: "Нет тем по этому фильтру.",
-        locale: "ru-RU"
+      uz: {
+        hello: "Salom", prepStands: "tayyorgarligingiz holati.",
+        topicsCompleted: "Tugatilgan mavzular", questionsAttempted: "Yechilgan savollar",
+        correct: "To'g'ri", wrong: "Noto'g'ri", accuracy: "Aniqlik",
+        dueForReview: "Takrorlash vaqti keldi", review: "Takrorlash →",
+        topicTracker: "Mavzular bo'yicha progress", topics: "mavzu",
+        unitChallenge: "Bo'lim sinovi", hardQs: "qiyin savol",
+        finalChallenge: "Yakuniy sinov", finalConfirm: "To'liq 120 daqiqalik sinov boshlansinmi? U vaqt bilan cheklangan va vaqt tugaganda avtomatik topshiriladi.",
+        resetAll: "Barcha progressni tozalash",
+        resetConfirm: "Barcha saqlangan javoblar, statistika va takrorlash sanalari o'chirilsinmi?",
+        dashboard: "Bosh sahifa", topic: "Mavzu", unit: "Bo'lim",
+        explanation: "Tushuntirish", quickReview: "Qisqacha takrorlash",
+        startPractice: "Mashqni boshlash", practice: "Mashq",
+        previous: "Orqaga", next: "Keyingi", finish: "Yakunlash", check: "Tekshirish", of: "/",
+        verdictOk: "To'g'ri", verdictBad: "Noto'g'ri", workedSolution: "Yechim",
+        practiceAgain: "Qayta mashq qilish", reviewAnswers: "Javoblarni ko'rish",
+        resetSkillConfirm: "Bu mavzuni qayta boshlab, savollarni yangidan yechasizmi?",
+        testResults: "Sinov natijalari", score: "Natija", skipped: "Tashlab ketilgan", timeUsed: "Sarflangan vaqt",
+        timeUpMsg: "Vaqt tugadi — sinov avtomatik topshirildi.",
+        backToDash: "Bosh sahifaga",
+        leaveTestConfirm: "Sinovdan chiqasizmi? Hozirgacha bergan javoblaringiz saqlanmaydi.",
+        timeLeft: "Qolgan vaqt",
+        navHome: "Bosh sahifa", navLearn: "O'rganish", navPractice: "Mashq",
+        navLessons: "Darslar", navPractices: "Mashqlar", navMonitoring: "Statistika",
+        navSaved: "Saqlangan", navMistakes: "Xatolar jurnali",
+        navAnalytics: "Tahlil", navQuestionBank: "Savollar banki",
+        theme: "Ko'rinish", language: "Til", more: "Yana",
+        feedback: "Fikr bildirish", joinUs: "Bizga qo'shiling", soon: "tez orada",
+        themeDark: "Qorong'i", themeLight: "Yorug'",
+        options: "Sozlamalar", logOut: "Chiqish", logOutConfirm: "Chiqasizmi? Progressingiz ushbu qurilmada saqlanib qoladi.",
+        comingSoon: "Tez orada — ustida ishlayapmiz.",
+        savedQuestions: "Saqlangan savollar", mistakeLog: "Xatolar jurnali",
+        yourProfile: "Profilingiz", name: "Ism", exam: "Imtihon",
+        learnTitle: "O'rganish", learnSub: "Istalgan mavzu darsini o'qing, so'ng mashq qiling.",
+        practiceTitle: "Mashq", practiceSub: "Mashq uchun mavzu tanlang yoki hammasini birga yeching.",
+        readLesson: "Darsni o'qish", continueLesson: "Davom etish", lessonDone: "O'rganildi",
+        practiceAllTitle: "Barcha mavzular birga", practiceAllSub: "Har bir mavzudan savollarni bitta mashqqa birlashtiring.",
+        startSession: "Mashqni boshlash",
+        filterAll: "Hammasi", filterInProgress: "Jarayonda", filterNotStarted: "Boshlanmagan", filterMastered: "O'zlashtirilgan",
+        unitsOverview: "Bo'limlaringiz", tests: "Sinovlar", noMatch: "Bu filtrga mos mavzu yo'q.",
+        // --- monitoring / saved / mistakes ---
+        saveQuestion: "Savolni saqlash", savedRemove: "Saqlanganlardan olib tashlash", retry: "Qayta urinish",
+        diffEasy: "Oson", diffMedium: "O'rta", diffHard: "Qiyin",
+        savedSub: "Keyin qaytish uchun belgilab qo'ygan savollaringiz.", mistakeSub: "Xato qilgan savollaringiz — ko'rib chiqing va qayta yeching.",
+        savedEmpty: "Hali saqlangan savollar yo'q. Saqlash uchun istalgan savoldagi 🔖 belgisini bosing.",
+        mistakeEmpty: "Hali xatolar yo'q. Noto'g'ri javoblar shu yerda ko'rinadi.",
+        practiceSaved: "Saqlangan savollarni mashq qilish", reviewMistakes: "Xatolaringizni ko'rib chiqish",
+        reviewAll: "Hammasini ko'rib chiqish", questions: "savol",
+        streak: "Ketma-ket kunlar", days: "kun", longest: "Rekord:", viewAll: "Hammasini ochish",
+        activity: "Kunlik faollik", heatmapTitle: "Faollik xaritasi", byDifficulty: "Qiyinligi bo'yicha",
+        attemptsShort: "urinish", avgTime: "o'rtacha vaqt",
+        leg_attempted: "Yechilgan", leg_correct: "To'g'ri", leg_wrong: "Noto'g'ri", leg_saved: "Saqlangan",
+        dow_mon: "Dush", dow_wed: "Chor", dow_fri: "Jum", hmLess: "Kam", hmMore: "Ko'p",
+        attemptOne: "urinish", attemptsMany: "urinish",
+        locale: "uz-UZ"
       }
     };
     const LANG_STORE = "newuu_lang";
-    let LANG = "en";
-    try { const l = localStorage.getItem(LANG_STORE); if (l === "en" || l === "ru") LANG = l; } catch (e) {}
+    let LANG = "uz";   // O'zbek is the default; English is the alternative
+    try { const l = localStorage.getItem(LANG_STORE); if (l === "en" || l === "uz") LANG = l; } catch (e) {}
     const t = (k) => (I18N[LANG] && I18N[LANG][k] != null) ? I18N[LANG][k] : I18N.en[k];
     function challengeTitle(n, name) {
-      return LANG === "ru"
-        ? "Испытание · Раздел " + n + " · " + name
+      return LANG === "uz"
+        ? "Sinov · " + n + "-bo'lim · " + name
         : "Unit " + n + " Challenge · " + name;
     }
     function finalChallengeTitle() {
       const fc = COURSE_DATA.finalChallenge || {};
-      return (LANG === "ru" && fc.titleRu) ? fc.titleRu : (fc.title || t("finalChallenge"));
+      return fc.title || t("finalChallenge");
     }
     function updateLangUI() {
-      const lbl = document.getElementById("langLabel");
-      if (lbl) lbl.textContent = LANG === "ru" ? "RU" : "EN";
-      document.querySelectorAll(".lang-opt").forEach((o) => o.classList.toggle("active", o.dataset.lang === LANG));
-      const navMap = { tabHome: "navHome", tabLearn: "navLearn", tabPractice: "navPractice" };
-      Object.keys(navMap).forEach((id) => { const e = document.getElementById(id); if (e) e.textContent = t(navMap[id]); });
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const label = node.classList.contains("di-label") ? node : node.querySelector(".di-label");
+        if (label) label.textContent = t(node.dataset.i18n);
+      });
+      const lv = document.getElementById("langVal");
+      if (lv) lv.textContent = LANG === "uz" ? "O'zbek" : "English";
+      const tv = document.getElementById("themeVal");
+      if (tv) tv.textContent = THEME === "dark" ? t("themeDark") : t("themeLight");
+      const lo = document.getElementById("logoutBtn");
+      if (lo) lo.title = t("logOut");
     }
     function setLang(l) {
-      if ((l !== "en" && l !== "ru") || l === LANG) return;
+      if ((l !== "en" && l !== "uz") || l === LANG) return;
       LANG = l;
       try { localStorage.setItem(LANG_STORE, l); } catch (e) {}
       document.documentElement.lang = l;
       updateLangUI();
       render();
     }
+    function toggleLang() { setLang(LANG === "uz" ? "en" : "uz"); }
 
     /* ---------------- theme (light / dark) ---------------- */
     const THEME_STORE = "newuu_theme";
@@ -620,8 +752,10 @@
     try { const tm = localStorage.getItem(THEME_STORE); if (tm === "light" || tm === "dark") THEME = tm; } catch (e) {}
     function applyTheme() {
       document.documentElement.setAttribute("data-theme", THEME);
-      const b = document.getElementById("themeBtn");
-      if (b) { b.textContent = THEME === "dark" ? "☀️" : "🌙"; b.setAttribute("aria-pressed", String(THEME === "dark")); }
+      const ic = document.getElementById("themeIc");
+      if (ic) ic.textContent = THEME === "dark" ? "☀️" : "🌙";
+      const tv = document.getElementById("themeVal");
+      if (tv) tv.textContent = THEME === "dark" ? t("themeDark") : t("themeLight");
     }
     function toggleTheme() {
       THEME = THEME === "dark" ? "light" : "dark";
@@ -629,30 +763,14 @@
       applyTheme();
     }
 
-    /* ---------------- Russian content overlay (course-data-ru.js → COURSE_DATA_RU) ----------------
-       Resolves each field to Russian when LANG === "ru" and a translation exists, else English.
-       This is per-field, so a partially-translated file degrades gracefully. */
-    const RU_DATA = (typeof COURSE_DATA_RU !== "undefined") ? COURSE_DATA_RU : null;
-    const ruOn = () => LANG === "ru" && !!RU_DATA;
-    const pick = (en, ru) => (ruOn() && ru != null && ru !== "") ? ru : en;
-    function ruSkill(id) {
-      if (!RU_DATA) return null;
-      for (const u of (RU_DATA.units || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return s; }
-      return null;
-    }
-    function ruUnitName(no) {
-      if (!RU_DATA) return null;
-      const u = (RU_DATA.units || []).find((x) => x.unit === no); return u ? u.name : null;
-    }
-    function ruQuestion(bank, id, i) {
-      if (!RU_DATA) return null;
-      for (const u of (RU_DATA[bank] || [])) { const s = (u.skills || []).find((x) => x.id === id); if (s) return (s.questions || [])[i] || null; }
-      return null;
-    }
-    const locUnitName = (u) => pick(u.name, ruUnitName(u.unit));
-    const locTitle = (s) => { const r = ruSkill(s.id); return pick(s.title, r && r.title); };
-    const locExplanation = (s) => { const r = ruSkill(s.id); return pick(s.explanation, r && r.explanation); };
-    const locReview = (s) => { const r = ruSkill(s.id); return pick(s.review, r && r.review); };
+    /* ---------------- content language ----------------
+       Questions and lesson content are English-only (only the UI strings above are
+       translated). These helpers keep a single seam so per-language content could be
+       reintroduced later without touching every call site. */
+    const locUnitName = (u) => u.name;
+    const locTitle = (s) => s.title;
+    const locExplanation = (s) => s.explanation;
+    const locReview = (s) => s.review;
 
     function typeset(node) {
       if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
@@ -660,12 +778,22 @@
       }
     }
 
-    /* ---------------- persistence ---------------- */
+    /* ---------------- persistence ----------------
+       DB shape:
+         answers  — { [qid]: { sel, correct, ts } }   latest attempt per question
+         review   — { [skillId]: { stage, due, last, acc } }  spaced repetition
+         activity — [ { ts, qid, correct, diff, ms } ]  append-only attempt log
+                    (powers daily charts, heatmap, streaks and avg-time-by-difficulty)
+         saved    — { [qid]: { on, ts } }   bookmarked questions (ts → last-write-wins sync) */
     const STORE = "newuu_stats_v2";
-    let DB = { answers: {}, review: {} };
+    let DB = { answers: {}, review: {}, activity: [], saved: {} };
     try {
       const raw = JSON.parse(localStorage.getItem(STORE));
-      if (raw && typeof raw === "object") DB = { answers: raw.answers || {}, review: raw.review || {} };
+      if (raw && typeof raw === "object") DB = {
+        answers: raw.answers || {}, review: raw.review || {},
+        activity: Array.isArray(raw.activity) ? raw.activity : [],
+        saved: raw.saved || {}, activitySeeded: !!raw.activitySeeded
+      };
     } catch (e) {}
     const saveLocal = () => { try { localStorage.setItem(STORE, JSON.stringify(DB)); } catch (e) {} };
     // save() persists locally always, and (when signed in) pushes to the cloud on a debounce.
@@ -695,10 +823,25 @@
         });
         return out;
       }
+      // Append-only activity log: union both, de-duped by a stable per-event key.
+      function mergeActivity(a, b) {
+        const out = [], seen = new Set();
+        [...(a || []), ...(b || [])].forEach((ev) => {
+          if (!ev || ev.ts == null) return;
+          const k = ev.ts + "|" + ev.qid;
+          if (seen.has(k)) return;
+          seen.add(k); out.push(ev);
+        });
+        out.sort((x, y) => x.ts - y.ts);
+        return out;
+      }
       function merge(local, remote) {
         return {
           answers: mergeBy(local.answers, remote.answers, "ts"),
           review: mergeBy(local.review, remote.review, "last"),
+          activity: mergeActivity(local.activity, remote.activity),
+          saved: mergeBy(local.saved, remote.saved, "ts"),
+          activitySeeded: !!(local.activitySeeded || remote.activitySeeded),
         };
       }
 
@@ -731,8 +874,9 @@
         setStatus("Syncing…");
         const { data, error } = await client.from("progress").select("data").eq("user_id", user.id).maybeSingle();
         if (error) { setStatus("Sync error"); return; }
-        const remote = (data && data.data) || { answers: {}, review: {} };
+        const remote = (data && data.data) || { answers: {}, review: {}, activity: [], saved: {} };
         DB = merge(DB, remote);
+        trimActivity();
         saveLocal();
         await push();           // write the merged result straight back up
         if (typeof render === "function") render();
@@ -760,15 +904,18 @@
       }
       async function signOut() {
         if (client) await client.auth.signOut();
+        // Don't leave the user's name/email sitting in localStorage on a shared device.
+        try { localStorage.removeItem(PROFILE_STORE); } catch (e) {}
         // When the backend gates the app, a signed-out user no longer belongs here.
         if (ready) window.location.replace("index.html");
       }
 
       // ---- boot
       function init() {
-        renderAuthUI();        // show the Sign in button even before a backend is wired
-        wireUI();
-        if (!ready) return;    // no backend yet — button & modal show, but sign-in is inert
+        // Sign-in lives on the landing page now; the app only reads the session
+        // (to greet by name and sync progress) and is reached through the gate.
+        wireUI();              // no-ops unless the in-app auth elements exist
+        if (!ready) return;    // no backend yet — sync is inert
         client.auth.getSession().then(({ data }) => onAuth(data.session));
         client.auth.onAuthStateChange((_e, session) => onAuth(session));
       }
@@ -786,6 +933,7 @@
         user = next;
         STUDENT = displayName(user);
         renderAuthUI();
+        if (typeof updateProfileUI === "function") updateProfileUI();
         if (typeof render === "function") render();   // refresh greeting
         if (user && changed) pull();
       }
@@ -793,6 +941,7 @@
       function wireUI() {
         const btn = $("authBtn"), menu = $("authMenu");
         const modal = $("authModal"), form = $("authForm"), msg = $("authMsg");
+        if (!btn || !modal || !form) return;   // in-app auth UI removed — nothing to wire
         const pwInput = $("authPasswordInput"), submit = $("authSubmitBtn");
         const tabIn = $("authTabSignIn"), tabUp = $("authTabSignUp");
         let mode = "signin";   // "signin" | "signup"
@@ -949,6 +1098,99 @@
       return "r";
     }
 
+    /* ---------------- question identity, difficulty & lookup ----------------
+       A question's unique id (qid) is the same composite key already used by
+       DB.answers: "bank|skillId|index" (or "finalChallenge|index"). It is stable
+       as long as course-data.js question order is unchanged — so no per-question
+       id needs to be added to the (large) data file. */
+    const DIFFS = ["easy", "medium", "hard"];
+    // Difficulty has no source field in the data, so it is derived from the bank
+    // (chosen mapping): practice Qs split easy/medium by position within their
+    // skill; the hard + final banks are all "hard".
+    function difficultyOf(qid) {
+      const p = String(qid).split("|");
+      const bank = p[0];
+      if (bank === "hardQuestions" || bank === "finalChallenge") return "hard";
+      const list = questionsFor("practiceQuestions", p[1]);
+      const half = Math.ceil(list.length / 2);
+      return (+p[2] < half) ? "easy" : "medium";
+    }
+    // Resolve a qid back to its question object + context for review/saved lists.
+    function questionByQid(qid) {
+      const p = String(qid).split("|");
+      if (p[0] === "finalChallenge") {
+        const list = (COURSE_DATA.finalChallenge && COURSE_DATA.finalChallenge.questions) || [];
+        return { q: list[+p[1]], key: qid };
+      }
+      const list = questionsFor(p[0], p[1]);
+      return { q: list[+p[2]], key: qid, skillId: p[1] };
+    }
+    function skillTitleForQid(qid) {
+      const p = String(qid).split("|");
+      if (p[0] === "finalChallenge") return finalChallengeTitle();
+      const f = findSkill(p[1]);
+      return f ? locTitle(f.skill) : p[1];
+    }
+
+    /* ---------------- attempt activity log ----------------
+       Every checked answer appends one event so daily charts / heatmap / streaks
+       and avg-time-by-difficulty have a real history (DB.answers only keeps the
+       latest attempt per question and is overwritten on re-attempts). */
+    // ts is shared with the matching DB.answers entry so the two stay consistent
+    // (and the seed-backfill de-dup below recognises an already-logged attempt).
+    function logAttempt(qid, correct, ms, ts) {
+      DB.activity.push({ ts: ts || Date.now(), qid: qid, correct: !!correct,
+        diff: difficultyOf(qid), ms: (ms != null && ms >= 0) ? ms : null });
+      trimActivity();
+    }
+    // Keep the activity log bounded: drop events older than the analytics window
+    // and hard-cap the count, so the blob can't grow without limit (quota + sync cost).
+    const ACTIVITY_MAX_DAYS = 240, ACTIVITY_MAX = 3000;
+    function trimActivity() {
+      if (!Array.isArray(DB.activity) || !DB.activity.length) return;
+      const cutoff = Date.now() - ACTIVITY_MAX_DAYS * 86400000;
+      if (DB.activity[0].ts < cutoff) DB.activity = DB.activity.filter((e) => e.ts >= cutoff);
+      if (DB.activity.length > ACTIVITY_MAX) DB.activity = DB.activity.slice(DB.activity.length - ACTIVITY_MAX);
+    }
+    // One-time backfill: seed history from past answers so existing users see
+    // their charts populated immediately. De-dup on sync handles re-seeds.
+    function seedActivity() {
+      if (DB.activitySeeded) return;
+      const have = new Set(DB.activity.map((e) => e.ts + "|" + e.qid));
+      Object.keys(DB.answers).forEach((qid) => {
+        const a = DB.answers[qid];
+        if (!a || a.ts == null) return;
+        const k = a.ts + "|" + qid;
+        if (have.has(k)) return;
+        DB.activity.push({ ts: a.ts, qid: qid, correct: !!a.correct,
+          diff: difficultyOf(qid), ms: null });
+      });
+      DB.activity.sort((x, y) => x.ts - y.ts);
+      trimActivity();
+      DB.activitySeeded = true;
+      saveLocal();
+    }
+
+    /* ---------------- saved / bookmarked questions ---------------- */
+    const isSaved = (qid) => { const s = DB.saved[qid]; return !!(s && s.on); };
+    function toggleSaved(qid) {
+      const cur = isSaved(qid);
+      DB.saved[qid] = { on: !cur, ts: Date.now() };
+      save();
+      return !cur;
+    }
+    function savedQids() {
+      return Object.keys(DB.saved)
+        .filter((qid) => DB.saved[qid] && DB.saved[qid].on && questionByQid(qid).q)
+        .sort((a, b) => (DB.saved[b].ts || 0) - (DB.saved[a].ts || 0));
+    }
+    // Questions whose most recent answer was wrong (the mistake log).
+    function mistakeQids() {
+      return Object.keys(DB.answers)
+        .filter((qid) => DB.answers[qid] && !DB.answers[qid].correct && questionByQid(qid).q)
+        .sort((a, b) => (DB.answers[b].ts || 0) - (DB.answers[a].ts || 0));
+    }
+
     /* ---------------- spaced repetition ---------------- */
     function scheduleReview(skillId) {
       const ps = practiceStats(skillId);
@@ -987,16 +1229,17 @@
 
     /* ---------------- view + session state ---------------- */
     const MIN_PER_Q = 3;  // unit-test (challenge) time budget: 3 minutes per question
-    let state = { view: "dashboard", skillId: null };
+    let state = { view: "home", skillId: null };
     let session = null;   // { kind:'practice'|'challenge', back, skillId?, unitNo?, items:[...],
                           //   selections?, deadline?, totalMs?, finished?, timeUp?, finishedAt?, review?, results? }
     let qIndex = 0;
     let showSol = false;
     let quizStart = null;
+    let qShownAt = null;   // when the current question was rendered (per-question timing)
     let pendingIdx = null; // selected but not yet checked
     let practiceFilter = "all"; // Practice page filter: all | inprogress | notstarted | mastered
 
-    function goHome() { state = { view: "dashboard" }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
+    function goHome() { state = { view: "home" }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
     function openSkill(id) { state = { view: "topic", skillId: id }; session = null; quizStart = null; pendingIdx = null; render(); scroll0(); }
 
     function startPractice(id) {
@@ -1057,7 +1300,32 @@
       state = { view: "quiz" }; render(); scroll0();
     }
     function firstUnanswered(s) { const i = s.items.findIndex((it) => !DB.answers[it.key]); return i < 0 ? 0 : i; }
-    function leaveSession() { goHome(); }   // always return to the dashboard from a quiz
+    function leaveSession() {
+      // A focused review list returns to where it was opened (Saved / Mistakes);
+      // every other session returns to the dashboard.
+      if (session && session.isList && session.back && session.back.type) {
+        goView(session.back.type); return;
+      }
+      goHome();
+    }
+
+    /* ---------------- focused review of a qid list (Saved / Mistakes) ----------------
+       Runs the given questions through the normal practice runner. Already-answered
+       questions show their verdict + worked solution; unanswered ones can be solved. */
+    function startReview(qids, backView, titleKey) {
+      const items = qids.map(questionByQid).filter((it) => it.q);
+      if (!items.length) return;
+      session = { kind: "practice", isList: true, listTitleKey: titleKey,
+        skillId: null, back: { type: backView || "dashboard" }, items: items };
+      qIndex = 0; showSol = true; pendingIdx = null; quizStart = Date.now();
+      state = { view: "quiz" }; render(); scroll0();
+    }
+    // Re-attempt a single mistake fresh: clear its stored answer, then review-run it.
+    function retryQid(qid, backView) {
+      delete DB.answers[qid];
+      save();
+      startReview([qid], backView, "practice");
+    }
 
     /* ---------------- timers ---------------- */
     const pad = (n) => String(n).padStart(2, "0");
@@ -1097,7 +1365,9 @@
         answered++;
         const ok = sel === it.q.answer;
         if (ok) correct++;
-        DB.answers[it.key] = { sel: sel, correct: ok, ts: Date.now() };
+        const ts = Date.now();
+        DB.answers[it.key] = { sel: sel, correct: ok, ts: ts };
+        logAttempt(it.key, ok, session.qTime ? session.qTime[i] : null, ts);
       });
       save();
       const total = session.items.length;
@@ -1110,23 +1380,182 @@
       state = { view: "results" }; render(); scroll0();
     }
 
-    /* ---------------- dashboard ---------------- */
-    function renderDashboard() {
+    /* ---------------- monitoring analytics (from DB.activity) ---------------- */
+    const dayKey = (ts) => { const d = new Date(ts); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+    function fmtAvg(ms) {
+      if (ms == null) return "—";
+      const s = ms / 1000;
+      if (s < 60) return (s < 10 ? s.toFixed(1) : Math.round(s)) + "s";
+      const m = Math.floor(s / 60), ss = Math.round(s % 60);
+      return m + "m " + ss + "s";
+    }
+    // Attempts grouped by difficulty: count, accuracy and average time.
+    function difficultyStats() {
+      const acc = {}; DIFFS.forEach((k) => acc[k] = { att: 0, cor: 0, ms: 0, msN: 0 });
+      DB.activity.forEach((e) => {
+        const d = acc[e.diff]; if (!d) return;
+        d.att++; if (e.correct) d.cor++;
+        if (e.ms != null) { d.ms += e.ms; d.msN++; }
+      });
+      return DIFFS.map((k) => ({ diff: k, att: acc[k].att, cor: acc[k].cor, wrong: acc[k].att - acc[k].cor,
+        acc: acc[k].att ? acc[k].cor / acc[k].att : 0, avgMs: acc[k].msN ? acc[k].ms / acc[k].msN : null }));
+    }
+    // Day-by-day attempted / correct / wrong / saved for the last nDays.
+    function dailySeries(nDays) {
+      const map = {};
+      const bump = (k) => (map[k] = map[k] || { att: 0, cor: 0, saved: 0 });
+      DB.activity.forEach((e) => { const m = bump(dayKey(e.ts)); m.att++; if (e.correct) m.cor++; });
+      Object.keys(DB.saved).forEach((qid) => { const s = DB.saved[qid]; if (s && s.on && s.ts) bump(dayKey(s.ts)).saved++; });
+      const out = [], today = new Date(); today.setHours(0, 0, 0, 0);
+      for (let i = nDays - 1; i >= 0; i--) {
+        const d = new Date(today); d.setDate(d.getDate() - i);
+        const m = map[dayKey(d.getTime())] || { att: 0, cor: 0, saved: 0 };
+        out.push({ date: new Date(d), attempted: m.att, correct: m.cor, wrong: m.att - m.cor, saved: m.saved });
+      }
+      return out;
+    }
+    function activityStreak() {
+      const days = new Set(); DB.activity.forEach((e) => days.add(dayKey(e.ts)));
+      if (!days.size) return { current: 0, longest: 0, active: 0 };
+      const keys = [...days].sort();
+      let longest = 1, run = 1;
+      for (let i = 1; i < keys.length; i++) {
+        const diff = Math.round((new Date(keys[i]) - new Date(keys[i - 1])) / 86400000);
+        if (diff === 1) { run++; longest = Math.max(longest, run); } else run = 1;
+      }
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const probe = new Date(today);
+      if (!days.has(dayKey(probe.getTime()))) probe.setDate(probe.getDate() - 1); // a streak can still be "alive" through yesterday
+      let current = 0;
+      while (days.has(dayKey(probe.getTime()))) { current++; probe.setDate(probe.getDate() - 1); }
+      return { current: current, longest: longest, active: days.size };
+    }
+
+    /* ---------------- SVG: multi-series daily line chart ---------------- */
+    function lineChartSVG(days) {
+      const W = 760, H = 240, pad = { l: 30, r: 12, t: 14, b: 24 };
+      const plotW = W - pad.l - pad.r, plotH = H - pad.t - pad.b, n = days.length;
+      let maxV = 1; days.forEach((d) => { maxV = Math.max(maxV, d.attempted, d.saved); });
+      const niceMax = maxV <= 5 ? 5 : Math.ceil(maxV / 5) * 5;
+      const X = (i) => pad.l + (n <= 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+      const Y = (v) => pad.t + plotH - (v / niceMax) * plotH;
+      const series = [
+        { k: "attempted", c: "var(--blue)" }, { k: "correct", c: "var(--green)" },
+        { k: "wrong", c: "var(--red)" }, { k: "saved", c: "var(--amber)" }
+      ];
+      let grid = "";
+      [0, 0.5, 1].forEach((f) => {
+        const v = Math.round(niceMax * f), y = Y(v);
+        grid += '<line class="lc-grid" x1="' + pad.l + '" y1="' + y + '" x2="' + (W - pad.r) + '" y2="' + y + '"/>' +
+          '<text class="lc-ytick" x="' + (pad.l - 6) + '" y="' + (y + 3) + '" text-anchor="end">' + v + '</text>';
+      });
+      const polys = series.map((s) => {
+        const pts = days.map((d, i) => X(i) + "," + Y(d[s.k])).join(" ");
+        return '<polyline class="lc-line" data-series="' + s.k + '" fill="none" stroke="' + s.c +
+          '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="' + pts + '"/>';
+      }).join("");
+      // x-axis date labels (about 5, evenly spaced)
+      let xlab = "";
+      const step = Math.max(1, Math.round(n / 5));
+      for (let i = 0; i < n; i += step) {
+        xlab += '<text class="lc-xtick" x="' + X(i) + '" y="' + (H - 6) + '" text-anchor="middle">' +
+          days[i].date.toLocaleDateString(t("locale"), { day: "numeric", month: "short" }) + '</text>';
+      }
+      const bandW = plotW / Math.max(1, n);
+      const bands = days.map((d, i) =>
+        '<rect class="lc-band" data-i="' + i + '" x="' + (X(i) - bandW / 2) + '" y="' + pad.t +
+        '" width="' + bandW + '" height="' + plotH + '" fill="transparent"/>').join("");
+      return '<svg class="linechart" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" role="img">' +
+        grid + polys + xlab +
+        '<line class="lc-cursor" x1="0" y1="' + pad.t + '" x2="0" y2="' + (pad.t + plotH) + '" style="display:none"/>' +
+        bands + '</svg>';
+    }
+    function chartLegend() {
+      const items = [["attempted", "var(--blue)"], ["correct", "var(--green)"], ["wrong", "var(--red)"], ["saved", "var(--savedLeg)"]];
+      return '<div class="lc-legend">' + items.map(([k, c]) =>
+        '<button class="lc-leg" data-series="' + k + '"><span class="lc-swatch" style="background:' +
+        (k === "saved" ? "var(--amber)" : c) + '"></span>' + t("leg_" + k) + '</button>').join("") + '</div>';
+    }
+
+    /* ---------------- SVG: GitHub-style activity heatmap ---------------- */
+    function heatmapData(weeks) {
+      const counts = {}; DB.activity.forEach((e) => { const k = dayKey(e.ts); counts[k] = (counts[k] || 0) + 1; });
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const end = new Date(today); end.setDate(end.getDate() + (6 - end.getDay())); // pad to end of this week (Sat)
+      const total = weeks * 7, start = new Date(end); start.setDate(start.getDate() - (total - 1));
+      const cells = [];
+      for (let i = 0; i < total; i++) {
+        const d = new Date(start); d.setDate(d.getDate() + i);
+        const future = d.getTime() > today.getTime();
+        cells.push({ date: new Date(d), key: dayKey(d.getTime()), count: future ? -1 : (counts[dayKey(d.getTime())] || 0) });
+      }
+      return { cells: cells, weeks: weeks, start: start };
+    }
+    const heatLevel = (c) => c < 0 ? -1 : c === 0 ? 0 : c <= 2 ? 1 : c <= 5 ? 2 : c <= 9 ? 3 : 4;
+    function heatmapSVG(hm) {
+      const cell = 13, gap = 3, top = 14, left = 26, unit = cell + gap;
+      const W = left + hm.weeks * unit, H = top + 7 * unit + 4;
+      let cellsSvg = "", months = "";
+      let lastMonth = -1;
+      hm.cells.forEach((c, i) => {
+        const col = Math.floor(i / 7), row = i % 7;
+        const x = left + col * unit, y = top + row * unit;
+        const lvl = heatLevel(c.count);
+        cellsSvg += '<rect class="hm-cell hm-' + lvl + '" data-key="' + c.key + '" data-count="' + c.count +
+          '" x="' + x + '" y="' + y + '" width="' + cell + '" height="' + cell + '" rx="2"/>';
+        // month label when a new month starts at the top of a column
+        if (row === 0) {
+          const m = c.date.getMonth();
+          if (m !== lastMonth) {
+            lastMonth = m;
+            months += '<text class="hm-month" x="' + x + '" y="' + (top - 4) + '">' +
+              c.date.toLocaleDateString(t("locale"), { month: "short" }) + '</text>';
+          }
+        }
+      });
+      const dows = [["Mon", 1], ["Wed", 3], ["Fri", 5]];
+      let dowLab = dows.map(([lbl, r]) =>
+        '<text class="hm-dow" x="' + (left - 6) + '" y="' + (top + r * unit + cell - 3) + '" text-anchor="end">' +
+        t("dow_" + lbl.toLowerCase()) + '</text>').join("");
+      return '<svg class="heatmap" viewBox="0 0 ' + W + ' ' + H + '" role="img" width="' + W + '" height="' + H + '">' +
+        months + dowLab + cellsSvg + '</svg>';
+    }
+    function heatLegend() {
+      let sw = "";
+      for (let l = 0; l <= 4; l++) sw += '<span class="hm-cell hm-' + l + ' hm-swatch"></span>';
+      return '<div class="hm-legend"><span>' + t("hmLess") + '</span>' + sw + '<span>' + t("hmMore") + '</span></div>';
+    }
+
+    // Wire a shared hover tooltip to chart bands + heatmap cells (after innerHTML).
+    function attachTip(sel, contentFn) {
+      const tip = document.getElementById("monTip"); if (!tip) return;
+      app.querySelectorAll(sel).forEach((node) => {
+        node.addEventListener("mouseenter", () => { const html = contentFn(node); if (html == null) return; tip.innerHTML = html; tip.hidden = false; });
+        node.addEventListener("mousemove", (e) => { tip.style.left = (e.clientX + 14) + "px"; tip.style.top = (e.clientY + 14) + "px"; });
+        node.addEventListener("mouseleave", () => { tip.hidden = true; });
+      });
+    }
+
+    function statsRow() {
       const g = globalStats();
-      const today = new Date().toLocaleDateString(t("locale"), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-      const topicsPct = Math.round((g.topics / g.totalSkills) * 100);
-
-      let html = "";
-      html += '<section class="greeting"><h1>' + t("hello") + (STUDENT ? ', ' + esc(STUDENT) : '') + ' 👋</h1>' +
-              '<p class="subtitle">' + today + ' — ' + t("prepStands") + '</p></section>';
-
-      html += '<section class="stats">' +
+      const topicsPct = g.totalSkills ? Math.round((g.topics / g.totalSkills) * 100) : 0;
+      return '<section class="stats">' +
         statCard(t("topicsCompleted"), g.topics, "/" + g.totalSkills, topicsPct) +
         statCard(t("questionsAttempted"), g.attempted) +
         statCard(t("correct"), g.correct, "", null, "correct") +
         statCard(t("wrong"), g.wrong, "", null, "wrong") +
         statCard(t("accuracy"), g.acc + "%", "", g.acc) +
       '</section>';
+    }
+
+    /* ---------------- Home (overview: stats, due, units, tests) ---------------- */
+    function renderHome() {
+      const today = new Date().toLocaleDateString(t("locale"), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+
+      let html = '<section class="greeting"><h1>' + t("hello") + (STUDENT ? ', ' + esc(STUDENT) : '') + ' 👋</h1>' +
+              '<p class="subtitle">' + today + ' — ' + t("prepStands") + '</p></section>';
+
+      html += statsRow();
 
       const due = dueSkills();
       if (due.length) {
@@ -1137,12 +1566,12 @@
           '</div></section>';
       }
 
-      // Units overview — compact progress cards that lead into Practice
+      // Units overview — compact progress cards that lead into the Question Bank
       html += '<div class="section-title">' + t("unitsOverview") + '</div><div class="unit-cards">';
       COURSE_DATA.units.forEach((u) => {
         let complete = 0;
         u.skills.forEach((s) => { if (practiceStats(s.id).complete) complete++; });
-        const pct = Math.round((complete / u.skills.length) * 100);
+        const pct = u.skills.length ? Math.round((complete / u.skills.length) * 100) : 0;
         html += '<button class="ucard" data-unit-go="' + u.unit + '">' +
           '<div class="uc-top"><span class="uc-idx">' + u.unit + '</span><span class="uc-name">' + esc(locUnitName(u)) + '</span></div>' +
           '<div class="uc-meta"><span>' + complete + '/' + u.skills.length + ' ' + t("topics") + '</span><span>' + pct + '%</span></div>' +
@@ -1169,7 +1598,7 @@
       if (fc && fc.questions && fc.questions.length) {
         const fs = finalChallengeStats();
         const fpct = fs.total ? Math.round((fs.done / fs.total) * 100) : 0;
-        const fmeta = (LANG === "ru" && fc.subtitleRu) ? fc.subtitleRu : (fc.subtitle || "");
+        const fmeta = fc.subtitle || "";
         html += '<button class="trow final-row" data-final="1">' +
           '<span class="trow-name"><span class="bolt">🏁</span><span class="txt">' + t("finalChallenge") + '</span>' +
             '<span class="ch-meta">' + esc(fmeta) + '</span></span>' +
@@ -1191,7 +1620,85 @@
       app.querySelectorAll(".due-chip").forEach((b) => b.addEventListener("click", () => reviewSkill(b.dataset.due)));
       const reset = document.getElementById("resetBtn");
       if (reset) reset.addEventListener("click", () => {
-        if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {} }; save(); render(); }
+        if (confirm(t("resetConfirm"))) { DB = { answers: {}, review: {}, activity: [], saved: {}, activitySeeded: true }; save(); render(); }
+      });
+    }
+
+    /* ---------------- Analytics (snapshot, charts, heatmap, difficulty) ---------------- */
+    function renderAnalytics() {
+      let html = '<div class="page-head"><div><h1>' + t("navAnalytics") + '</h1>' +
+        '<div class="ph-sub">' + t("prepStands") + '</div></div></div>';
+
+      html += statsRow();
+
+      // ---- Snapshot row: streak + quick links to Saved / Mistakes
+      const streak = activityStreak();
+      const savedN = savedQids().length, mistakeN = mistakeQids().length;
+      html += '<section class="stats snap">' +
+        '<div class="stat"><div class="stat-label">🔥 ' + t("streak") + '</div>' +
+          '<div class="stat-val">' + streak.current + '<span class="stat-sub"> ' + t("days") + '</span></div>' +
+          '<div class="stat-foot">' + t("longest") + ' ' + streak.longest + '</div></div>' +
+        '<button class="stat go" data-go="saved"><div class="stat-label">🔖 ' + t("savedQuestions") + '</div>' +
+          '<div class="stat-val">' + savedN + '</div><div class="stat-foot">' + t("viewAll") + ' →</div></button>' +
+        '<button class="stat go" data-go="mistakes"><div class="stat-label">⚠️ ' + t("mistakeLog") + '</div>' +
+          '<div class="stat-val">' + mistakeN + '</div><div class="stat-foot">' + t("viewAll") + ' →</div></button>' +
+      '</section>';
+
+      // ---- Daily activity line chart (attempted / correct / wrong / saved)
+      const days = dailySeries(30);
+      html += '<div class="section-title">' + t("activity") + '</div>' +
+        '<div class="card chartcard">' + chartLegend() +
+          '<div class="chart-wrap">' + lineChartSVG(days) + '</div></div>';
+
+      // ---- GitHub-style heatmap
+      const hm = heatmapData(27);
+      html += '<div class="section-title">' + t("heatmapTitle") + '</div>' +
+        '<div class="card heatcard"><div class="heat-scroll">' + heatmapSVG(hm) + '</div>' + heatLegend() + '</div>';
+
+      // ---- Breakdown by difficulty (attempts / accuracy / avg time)
+      const dstats = difficultyStats();
+      const diffRow = (d) => {
+        const pct = Math.round(d.acc * 100);
+        return '<div class="diffrow">' + diffBadge(d.diff) +
+          '<div class="dr-bar"><div class="dr-fill ' + d.diff + '" style="width:' + (d.att ? pct : 0) + '%"></div></div>' +
+          '<div class="dr-cell"><span class="dr-v">' + (d.att ? pct + "%" : "—") + '</span><span class="dr-sub">' + d.att + ' ' + t("attemptsShort") + '</span></div>' +
+          '<div class="dr-cell"><span class="dr-v">' + fmtAvg(d.avgMs) + '</span><span class="dr-sub">' + t("avgTime") + '</span></div>' +
+        '</div>';
+      };
+      html += '<div class="section-title">' + t("byDifficulty") + '</div>' +
+        '<div class="card diffcard">' + dstats.map(diffRow).join("") + '</div>';
+
+      app.innerHTML = html;
+
+      // ---- analytics interactions (tooltip, nav, legend toggles) ----
+      if (!document.getElementById("monTip")) {
+        const tp = el("div", "mon-tip"); tp.id = "monTip"; tp.hidden = true; document.body.appendChild(tp);
+      }
+      app.querySelectorAll(".stat.go[data-go]").forEach((b) => b.addEventListener("click", () => goView(b.dataset.go)));
+      app.querySelectorAll(".lc-leg").forEach((b) => b.addEventListener("click", () => {
+        b.classList.toggle("off");
+        const ln = app.querySelector('.lc-line[data-series="' + b.dataset.series + '"]');
+        if (ln) ln.style.display = b.classList.contains("off") ? "none" : "";
+      }));
+      const cursor = app.querySelector(".lc-cursor");
+      const chartWrap = app.querySelector(".chart-wrap");
+      if (chartWrap && cursor) chartWrap.addEventListener("mouseleave", () => { cursor.style.display = "none"; });
+      const tipDate = (dt, withYear) => dt.toLocaleDateString(t("locale"),
+        Object.assign({ weekday: "short", day: "numeric", month: "short" }, withYear ? { year: "numeric" } : {}));
+      attachTip(".lc-band", (node) => {
+        const d = days[+node.dataset.i]; if (!d) return null;
+        if (cursor) { const cx = +node.getAttribute("x") + +node.getAttribute("width") / 2; cursor.setAttribute("x1", cx); cursor.setAttribute("x2", cx); cursor.style.display = ""; }
+        const rowsCfg = [["attempted", "--blue"], ["correct", "--green"], ["wrong", "--red"], ["saved", "--amber"]];
+        return '<div class="tip-date">' + tipDate(d.date) + '</div>' +
+          rowsCfg.map(([k, c]) => '<div class="tip-row"><span class="tip-dot" style="background:var(' + c + ')"></span>' +
+            t("leg_" + k) + '<b>' + d[k] + '</b></div>').join("");
+      });
+      attachTip(".hm-cell", (node) => {
+        const c = +node.dataset.count; if (c < 0) return null;
+        const p = node.dataset.key.split("-").map(Number);
+        const dt = new Date(p[0], p[1] - 1, p[2]);
+        return '<div class="tip-date">' + tipDate(dt, true) + '</div>' +
+          '<div class="tip-row">' + c + ' ' + t(c === 1 ? "attemptOne" : "attemptsMany") + '</div>';
       });
     }
 
@@ -1336,7 +1843,9 @@
     function renderQuiz() {
       if (!session || !session.items.length) { leaveSession(); return; }  // nothing to show — bail safely
       let title;
-      if (session.kind === "practice") {
+      if (session.isList) {
+        title = t(session.listTitleKey || "review");
+      } else if (session.kind === "practice") {
         title = session.allTopics ? t("practiceAllTitle")
               : t("practice") + " · " + locTitle(findSkill(session.skillId).skill);
       } else if (session.isFinal) {
@@ -1359,7 +1868,10 @@
         '<button class="back" id="backBtn">← ' + t("dashboard") + '</button>' +
         '<div class="runner">' +
           '<div class="runner-top"><div class="runner-title">' + esc(title) + '</div>' +
-            (showTimer ? '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div>' : '') +
+            '<div class="runner-tools">' +
+              '<button class="bookmark-btn" id="bookmarkBtn" aria-pressed="false" title="' + esc(t("saveQuestion")) + '">🔖</button>' +
+              (showTimer ? '<div class="timer"><span class="ic">⏱</span><span id="quizTimer">00:00</span></div>' : '') +
+            '</div>' +
           '</div>' +
           '<div id="stage" class="stage"></div>' +
           '<div class="runner-bar"><div class="count" id="qCount"></div>' +
@@ -1394,14 +1906,29 @@
         pendingIdx = null;
         answer(idx);
       });
+      const bm = document.getElementById("bookmarkBtn");
+      if (bm) bm.addEventListener("click", () => { toggleSaved(session.items[qIndex].key); syncBookmarkBtn(); });
 
       renderStage();
+    }
+    // Reflect the current question's saved state on the bookmark toggle.
+    function syncBookmarkBtn() {
+      const bm = document.getElementById("bookmarkBtn");
+      if (!bm || !session || !session.items[qIndex]) return;
+      const on = isSaved(session.items[qIndex].key);
+      bm.classList.toggle("on", on);
+      bm.setAttribute("aria-pressed", String(on));
+      bm.title = on ? t("savedRemove") : t("saveQuestion");
     }
 
     function answer(idx) {
       const it = session.items[qIndex];
       if (DB.answers[it.key]) return;
-      DB.answers[it.key] = { sel: idx, correct: idx === it.q.answer, ts: Date.now() };
+      const correct = idx === it.q.answer;
+      const ms = qShownAt ? (Date.now() - qShownAt) : null;
+      const ts = Date.now();
+      DB.answers[it.key] = { sel: idx, correct: correct, ts: ts };
+      logAttempt(it.key, correct, ms, ts);
       save();
       if (session.kind === "practice") scheduleReview(session.skillId);
       renderStage();
@@ -1411,11 +1938,9 @@
       const it = session.items[qIndex];
       const q = it.q;
       const a = DB.answers[it.key];
-      const parts = it.key.split("|");          // [bank, skillId, index]
-      const rq = ruQuestion(parts[0], parts[1], +parts[2]);
-      const qText = pick(q.q, rq && rq.q);
-      const qOpts = q.options.map((opt, i) => pick(opt, rq && rq.options && rq.options[i]));
-      const qSol = pick(q.solution, rq && rq.solution);
+      const qText = q.q;
+      const qOpts = q.options;
+      const qSol = q.solution;
       const stage = document.getElementById("stage");
       stage.innerHTML = "";
 
@@ -1435,6 +1960,8 @@
             document.querySelectorAll("#stage .choice").forEach(c => c.classList.remove("chosen"));
             b.classList.add("chosen");
             session.selections[qIndex] = idx;
+            session.qTime = session.qTime || {};
+            session.qTime[qIndex] = qShownAt ? (Date.now() - qShownAt) : null;
           });
         } else if (a) {
           b.disabled = true;
@@ -1476,6 +2003,8 @@
       if (checkBtn) { checkBtn.disabled = !!a || pendingIdx === null; checkBtn.style.display = a ? "none" : ""; }
 
       typeset(stage);
+      syncBookmarkBtn();
+      qShownAt = Date.now();   // start the per-question timer for this question
     }
 
     /* ---------------- test results screen ---------------- */
@@ -1515,56 +2044,187 @@
         '</div><div class="v">' + val + '</div></div>';
     }
 
+    /* ---------------- Saved questions & Mistake log ---------------- */
+    function qTextLocalized(qid) {
+      const it = questionByQid(qid);
+      return it.q ? it.q.q : "";
+    }
+    function diffBadge(diff) {
+      const lbl = { easy: t("diffEasy"), medium: t("diffMedium"), hard: t("diffHard") }[diff] || diff;
+      return '<span class="diff-badge ' + diff + '">' + lbl + '</span>';
+    }
+    // One row in a Saved / Mistakes list. kind: "saved" | "mistake".
+    function qListRow(qid, kind) {
+      const diff = difficultyOf(qid);
+      const a = DB.answers[qid];
+      let meta = '<span class="qrow-skill">' + esc(skillTitleForQid(qid)) + '</span>';
+      if (kind === "mistake" && a) {
+        const it = questionByQid(qid);
+        const your = (it.q.options && it.q.options[a.sel] != null) ? LABELS[a.sel] : "—";
+        const corr = LABELS[it.q.answer];
+        meta += '<span class="qrow-ans"><span class="x">✗ ' + your + '</span> · <span class="ok">✓ ' + corr + '</span></span>';
+      } else if (kind === "saved" && a) {
+        meta += '<span class="qrow-ans ' + (a.correct ? "ok" : "x") + '">' +
+          (a.correct ? "✓ " + t("verdictOk") : "✗ " + t("verdictBad")) + '</span>';
+      }
+      const action = kind === "saved"
+        ? '<button class="qrow-x" data-unsave="' + esc(qid) + '" title="' + esc(t("savedRemove")) + '">✕</button>'
+        : '<button class="qrow-x" data-retry="' + esc(qid) + '" title="' + esc(t("retry")) + '">↻</button>';
+      return '<div class="qrow">' +
+        '<button class="qrow-main" data-open="' + esc(qid) + '">' +
+          '<div class="qrow-top">' + diffBadge(diff) + meta + '</div>' +
+          '<div class="qrow-q">' + esc(qTextLocalized(qid)) + '</div>' +
+        '</button>' + action +
+      '</div>';
+    }
+    function renderQList(view) {
+      const isSavedView = view === "saved";
+      const qids = isSavedView ? savedQids() : mistakeQids();
+      const titleKey = isSavedView ? "savedQuestions" : "mistakeLog";
+      const subKey = isSavedView ? "savedSub" : "mistakeSub";
+      const icon = isSavedView ? "🔖" : "⚠️";
+      let html = '<div class="page-head"><div><h1>' + icon + ' ' + esc(t(titleKey)) + '</h1>' +
+        '<div class="ph-sub">' + esc(t(subKey)) + '</div></div></div>';
+
+      if (!qids.length) {
+        html += '<div class="empty">' + esc(t(isSavedView ? "savedEmpty" : "mistakeEmpty")) + '</div>';
+        app.innerHTML = html; return;
+      }
+
+      html += '<div class="practice-all"><div class="pa-text"><h3>' +
+        esc(t(isSavedView ? "practiceSaved" : "reviewMistakes")) + '</h3>' +
+        '<p>' + qids.length + ' ' + esc(t("questions")) + '</p></div>' +
+        '<button class="btn-primary" id="reviewAllBtn">' + esc(t(isSavedView ? "startSession" : "reviewAll")) + '</button></div>';
+
+      html += '<div class="listcard qlist">' + qids.map((qid) => qListRow(qid, isSavedView ? "saved" : "mistake")).join("") + '</div>';
+
+      app.innerHTML = html;
+      typeset(app);
+      const allBtn = document.getElementById("reviewAllBtn");
+      if (allBtn) allBtn.addEventListener("click", () => startReview(qids, view, titleKey));
+      app.querySelectorAll("[data-open]").forEach((b) =>
+        b.addEventListener("click", () => startReview([b.dataset.open], view, titleKey)));
+      app.querySelectorAll("[data-unsave]").forEach((b) =>
+        b.addEventListener("click", () => { toggleSaved(b.dataset.unsave); renderQList(view); }));
+      app.querySelectorAll("[data-retry]").forEach((b) =>
+        b.addEventListener("click", () => retryQid(b.dataset.retry, view)));
+    }
+
     /* ---------------- router ---------------- */
     function render() {
-      if (state.view === "dashboard") renderDashboard();
+      if (state.view === "home") renderHome();
+      else if (state.view === "analytics") renderAnalytics();
       else if (state.view === "learn") renderLearn();
       else if (state.view === "practice") renderPractice();
       else if (state.view === "topic") renderTopic();
       else if (state.view === "results") renderResults();
+      else if (state.view === "saved") renderQList("saved");
+      else if (state.view === "mistakes") renderQList("mistakes");
+      else if (state.view === "options") renderOptions();
+      else if (state.view === "feedback") renderPlaceholder("feedback", "💬");
+      else if (state.view === "join") renderPlaceholder("joinUs", "🤝");
       else renderQuiz();
       updateNav();
       updateTimers();
     }
 
-    // highlight the nav tab matching the current top-level section
+    // Simple placeholder for sections we haven't built yet (keeps the menu honest).
+    function renderPlaceholder(titleKey, icon) {
+      app.innerHTML =
+        '<section class="greeting"><h1>' + (icon ? icon + ' ' : '') + esc(t(titleKey)) + '</h1>' +
+        '<p class="subtitle">' + esc(t("comingSoon")) + '</p></section>';
+    }
+    function renderOptions() {
+      let p = {}; try { p = JSON.parse(localStorage.getItem(PROFILE_STORE) || "{}") || {}; } catch (e) {}
+      const full = [p.name, p.surname].filter(Boolean).map(esc).join(" ");
+      const exam = p.track === "dtm" ? "DTM" : (p.track === "newuu" ? "NewUU" : "—");
+      app.innerHTML =
+        '<section class="greeting"><h1>⚙️ ' + esc(t("options")) + '</h1>' +
+        '<p class="subtitle">' + esc(t("yourProfile")) + '</p></section>' +
+        '<section class="stats" style="grid-template-columns:repeat(2,1fr)">' +
+          statCard(t("name"), full || "—") +
+          statCard(t("exam"), exam) +
+        '</section>' +
+        '<div class="dash-foot" style="text-align:left;margin-top:24px">' +
+          '<button class="btn-ghost danger-btn" id="optLogout">🚪 ' + esc(t("logOut")) + '</button>' +
+        '</div>';
+      const lo = document.getElementById("optLogout");
+      if (lo) lo.addEventListener("click", doLogout);
+    }
+
+    // highlight the sidebar item matching the current top-level section
     function updateNav() {
-      const map = { dashboard: "dashboard", learn: "learn", lesson: "learn",
-                    practice: "practice", topic: "learn" };
-      const active = map[state.view] || "dashboard";
-      document.querySelectorAll(".topnav .tab").forEach((b) =>
+      const map = { home: "home", analytics: "analytics", learn: "learn", lesson: "learn",
+                    practice: "practice", topic: "learn", saved: "saved",
+                    mistakes: "mistakes", options: "options", feedback: "feedback", join: "join" };
+      const active = map[state.view] || "home";
+      document.querySelectorAll(".sb-item[data-view]").forEach((b) =>
         b.classList.toggle("active", b.dataset.view === active));
     }
     function goView(view) {
       state = { view: view }; session = null; quizStart = null; pendingIdx = null;
-      render(); scroll0();
+      render(); scroll0(); closeSidebar();
     }
 
-    document.getElementById("homeBtn").addEventListener("click", goHome);
-    document.querySelectorAll(".topnav .tab").forEach((b) =>
+    function doLogout() {
+      if (!confirm(t("logOutConfirm"))) return;
+      try { localStorage.removeItem(PROFILE_STORE); } catch (e) {}
+      window.location.replace("index.html");
+    }
+    // Reflect the local profile in the bottom-of-sidebar profile card.
+    function updateProfileUI() {
+      let p = {}; try { p = JSON.parse(localStorage.getItem(PROFILE_STORE) || "{}") || {}; } catch (e) {}
+      const name = [p.name, p.surname].filter(Boolean).join(" ") || STUDENT || "Guest";
+      const av = document.getElementById("pfAvatar"); if (av) av.textContent = (name[0] || "?");
+      const nm = document.getElementById("pfName"); if (nm) nm.textContent = name;
+      const sub = document.getElementById("pfSub");
+      if (sub) sub.textContent = p.email || (p.track === "dtm" ? "DTM" : p.track === "newuu" ? "NewUU" : "");
+    }
+
+    /* ---------------- left sidebar wiring ---------------- */
+    const sidebar = document.getElementById("sidebar");
+    const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+    function openSidebar() { sidebar.classList.add("open"); sidebarBackdrop.hidden = false;
+      const tg = document.getElementById("navToggle"); if (tg) tg.setAttribute("aria-expanded", "true"); }
+    function closeSidebar() { sidebar.classList.remove("open"); sidebarBackdrop.hidden = true;
+      const tg = document.getElementById("navToggle"); if (tg) tg.setAttribute("aria-expanded", "false"); }
+    const navToggle = document.getElementById("navToggle");
+    if (navToggle) navToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (sidebar.classList.contains("open")) closeSidebar(); else openSidebar();
+    });
+    sidebarBackdrop.addEventListener("click", closeSidebar);
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSidebar(); });
+
+    document.querySelectorAll(".js-home").forEach((b) => b.addEventListener("click", () => { goHome(); closeSidebar(); }));
+    document.querySelectorAll(".sb-item[data-view], .pf-open[data-view]").forEach((b) =>
       b.addEventListener("click", () => goView(b.dataset.view)));
 
-    /* ---------------- language switcher wiring ---------------- */
-    const langBtn = document.getElementById("langBtn");
-    const langMenu = document.getElementById("langMenu");
-    function toggleLangMenu(open) {
-      const show = open != null ? open : langMenu.hidden;
-      langMenu.hidden = !show;
-      langBtn.setAttribute("aria-expanded", String(show));
-    }
-    langBtn.addEventListener("click", (e) => { e.stopPropagation(); toggleLangMenu(); });
-    const themeBtn = document.getElementById("themeBtn");
-    if (themeBtn) themeBtn.addEventListener("click", toggleTheme);
-    document.querySelectorAll(".lang-opt").forEach((o) =>
-      o.addEventListener("click", () => { toggleLangMenu(false); setLang(o.dataset.lang); }));
-    document.addEventListener("click", (e) => {
-      if (!langMenu.hidden && !e.target.closest(".lang-wrap")) toggleLangMenu(false);
+    document.getElementById("themeItem").addEventListener("click", toggleTheme);
+    document.getElementById("langItem").addEventListener("click", toggleLang);
+
+    const moreBtn = document.getElementById("moreBtn");
+    const moreMenu = document.getElementById("moreMenu");
+    moreBtn.addEventListener("click", () => {
+      const show = moreMenu.hidden;
+      moreMenu.hidden = !show;
+      moreBtn.setAttribute("aria-expanded", String(show));
     });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") toggleLangMenu(false); });
+
+    const logoutBtn = document.getElementById("logoutBtn");
+    if (logoutBtn) logoutBtn.addEventListener("click", (e) => { e.stopPropagation(); doLogout(); });
+
+    // Load the local profile (created at sign-up) for the greeting + profile card.
+    try {
+      const profile = JSON.parse(localStorage.getItem(PROFILE_STORE) || "null");
+      if (profile && profile.name) STUDENT = profile.name;
+    } catch (e) {}
 
     document.documentElement.lang = LANG;
     updateLangUI();
     applyTheme();
+    updateProfileUI();
+    seedActivity();
     render();
     cloud.init();
   })();

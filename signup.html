@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ro'yxatdan o'tish — eprep.uz</title>
+<meta name="description" content="Bepul eprep.uz hisobingizni yarating va Yangi O'zbekiston universiteti kirish imtihoniga tayyorlanishni boshlang." />
+
+<!-- Supabase: when supabase-config.js is filled in, sign-up creates a real account
+     and progress syncs across devices. Until then, the page falls back to a local
+     profile so the site keeps working. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:#ffffff; --ink:#1a1a1a; --muted:#6b7280; --line:#e8e8e8;
+    --blue:#2b7fff; --blue-soft:#eaf2ff; --green:#16a34a; --green-soft:#f0faf3;
+    --amber:#d97706; --red:#dc2626; --red-soft:#fdf2f2;
+    --surface:#ffffff; --surface-2:#fafafa; --surface-3:#f5f7fa;
+    --shadow:rgba(0,0,0,.10); --radius:14px;
+  }
+  :root[data-theme="dark"] {
+    --bg:#0f1115; --ink:#e6e8eb; --muted:#9aa1ab; --line:#2a2f3a;
+    --blue:#4f8dff; --blue-soft:#18253d; --green:#35c46b; --green-soft:#14271b;
+    --amber:#e0a13b; --red:#ff6b6b; --red-soft:#2c1a1a;
+    --surface:#161922; --surface-2:#1b1f29; --surface-3:#232838; --shadow:rgba(0,0,0,.55);
+  }
+
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    min-height:100vh; display:flex; flex-direction:column;
+    transition:background .25s ease,color .25s ease;
+  }
+  button { font-family:inherit; cursor:pointer; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--blue); outline-offset:2px; border-radius:4px; }
+
+  /* ---------- App bar ---------- */
+  .appbar { display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px; border-bottom:1px solid var(--line); background:var(--bg); }
+  .brand { display:flex; align-items:center; gap:10px; text-decoration:none; font-size:18px; font-weight:700; color:var(--ink); }
+  .logo { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
+    border-radius:9px; background:var(--blue); color:#fff; font-weight:800; }
+  .appbar-actions { display:flex; align-items:center; gap:10px; }
+  .theme-btn { display:inline-flex; align-items:center; justify-content:center; background:var(--surface);
+    border:1px solid var(--line); border-radius:999px; width:36px; height:33px; font-size:15px; }
+  .theme-btn:hover { border-color:var(--muted); }
+  .lang-btn { display:inline-flex; align-items:center; gap:6px; background:var(--surface);
+    border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-size:14px; font-weight:600; color:var(--ink); }
+  .lang-btn:hover { border-color:var(--muted); }
+  .lang-btn .globe { font-size:14px; }
+
+  /* ---------- Sign-up wizard (full clean page) ---------- */
+  main { flex:1; display:flex; align-items:center; justify-content:center; padding:32px 20px; }
+  .wizard { width:100%; max-width:420px; }
+
+  .steps-dots { display:flex; gap:7px; justify-content:center; margin-bottom:22px; }
+  .steps-dots span { width:26px; height:4px; border-radius:999px; background:var(--line); transition:background .2s ease; }
+  .steps-dots span.is-active { background:var(--blue); }
+  .steps-dots[hidden] { display:none; }
+
+  .step h1 { font-size:27px; font-weight:780; letter-spacing:-.5px; }
+  .step .sub { color:var(--muted); font-size:15px; margin:8px 0 22px; line-height:1.5; }
+  .step[hidden] { display:none; }
+
+  form { display:flex; flex-direction:column; gap:12px; }
+  input { width:100%; border:1px solid var(--line); border-radius:11px; padding:13px 14px; font-size:16px;
+    background:var(--surface); color:var(--ink); }
+  input:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 3px var(--blue-soft); }
+  input:disabled { opacity:.6; }
+  #pCode { letter-spacing:.4em; text-align:center; font-size:22px; font-weight:700; }
+
+  .track-choice { display:flex; gap:12px; }
+  .track-opt { flex:1; border:1px solid var(--line); background:var(--surface); border-radius:12px; padding:20px 12px;
+    font-size:16px; font-weight:680; color:var(--ink); transition:border-color .15s ease,background .15s ease; }
+  .track-opt:hover { border-color:var(--blue); }
+  .track-opt.is-active { border-color:var(--blue); background:var(--blue-soft); color:var(--blue); }
+
+  .actions { display:flex; gap:12px; margin-top:18px; }
+  .btn-back { flex:0 0 auto; background:var(--surface); border:1px solid var(--line); color:var(--ink);
+    border-radius:11px; padding:13px 22px; font-size:16px; font-weight:660; }
+  .btn-back:hover { border-color:var(--muted); }
+  .btn-next { flex:1; background:var(--blue); color:#fff; border:none; border-radius:11px; padding:13px; font-size:16px;
+    font-weight:680; }
+  .btn-next:hover { filter:brightness(.96); }
+  .btn-next:disabled, .btn-back:disabled { opacity:.6; cursor:default; }
+
+  .linklike { display:inline-block; background:none; border:none; color:var(--blue); font-weight:650; font-size:14px;
+    margin-top:16px; padding:4px 0; }
+  .linklike:hover { text-decoration:underline; }
+  .linklike[hidden] { display:none; }
+
+  .msg { margin-top:16px; font-size:14px; line-height:1.5; min-height:1.2em; }
+  .msg[hidden] { display:none; }
+  .msg.err { color:var(--red); }
+  .msg.ok { color:var(--green); }
+
+  @media (max-width:480px) {
+    .step h1 { font-size:24px; }
+  }
+</style>
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="index.html"><span class="logo">e</span><span>eprep.uz</span></a>
+    <div class="appbar-actions">
+      <button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+      <button class="lang-btn" id="langBtn" title="Til / Language"><span class="globe">🌐</span><span id="langLabel">UZ</span></button>
+    </div>
+  </header>
+
+  <main>
+    <div class="wizard">
+      <div class="steps-dots" id="dots" aria-hidden="true">
+        <span class="is-active"></span><span></span><span></span><span></span>
+      </div>
+
+      <!-- Step 1: name -->
+      <section class="step" id="step1">
+        <h1 data-i18n="s1Title">What is your name?</h1>
+        <p class="sub" data-i18n="s1Sub">Tell us what to call you.</p>
+        <form id="stepNameForm">
+          <input type="text" id="pName" data-i18n-ph="phName" placeholder="First name" autocomplete="given-name" required />
+          <input type="text" id="pSurname" data-i18n-ph="phSurname" placeholder="Surname (optional)" autocomplete="family-name" />
+          <div class="actions">
+            <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
+            <button type="submit" class="btn-next" data-i18n="nextArrow">Next →</button>
+          </div>
+        </form>
+        <button type="button" class="linklike" id="toLogin" data-i18n="toLogin" hidden>Already have an account? Log in</button>
+      </section>
+
+      <!-- Step 2: goal -->
+      <section class="step" id="step2" hidden>
+        <h1 data-i18n="s2Title">Choose your goal</h1>
+        <p class="sub" data-i18n="s2Sub">Which exam are you preparing for?</p>
+        <div class="track-choice" id="trackChoice" role="radiogroup" aria-label="Exam">
+          <button type="button" class="track-opt" data-track="newuu" role="radio" aria-checked="false">NewUU</button>
+          <button type="button" class="track-opt" data-track="dtm" role="radio" aria-checked="false">DTM</button>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
+          <button type="button" class="btn-next" id="goalNext" data-i18n="nextArrow">Next →</button>
+        </div>
+      </section>
+
+      <!-- Step 3: email + password -->
+      <section class="step" id="step3" hidden>
+        <h1 data-i18n="s3Title">Create your login</h1>
+        <p class="sub" data-i18n="s3Sub">Your email and a password — we'll use these to save your progress.</p>
+        <form id="stepCredsForm">
+          <input type="email" id="pEmail" data-i18n-ph="phEmail" placeholder="Email" autocomplete="email" required />
+          <input type="password" id="pPassword" data-i18n-ph="phPassword" placeholder="Password (min 6 characters)" autocomplete="new-password" required />
+          <div class="actions">
+            <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
+            <button type="submit" class="btn-next" id="credsNext" data-i18n="nextArrow">Next →</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Step 4: 6-digit email verification code -->
+      <section class="step" id="step4" hidden>
+        <h1 data-i18n="s4Title">Check your email</h1>
+        <p class="sub"><span data-i18n="otpSentTo">We sent a 6-digit code to</span> <b id="otpEmail"></b>. <span data-i18n="otpEnter">Enter it to finish.</span></p>
+        <form id="stepOtpForm">
+          <input type="text" id="pCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6"
+                 pattern="[0-9]*" placeholder="000000" required />
+          <div class="actions">
+            <button type="button" class="btn-back" data-back data-i18n="back">Back</button>
+            <button type="submit" class="btn-next" id="otpVerify" data-i18n="verifyArrow">Verify →</button>
+          </div>
+        </form>
+        <button type="button" class="linklike" id="resendCode" data-i18n="resend">Resend code</button>
+      </section>
+
+      <!-- Login view (returning users) -->
+      <section class="step" id="stepLogin" hidden>
+        <h1 data-i18n="loginTitle">Welcome back</h1>
+        <p class="sub" data-i18n="loginSub">Log in to pick up your progress on this device.</p>
+        <form id="loginForm">
+          <input type="email" id="lEmail" data-i18n-ph="phEmail" placeholder="Email" autocomplete="email" required />
+          <input type="password" id="lPassword" data-i18n-ph="phLPassword" placeholder="Password" autocomplete="current-password" required />
+          <div class="actions">
+            <button type="button" class="btn-back" id="loginBack" data-i18n="back">Back</button>
+            <button type="submit" class="btn-next" id="loginSubmit" data-i18n="loginArrow">Log in →</button>
+          </div>
+        </form>
+      </section>
+
+      <p class="msg" id="authMsg" hidden></p>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    /* ---- language (EN / UZ; shared with the app via localStorage key newuu_lang) ---- */
+    var LANG_STORE = "newuu_lang";
+    var LANG = "uz";
+    try { var sl = localStorage.getItem(LANG_STORE); if (sl === "en" || sl === "uz") LANG = sl; } catch (e) {}
+
+    var DICT = {
+      en: {
+        s1Title: "What is your name?", s1Sub: "Tell us what to call you.",
+        phName: "First name", phSurname: "Surname (optional)",
+        back: "Back", nextArrow: "Next →", toLogin: "Already have an account? Log in",
+        s2Title: "Choose your goal", s2Sub: "Which exam are you preparing for?",
+        s3Title: "Create your login", s3Sub: "Your email and a password — we'll use these to save your progress.",
+        phEmail: "Email", phPassword: "Password (min 6 characters)",
+        s4Title: "Check your email", otpSentTo: "We sent a 6-digit code to", otpEnter: "Enter it to finish.",
+        verifyArrow: "Verify →", resend: "Resend code",
+        loginTitle: "Welcome back", loginSub: "Log in to pick up your progress on this device.",
+        phLPassword: "Password", loginArrow: "Log in →", startPracticing: "Start practicing →",
+        sending: "Sending…", verifying: "Verifying…", loggingIn: "Logging in…",
+        errName: "Please enter your first name.",
+        errTrack: "Please choose which exam you're preparing for.",
+        errEmail: "Please enter a valid email address.",
+        errPassword: "Password must be at least 6 characters.",
+        errCode: "Enter the 6-digit code from your email.",
+        errPasswordEmpty: "Please enter your password.",
+        errGeneric: "Something went wrong. Please try again.",
+        errVerify: "Couldn't verify the code. Please try again.",
+        errLogin: "Couldn't log in. Please try again.",
+        okResend: "A new code is on its way.", errResend: "Couldn't resend the code."
+      },
+      uz: {
+        s1Title: "Ismingiz nima?", s1Sub: "Sizni qanday chaqirishimizni ayting.",
+        phName: "Ism", phSurname: "Familiya (ixtiyoriy)",
+        back: "Orqaga", nextArrow: "Keyingi →", toLogin: "Hisobingiz bormi? Kirish",
+        s2Title: "Maqsadingizni tanlang", s2Sub: "Qaysi imtihonga tayyorlanyapsiz?",
+        s3Title: "Hisob yarating", s3Sub: "Email va parol — progressingizni saqlash uchun ulardan foydalanamiz.",
+        phEmail: "Email", phPassword: "Parol (kamida 6 ta belgi)",
+        s4Title: "Emailingizni tekshiring", otpSentTo: "6 xonali kodni yubordik:", otpEnter: "Tugatish uchun uni kiriting.",
+        verifyArrow: "Tasdiqlash →", resend: "Kodni qayta yuborish",
+        loginTitle: "Xush kelibsiz", loginSub: "Ushbu qurilmada progressingizni davom ettirish uchun kiring.",
+        phLPassword: "Parol", loginArrow: "Kirish →", startPracticing: "Mashqni boshlash →",
+        sending: "Yuborilmoqda…", verifying: "Tekshirilmoqda…", loggingIn: "Kirilmoqda…",
+        errName: "Iltimos, ismingizni kiriting.",
+        errTrack: "Iltimos, qaysi imtihonga tayyorlanayotganingizni tanlang.",
+        errEmail: "Iltimos, to'g'ri email manzilini kiriting.",
+        errPassword: "Parol kamida 6 ta belgidan iborat bo'lishi kerak.",
+        errCode: "Emailingizdagi 6 xonali kodni kiriting.",
+        errPasswordEmpty: "Iltimos, parolingizni kiriting.",
+        errGeneric: "Nimadir xato ketdi. Iltimos, qayta urinib ko'ring.",
+        errVerify: "Kodni tasdiqlab bo'lmadi. Iltimos, qayta urinib ko'ring.",
+        errLogin: "Kirish amalga oshmadi. Iltimos, qayta urinib ko'ring.",
+        okResend: "Yangi kod yo'lda.", errResend: "Kodni qayta yuborib bo'lmadi."
+      }
+    };
+    var t = function (k) { return (DICT[LANG] && DICT[LANG][k] != null) ? DICT[LANG][k] : DICT.en[k]; };
+
+    /* ---- theme (shared with the rest of the site via newuu_theme) ---- */
+    var THEME_STORE = "newuu_theme";
+    var theme = "light";
+    try {
+      var saved = localStorage.getItem(THEME_STORE);
+      if (saved === "light" || saved === "dark") theme = saved;
+      else if (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) theme = "dark";
+    } catch (e) {}
+    function applyTheme() {
+      document.documentElement.setAttribute("data-theme", theme);
+      var b = document.getElementById("themeBtn");
+      if (b) b.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+    applyTheme();
+    document.getElementById("themeBtn").addEventListener("click", function () {
+      theme = theme === "dark" ? "light" : "dark";
+      try { localStorage.setItem(THEME_STORE, theme); } catch (e) {}
+      applyTheme();
+    });
+
+    /* ---- Supabase (optional) ----
+       When supabase-config.js carries real keys and the library loaded, we create
+       real accounts and verify the email with a 6-digit code. Otherwise the page
+       falls back to a local profile so nothing breaks before the backend is wired. */
+    var cfg = window.SUPABASE_CONFIG || {};
+    var ready = !!(cfg.url && cfg.anonKey && window.supabase);
+    var client = ready
+      ? (window.__supabaseClient || (window.__supabaseClient = window.supabase.createClient(cfg.url, cfg.anonKey)))
+      : null;
+
+    /* ---- language switcher ---- */
+    function applyI18n() {
+      document.documentElement.lang = LANG;
+      document.querySelectorAll("[data-i18n]").forEach(function (n) {
+        var v = t(n.getAttribute("data-i18n")); if (v != null) n.textContent = v;
+      });
+      document.querySelectorAll("[data-i18n-ph]").forEach(function (n) {
+        var v = t(n.getAttribute("data-i18n-ph")); if (v != null) n.setAttribute("placeholder", v);
+      });
+      var lb = document.getElementById("langLabel"); if (lb) lb.textContent = LANG === "uz" ? "UZ" : "EN";
+      // Without a backend there's no email step, so step 3 is the finish line.
+      if (!ready) document.getElementById("credsNext").textContent = t("startPracticing");
+    }
+    document.getElementById("langBtn").addEventListener("click", function () {
+      LANG = LANG === "uz" ? "en" : "uz";
+      try { localStorage.setItem(LANG_STORE, LANG); } catch (e) {}
+      applyI18n();
+    });
+
+    /* ---- sign-up wizard ---- */
+    var PROFILE = "eprep_profile";
+    var msg = document.getElementById("authMsg");
+    var dots = document.querySelectorAll("#dots span");
+    var steps = [
+      document.getElementById("step1"),
+      document.getElementById("step2"),
+      document.getElementById("step3"),
+      document.getElementById("step4")
+    ];
+    var loginView = document.getElementById("stepLogin");
+    var nameInput = document.getElementById("pName");
+    var surnameInput = document.getElementById("pSurname");
+    var trackChoice = document.getElementById("trackChoice");
+    var emailInput = document.getElementById("pEmail");
+    var passwordInput = document.getElementById("pPassword");
+    var codeInput = document.getElementById("pCode");
+    var focusTargets = [nameInput, null, emailInput, codeInput];
+    var track = "";
+    var current = 0;
+    var busy = false;
+
+    function setMsg(text, kind) {
+      msg.hidden = !text;
+      msg.className = "msg" + (kind ? " " + kind : "");
+      msg.textContent = text || "";
+    }
+    function showErr(text) { setMsg(text, "err"); }
+    function showOk(text) { setMsg(text, "ok"); }
+
+    function showStep(i) {
+      current = i;
+      loginView.hidden = true;
+      document.getElementById("dots").hidden = false;
+      steps.forEach(function (s, idx) { s.hidden = idx !== i; });
+      dots.forEach(function (d, idx) { d.classList.toggle("is-active", idx <= i); });
+      setMsg("");
+      var el = focusTargets[i];
+      if (el) setTimeout(function () { el.focus(); }, 30);
+    }
+    function showLogin() {
+      steps.forEach(function (s) { s.hidden = true; });
+      document.getElementById("dots").hidden = true;
+      loginView.hidden = false;
+      setMsg("");
+      setTimeout(function () { document.getElementById("lEmail").focus(); }, 30);
+    }
+
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    // Persist a small local profile — keeps the in-app greeting working and powers
+    // the local-only fallback. The real source of truth (when signed in) is Supabase.
+    function saveLocalProfile() {
+      var profile = {
+        name: nameInput.value.trim(),
+        surname: surnameInput.value.trim(),
+        track: track,
+        email: emailInput.value.trim()
+      };
+      try { localStorage.setItem(PROFILE, JSON.stringify(profile)); } catch (e) {}
+    }
+    function goToApp() { window.location.href = "app.html"; }
+    function setBusy(on, btn, busyLabel, label) {
+      busy = on;
+      if (btn) { btn.disabled = on; btn.textContent = on ? busyLabel : label; }
+    }
+
+    // Track picker (radio-style buttons).
+    trackChoice.querySelectorAll(".track-opt").forEach(function (b) {
+      b.addEventListener("click", function () {
+        track = b.dataset.track;
+        trackChoice.querySelectorAll(".track-opt").forEach(function (o) {
+          var on = o === b;
+          o.classList.toggle("is-active", on);
+          o.setAttribute("aria-checked", String(on));
+        });
+        setMsg("");
+      });
+    });
+
+    // Back buttons inside the wizard: step 0 returns home; otherwise step back.
+    document.querySelectorAll("[data-back]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        if (busy) return;
+        if (current === 0) window.location.href = "index.html";
+        else showStep(current - 1);
+      });
+    });
+
+    // Step 1 → 2 (name)
+    document.getElementById("stepNameForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!nameInput.value.trim()) { showErr(t("errName")); return; }
+      showStep(1);
+    });
+
+    // Step 2 → 3 (goal)
+    document.getElementById("goalNext").addEventListener("click", function () {
+      if (!track) { showErr(t("errTrack")); return; }
+      showStep(2);
+    });
+
+    // Step 3 (email + password): create the account, then go verify the code.
+    document.getElementById("stepCredsForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var email = emailInput.value.trim();
+      var password = passwordInput.value;
+      if (!isEmail(email)) { showErr(t("errEmail")); return; }
+      if (password.length < 6) { showErr(t("errPassword")); return; }
+
+      if (!ready) {
+        // No backend yet — save a local profile and enter the app.
+        saveLocalProfile();
+        goToApp();
+        return;
+      }
+
+      var btn = document.getElementById("credsNext");
+      setBusy(true, btn, t("sending"), t("nextArrow"));
+      client.auth.signUp({
+        email: email,
+        password: password,
+        options: { data: { name: nameInput.value.trim(), surname: surnameInput.value.trim(), track: track } }
+      }).then(function (res) {
+        setBusy(false, btn, t("sending"), t("nextArrow"));
+        if (res.error) { showErr(res.error.message); return; }
+        if (res.data && res.data.session) {
+          // Email confirmation disabled in Supabase → already signed in.
+          saveLocalProfile();
+          goToApp();
+          return;
+        }
+        // Confirmation required → a 6-digit code was emailed.
+        document.getElementById("otpEmail").textContent = email;
+        showStep(3);
+      }).catch(function (err) {
+        setBusy(false, btn, t("sending"), t("nextArrow"));
+        showErr((err && err.message) || t("errGeneric"));
+      });
+    });
+
+    // Step 4 (verify): confirm the 6-digit code → session created → enter the app.
+    document.getElementById("stepOtpForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy || !ready) return;
+      var code = codeInput.value.trim();
+      if (!/^\d{6}$/.test(code)) { showErr(t("errCode")); return; }
+      var btn = document.getElementById("otpVerify");
+      setBusy(true, btn, t("verifying"), t("verifyArrow"));
+      client.auth.verifyOtp({ email: emailInput.value.trim(), token: code, type: "signup" }).then(function (res) {
+        setBusy(false, btn, t("verifying"), t("verifyArrow"));
+        if (res.error) { showErr(res.error.message); return; }
+        saveLocalProfile();
+        goToApp();
+      }).catch(function (err) {
+        setBusy(false, btn, t("verifying"), t("verifyArrow"));
+        showErr((err && err.message) || t("errVerify"));
+      });
+    });
+
+    // Resend the verification code.
+    document.getElementById("resendCode").addEventListener("click", function () {
+      if (busy || !ready) return;
+      var btn = this;
+      btn.disabled = true;
+      client.auth.resend({ type: "signup", email: emailInput.value.trim() }).then(function (res) {
+        btn.disabled = false;
+        if (res.error) showErr(res.error.message);
+        else showOk(t("okResend"));
+      }).catch(function () { btn.disabled = false; showErr(t("errResend")); });
+    });
+
+    // ---- login (returning users) ----
+    var toLogin = document.getElementById("toLogin");
+    if (ready) toLogin.hidden = false;   // only meaningful when accounts exist
+    toLogin.addEventListener("click", showLogin);
+    document.getElementById("loginBack").addEventListener("click", function () { if (!busy) showStep(0); });
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy || !ready) return;
+      var email = document.getElementById("lEmail").value.trim();
+      var password = document.getElementById("lPassword").value;
+      if (!isEmail(email)) { showErr(t("errEmail")); return; }
+      if (!password) { showErr(t("errPasswordEmpty")); return; }
+      var btn = document.getElementById("loginSubmit");
+      setBusy(true, btn, t("loggingIn"), t("loginArrow"));
+      client.auth.signInWithPassword({ email: email, password: password }).then(function (res) {
+        setBusy(false, btn, t("loggingIn"), t("loginArrow"));
+        if (res.error) { showErr(res.error.message); return; }
+        goToApp();
+      }).catch(function (err) {
+        setBusy(false, btn, t("loggingIn"), t("loginArrow"));
+        showErr((err && err.message) || t("errLogin"));
+      });
+    });
+
+    // Pre-fill from an existing local profile so returning users can edit rather than
+    // re-type. (No forced redirect — this page should always open; the app's own gate
+    // handles unprofiled / signed-out visitors.)
+    try {
+      var existing = JSON.parse(localStorage.getItem(PROFILE) || "null");
+      if (existing) {
+        if (existing.name) nameInput.value = existing.name;
+        if (existing.surname) surnameInput.value = existing.surname;
+        if (existing.email) emailInput.value = existing.email;
+        if (existing.track) {
+          var pre = trackChoice.querySelector('.track-opt[data-track="' + existing.track + '"]');
+          if (pre) pre.click();
+        }
+      }
+    } catch (e) {}
+
+    applyI18n();
+    showStep(0);
+  })();
+  </script>
+</body>
+</html>
